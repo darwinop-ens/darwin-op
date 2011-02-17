@@ -14,11 +14,11 @@ using namespace Robot;
 
 ColorFinder::ColorFinder() :
         m_center_point(Point2D()),
-        m_hue(350),
+        m_hue(356),
         m_hue_tolerance(15),
         m_min_saturation(50),
-        m_min_value(20),
-        m_min_percent(0.1),
+        m_min_value(10),
+        m_min_percent(0.07),
         m_max_percent(30.0),
         m_result(0),
         color_section("")
