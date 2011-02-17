@@ -53,15 +53,15 @@ int main(void)
 
     BallFollower follower = BallFollower();
 
-    ColorFinder* red_finder = new ColorFinder(0, 15, 55, 30, 0.3, 50.0);
+    ColorFinder* red_finder = new ColorFinder(0, 15, 45, 0, 0.3, 50.0);
     red_finder->LoadINISettings(ini, "RED");
     httpd::red_finder = red_finder;
 
-    ColorFinder* yellow_finder = new ColorFinder(50, 15, 50, 30, 0.3, 50.0);
+    ColorFinder* yellow_finder = new ColorFinder(60, 15, 45, 0, 0.3, 50.0);
     yellow_finder->LoadINISettings(ini, "YELLOW");
     httpd::yellow_finder = yellow_finder;
 
-    ColorFinder* blue_finder = new ColorFinder(230, 15, 45, 15, 0.3, 50.0);
+    ColorFinder* blue_finder = new ColorFinder(225, 15, 45, 0, 0.3, 50.0);
     blue_finder->LoadINISettings(ini, "BLUE");
     httpd::blue_finder = blue_finder;
 
