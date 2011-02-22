@@ -25,13 +25,14 @@ BallFollower::BallFollower()
 	m_KickBallMaxCount = 10;
 	m_KickBallCount = 0;
 
-	m_KickTopAngle = -10.0;
+	m_KickTopAngle = -5.0;
 	m_KickRightAngle = -30.0;
 	m_KickLeftAngle = 30.0;
 
 	m_FollowMaxFBStep = 25.0;
+    m_FollowMinFBStep = 5.0;
 	m_FollowMaxRLTurn = 40.0;
-	m_FitMaxFBStep = 25.0;
+	m_FitFBStep = 3.0;
 	m_FitMaxRLTurn = 40.0;
 	m_UnitFBStep = 1.0;
 	m_UnitRLTurn = 5.0;
@@ -129,7 +130,7 @@ void BallFollower::Process(Point2D ball_pos)
 				{
 					m_KickBallCount = 0;
 					KickBall = 0;
-					m_GoalFBStep = m_FitMaxFBStep * tilt_percent;
+					m_GoalFBStep = m_FitFBStep;
 					m_GoalRLTurn = m_FitMaxRLTurn * pan_percent;
 					if(DEBUG_PRINT == true)
 						fprintf(stderr, "[FIT(P:%.2f T:%.2f>%.2f)]", pan, ball_pos.Y, m_KickTopAngle);
@@ -140,6 +141,8 @@ void BallFollower::Process(Point2D ball_pos)
 				m_KickBallCount = 0;
 				KickBall = 0;
 				m_GoalFBStep = m_FollowMaxFBStep * tilt_percent;
+				if(m_GoalFBStep < m_FollowMinFBStep)
+				    m_GoalFBStep = m_FollowMinFBStep;
 				m_GoalRLTurn = m_FollowMaxRLTurn * pan_percent;
 				if(DEBUG_PRINT == true)
 					fprintf(stderr, "[FOLLOW(P:%.2f T:%.2f>%.2f]", pan, tilt, tilt_min);
