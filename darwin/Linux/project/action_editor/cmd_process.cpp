@@ -88,7 +88,7 @@ void ReadStep(CM730 *cm730)
 			{
 				if(value == 1)
 				{
-					if(cm730->ReadWord(id, RX28M::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
+					if(cm730->ReadWord(id, RX28M::P_GOAL_POSITION_L, &value, 0) == CM730::SUCCESS)
 						Step.position[id] = value;
 					else
 						Step.position[id] = Action::INVALID_BIT_MASK;
@@ -895,7 +895,6 @@ void HelpCmd()
 	printf(" set [value]: Set [value] on cursor\n");
 	printf(" save: Save changes\n");
 	printf(" play: Play motion of this page\n");
-	printf(" play [index]: Play motion of [index] page\n");
 	printf(" name: Change page name\n");
 	printf(" time: Change time base playing\n");
 	printf(" speed: Change speed base playing\n");
@@ -961,6 +960,8 @@ void SpeedCmd()
 
 void PlayCmd(CM730 *cm730)
 {
+	int value;	
+
 	for(int i=0; i<Page.header.stepnum; i++)
 	{
 		for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
@@ -973,12 +974,24 @@ void PlayCmd(CM730 *cm730)
 		}
 	}
 
-	PrintCmd("Playing... ('s' to stop, 'b' to brake)");
-
-	ReadStep(cm730);
 	for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
-		MotionStatus::m_CurrentJoints.SetValue(id, Step.position[id]);
+	{
+		if(cm730->ReadByte(id, RX28M::P_TORQUE_ENABLE, &value, 0) == CM730::SUCCESS)
+		{
+			if(value == 0)
+			{
+				if(cm730->ReadWord(id, RX28M::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
+					MotionStatus::m_CurrentJoints.SetValue(id, value);
+			}
+			else
+			{
+				if(cm730->ReadWord(id, RX28M::P_GOAL_POSITION_L, &value, 0) == CM730::SUCCESS)
+					MotionStatus::m_CurrentJoints.SetValue(id, value);
+			}
+		}
+	}
 
+	PrintCmd("Playing... ('s' to stop, 'b' to brake)");
 
 	LinuxMotionTimer::Start();
 	MotionManager::GetInstance()->SetEnable(true);

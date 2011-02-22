@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
 								{
 									if(torque == 1)
 									{
-										if(cm730.ReadWord(id, RX28M::P_PRESENT_POSITION_L, &position, 0) == CM730::SUCCESS)
+										if(cm730.ReadWord(id, RX28M::P_GOAL_POSITION_L, &position, 0) == CM730::SUCCESS)
 										{
 											new_sock << position;
 											cout << position;
@@ -331,27 +331,43 @@ int main(int argc, char *argv[])
 						new_sock << "{[ME]}\n";
                     }
                     else if(p_str_tok[0] == "play" || p_str_tok[0] == "rplay")
-                    {
+                    {						
 						int value;
+
 						for(int id=0; id<ROBOPLUS_JOINT_MAXNUM; id++)
 						{
 							if(id >= JointData::ID_R_SHOULDER_PITCH && id <= JointData::ID_HEAD_TILT)
 							{
-								if(cm730.ReadWord(id, RX28M::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
-									MotionStatus::m_CurrentJoints.SetValue(id, value);
+								if(cm730.ReadWord(id, RX28M::P_TORQUE_ENABLE, &value, 0) == CM730::SUCCESS)
+								{
+									if(value == 0)
+									{
+										if(cm730.ReadWord(id, RX28M::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
+											MotionStatus::m_CurrentJoints.SetValue(id, value);
+										else
+											cout << "[Fail to communication ID(" << id << ")]" << endl;
+									}
+									else
+									{
+										if(cm730.ReadWord(id, RX28M::P_GOAL_POSITION_L, &value, 0) == CM730::SUCCESS)
+											MotionStatus::m_CurrentJoints.SetValue(id, value);
+										else
+											cout << "[Fail to communication ID(" << id << ")]" << endl;
+									}
+								}
 								else
-									cout << "[Fail to read present position ID(" << id << ")]" << endl;
-							}							
-						}					
+									cout << "[Fail to communication ID(" << id << ")]" << endl;
+							}
+						}														
 						
 						LinuxMotionTimer::Start();
 						MotionManager::GetInstance()->SetEnable(true);
-
+						
 						int index = (int)atoi(p_str_tok[1].c_str());
 						if(p_str_tok[0] == "play")
 							Action::GetInstance()->Start(index);
 						else
-							Action::GetInstance()->Start(index, &page);		
+							Action::GetInstance()->Start(index, &page);
                     }
 					else if(p_str_tok[0] == "info")
 					{
