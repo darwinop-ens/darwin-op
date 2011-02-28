@@ -18,13 +18,24 @@
     <script language="javascript">
 
     var pretab = "";
+	var pretd = "";
     function extendmenu(mid, aobject) {
+		var tab_name = "sc"+mid;
+		var td_name = "td"+mid;
+		
         if(pretab != "") {
             document.getElementById(pretab).style.display = "none"
-        }
+			document.getElementById(pretd).style.backgroundColor="#FFFFFF";
+			document.getElementById(pretd).style.fontWeight="normal";
+			document.getElementById(pretd).style.color="#000000";
+	    }
         
-        document.getElementById(mid).style.display = "block"
-        pretab = mid
+        document.getElementById(tab_name).style.display = "block"
+		document.getElementById(td_name).style.backgroundColor="navy";
+		document.getElementById(td_name).style.fontWeight="bold";
+		document.getElementById(td_name).style.color="#FFFFFF";
+        pretab = tab_name;
+		pretd = td_name;
     }
     
       function send_command(cmd) {
@@ -105,7 +116,7 @@ function imageOnclick() { // Clicking on the image will pause the stream
 }
 
 </script>
-<body onload="createImageLayer();extendmenu('sc1', this);">
+<body onload="createImageLayer();extendmenu('1', this);">
 
 <div id="hints" style="background-color: yellow; position: absolute; top: 2px">communication hints</div>
 
@@ -130,18 +141,18 @@ function imageOnclick() { // Clicking on the image will pause the stream
       <input type="button" value="-10" onclick="send_command('exposure_minus&value=10')">
       <input type="button" value="+10" onclick="send_command('exposure_plus&value=10')">
       &nbsp;
-      <input type="button" value="-100" onclick="send_command('exposure_minus&value=100')">
-      <input type="button" value="+100" onclick="send_command('exposure_plus&value=100')">
+      <input type="button" value="-100" onclick="send_command('exposure_minus&value=100')" STYLE="width:51px;">
+      <input type="button" value="+100" onclick="send_command('exposure_plus&value=100')" STYLE="width:51px;">
     </form>
 </div>
 
 <div id="control" style="position: absolute; top: 6px; left: 345px;">
     <table width="320px" border="0">
-    <tr align="center">
-    <td width="80px"><a href="#" class="current" onClick="return extendmenu('sc1', this)"><b>[BALL]</b></a></td>
-    <td width="80px"><a href="#" class="current" onClick="return extendmenu('sc2', this)"><b>[RED]</b></a></td>
-    <td width="80px"><a href="#" class="current" onClick="return extendmenu('sc3', this)"><b>[YELLOW]</b></a></td>
-    <td width="80px"><a href="#" class="current" onClick="return extendmenu('sc4', this)"><b>[BLUE]</b></a></td>
+    <tr>
+    <td id="td1" align="center" onClick="return extendmenu('1', this)" style="cursor:pointer; FONT-WEIGHT:normal; " bgcolor="#FFFFFF" width="80px" height="20px">[BALL]</td>
+    <td id="td2" align="center" onClick="return extendmenu('2', this)" style="cursor:pointer; FONT-WEIGHT:normal; " bgcolor="#FFFFFF" width="80px" height="20px">[RED]</td>
+    <td id="td3" align="center" onClick="return extendmenu('3', this)" style="cursor:pointer; FONT-WEIGHT:normal; " bgcolor="#FFFFFF" width="80px" height="20px">[YELLOW]</td>
+    <td id="td4" align="center" onClick="return extendmenu('4', this)" style="cursor:pointer; FONT-WEIGHT:normal; " bgcolor="#FFFFFF" width="80px" height="20px">[BLUE]</td>
     </tr>
     </table>
 
