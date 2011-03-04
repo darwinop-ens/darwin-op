@@ -219,11 +219,11 @@ int CM730::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int prio
 		}
 	}
 
-	if(priority > 1)
-		m_Platform->LowPriorityRelease();
-	if(priority > 0)
-		m_Platform->MidPriorityRelease();
 	m_Platform->HighPriorityRelease();
+    if(priority > 0)
+        m_Platform->MidPriorityRelease();
+    if(priority > 1)
+        m_Platform->LowPriorityRelease();
 
 	return res;
 }
