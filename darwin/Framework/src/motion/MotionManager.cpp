@@ -19,6 +19,8 @@ MotionManager::MotionManager()
 	m_ProcessEnable = false;
 	m_Enabled = false;
 	DEBUG_PRINT = false;	
+
+	m_IsRunning = false;
 }
 
 MotionManager::~MotionManager()
@@ -105,8 +107,10 @@ bool MotionManager::Reinitialize()
 #define WINDOW_SIZE 30
 void MotionManager::Process()
 {
-	if(m_ProcessEnable == false)
-		return;
+    if(m_ProcessEnable == false || m_IsRunning == true)
+        return;
+
+    m_IsRunning = true;
 
     int value, error, sum = 0, avr = 512;
     static int fb_array[WINDOW_SIZE] = {512};
@@ -116,7 +120,10 @@ void MotionManager::Process()
         MotionStatus::BUTTON = value;
 
 	if(m_Enabled == false)
+	{
+	    m_IsRunning = false;
 		return;
+	}
 
 	if(m_SensorCalibrated == true)
 	{		
@@ -198,6 +205,8 @@ void MotionManager::Process()
 	}
 	if(joint_num > 0)
 	    m_CM730->SyncWrite(RX28M::P_CW_COMPLIANCE_SLOPE, 5, joint_num, param);
+
+	m_IsRunning = false;
 }
 
 void MotionManager::SetEnable(bool enable)

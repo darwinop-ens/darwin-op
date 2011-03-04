@@ -29,6 +29,8 @@ namespace Robot
 		bool m_SensorCalibrated;
 		int m_CalibrationTime;
 
+		bool m_IsRunning;
+
 	protected:
 
 	public:
