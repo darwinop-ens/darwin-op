@@ -17,6 +17,7 @@ namespace Robot
 	{
 	private:
 		static Kinematics* m_UniqueInstance;
+        Kinematics();
 
 	protected:
 
@@ -29,7 +30,6 @@ namespace Robot
 		static const double ANKLE_LENGTH = 33.5; //mm
 		static const double LEG_LENGTH = 219.5; //mm (THIGH_LENGTH + CALF_LENGTH + ANKLE_LENGTH)
 
-		Kinematics();
 		~Kinematics();
 
 		static Kinematics* GetInstance()			{ return m_UniqueInstance; }

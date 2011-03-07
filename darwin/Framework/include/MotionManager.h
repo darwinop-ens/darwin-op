@@ -31,12 +31,13 @@ namespace Robot
 
 		bool m_IsRunning;
 
+        MotionManager();
+
 	protected:
 
 	public:
 		bool DEBUG_PRINT;
 
-		MotionManager();
 		~MotionManager();
 
 		static MotionManager* GetInstance() { return m_UniqueInstance; }
