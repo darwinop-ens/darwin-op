@@ -769,9 +769,9 @@ void HelpCmd()
 {
 	system("clear");
 	printf("\n");
-	printf(" exit: Terminate program\n");
-	printf(" re: Redraw screen\n");
-	printf(" save: Save parameters\n");
+	printf(" exit: Exits the program\n");
+	printf(" re: Refreshes the screen\n");
+	printf(" save: Saves any changes made\n");
 	printf(" mon: Monitoring sensor\n");
 	printf("\n");
 	printf("       Copyright ROBOTIS CO.,LTD.\n");

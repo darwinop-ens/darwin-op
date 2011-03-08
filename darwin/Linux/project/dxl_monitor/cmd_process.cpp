@@ -84,16 +84,15 @@ void Prompt(int id)
 void Help()
 {
 	printf( "\n" );
-	printf( " exit : Terminate program\n" );
-	printf( " scan : Check connection of dynamixel\n" );
-	printf( " id [ID] : Change selected [ID]\n" );
-	printf( " dump : Dump control table of Dynamixel\n" );
-	printf( " reset : Set default value for selected ID's Dynamixel\n" );
-	printf( " reset all : Set default value for all Dynamixel\n" );
-	printf( " wr [ADDR] [VALUE] : Write [VALUE] to [ADDR] of selected ID's Dynamixel\n" );
-	printf( " on/off : If actuator, torque on/off\n" );
-	printf( "          If sub-board, actuator power on/off\n" );
-	printf( " on/off all : Torque on/off all actuator)\n" );
+	printf( " exit : Exits the program\n" );
+	printf( " scan : Outputs the current status of all Dynamixels\n" );
+	printf( " id [ID] : Go to [ID]\n" );
+	printf( " dump : Dumps the current control table of CM-730 and all Dynamixels\n" );
+	printf( " reset : Defaults the value of current Dynamixel\n" );
+	printf( " reset all : Defaults the value of all Dynamixels\n" );
+	printf( " wr [ADDR] [VALUE] : Writes value [VALUE] to address [ADDR] of current Dynamixel\n" );
+	printf( " on/off : Turns torque on/off of current Dynamixel\n" );
+	printf( " on/off all : Turns torque on/off of all Dynamixels)\n" );
 	printf( "\n       Copyright ROBOTIS CO.,LTD.\n\n" );
 }
 
@@ -584,5 +583,5 @@ void Write(Robot::CM730 *cm730, int id, int addr, int value)
 		return;
 	}
 
-	printf(" Success to write!\n");
+	printf(" Writing successful!\n");
 }
