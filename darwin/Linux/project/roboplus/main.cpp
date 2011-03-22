@@ -64,7 +64,6 @@ void change_current_dir()
 
 void sighandler(int sig)
 {
-	cm730.Disconnect();
 	exit(0);
 }
 

@@ -17,7 +17,6 @@ CM730 cm730(&linux_cm730);
 
 void sighandler(int sig)
 {
-	cm730.Disconnect();
 	exit(0);
 }
 

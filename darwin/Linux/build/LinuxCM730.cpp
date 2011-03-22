@@ -27,6 +27,10 @@ LinuxCM730::LinuxCM730(const char* name)
 	m_UpdateWaitTime = 0;
 	m_ByteTransferTime = 0;
 
+    sem_init(&m_LowSemID, 0, 1);
+    sem_init(&m_MidSemID, 0, 1);
+    sem_init(&m_HighSemID, 0, 1);
+
 	SetPortName(name);
 }
 
@@ -91,10 +95,6 @@ bool LinuxCM730::OpenPort()
 	tcflush(m_Socket_fd, TCIFLUSH);
 
     m_ByteTransferTime = (1000.0 / baudrate) * 12.0;
-
-	sem_init(&m_LowSemID, 0, 1);
-	sem_init(&m_MidSemID, 0, 1);
-	sem_init(&m_HighSemID, 0, 1);
 	
     return true;
 

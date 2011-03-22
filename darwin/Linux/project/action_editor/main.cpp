@@ -24,8 +24,6 @@ void change_current_dir()
 
 void sighandler(int sig)
 {
-	cm730.Disconnect();
-
 	struct termios term;
 	tcgetattr( STDIN_FILENO, &term );
 	term.c_lflag |= ICANON | ECHO;
