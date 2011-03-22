@@ -929,7 +929,7 @@ void PageCmd(int index)
 	if(AskSave() == true)
 		return;
 
-	if(index > 0 && index < (Action::MAXNUM_PAGE - 1))
+	if(index > 0 && index < Action::MAXNUM_PAGE)
 	{
 		indexPage = index;
 		Action::GetInstance()->LoadPage(indexPage, &Page);
