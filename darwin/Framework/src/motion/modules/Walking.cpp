@@ -249,7 +249,7 @@ void Walking::update_param_move()
     if(m_Y_Move_Amplitude > 0)
         m_Y_Move_Amplitude_Shift = m_Y_Move_Amplitude;
     else
-        m_Y_Move_Amplitude_Shift = -Y_MOVE_AMPLITUDE;
+        m_Y_Move_Amplitude_Shift = -m_Y_Move_Amplitude;
     m_Y_Swap_Amplitude = Y_SWAP_AMPLITUDE + m_Y_Move_Amplitude_Shift * 0.04;
 
     m_Z_Move_Amplitude = Z_MOVE_AMPLITUDE / 2;
