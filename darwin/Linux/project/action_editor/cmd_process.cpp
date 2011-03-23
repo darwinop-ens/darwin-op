@@ -668,7 +668,7 @@ void SetValue(CM730 *cm730, int value)
 		}
 		else
 		{
-			if(value >= 0 && value <= Action::RANGE_BIT_MASK)
+			if(value >= 0 && value <= RX28M::MAX_VALUE)
 			{
 				if(!(Step.position[row + 1] & Action::INVALID_BIT_MASK) && !(Step.position[row + 1] & Action::TORQUE_OFF_BIT_MASK))
 				{
@@ -740,7 +740,7 @@ void SetValue(CM730 *cm730, int value)
 		}
 		else
 		{
-			if(value >= 0 && value <= Action::RANGE_BIT_MASK)
+			if(value >= 0 && value <= RX28M::MAX_VALUE)
 			{
 				if(!(Page.step[i].position[row + 1] & Action::INVALID_BIT_MASK))
 				{

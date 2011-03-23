@@ -34,7 +34,6 @@ namespace Robot
 
 		enum
 		{
-			RANGE_BIT_MASK		= 0x3ff,	//0~1023 range
 			INVALID_BIT_MASK	= 0x4000,
 			TORQUE_OFF_BIT_MASK	= 0x2000
 		};
