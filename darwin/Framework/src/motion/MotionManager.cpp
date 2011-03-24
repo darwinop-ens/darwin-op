@@ -167,6 +167,9 @@ void MotionManager::Process()
 			m_RLGyroCenter = (int)((double)m_RLGyroCenter / (double)m_CalibrationTime);
 			m_SensorCalibrated = true;
 		}
+
+        m_IsRunning = false;
+        return;
 	}
 
 	if(m_Modules.size() != 0)
