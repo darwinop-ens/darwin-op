@@ -121,6 +121,8 @@ void StatusCheck::Check(CM730 &cm730)
                 Head::GetInstance()->m_Joint.SetEnableHeadOnly(true);
                 Walking::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true);
                 Action::GetInstance()->m_Joint.SetEnableBody(false);
+
+                MotionManager::GetInstance()->GyroCalibrationReset();
             }
             else if(m_cur_mode == MOTION)
             {

@@ -49,6 +49,8 @@ namespace Robot
 		bool GetEnable()				{ return m_Enabled; }
 		void AddModule(MotionModule *module);
 		void RemoveModule(MotionModule *module);
+
+		void GyroCalibrationReset() { m_SensorCalibrated = false; m_CalibrationTime = 0; m_FBGyroCenter = 0; m_RLGyroCenter = 0; }
 	};
 }
 
