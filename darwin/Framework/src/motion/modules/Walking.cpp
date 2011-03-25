@@ -39,7 +39,7 @@ Walking::Walking()
 	Z_SWAP_AMPLITUDE = 6;
 	ARM_SWING_GAIN = 0.8;
 	PELVIS_OFFSET = 10;
-	HIP_PITCH_OFFSET = 60;
+	HIP_PITCH_OFFSET = HIP_PITCH_OFFSET_DEFAULT;
 
 
 	X_MOVE_AMPLITUDE = 0;
@@ -240,6 +240,8 @@ void Walking::update_param_time()
 
 void Walking::update_param_move()
 {
+    HIP_PITCH_OFFSET = HIP_PITCH_OFFSET_DEFAULT + (X_MOVE_AMPLITUDE*HIP_PITCH_OFFSET_GAIN);
+
 	// Forward/Back
     m_X_Move_Amplitude = X_MOVE_AMPLITUDE;
     m_X_Swap_Amplitude = X_MOVE_AMPLITUDE * 0.5;

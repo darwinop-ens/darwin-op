@@ -131,6 +131,9 @@ namespace Robot
 		int    PELVIS_OFFSET;
 		int    HIP_PITCH_OFFSET;
 
+		static const int HIP_PITCH_OFFSET_DEFAULT = 60;
+		static const int HIP_PITCH_OFFSET_GAIN = 0.5;
+
 		int GetCurrentPhase()		{ return m_Phase; }
 		double GetBodySwingY()		{ return m_Body_Swing_Y; }
 		double GetBodySwingZ()		{ return m_Body_Swing_Z; }

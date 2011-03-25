@@ -31,11 +31,11 @@ BallFollower::BallFollower()
 
 	m_FollowMaxFBStep = 25.0;
     m_FollowMinFBStep = 5.0;
-	m_FollowMaxRLTurn = 40.0;
+	m_FollowMaxRLTurn = 35.0;
 	m_FitFBStep = 3.0;
-	m_FitMaxRLTurn = 40.0;
-	m_UnitFBStep = 1.0;
-	m_UnitRLTurn = 5.0;
+	m_FitMaxRLTurn = 35.0;
+	m_UnitFBStep = 0.3;
+	m_UnitRLTurn = 1.0;
 
 	m_GoalFBStep = 0;
 	m_GoalRLTurn = 0;
@@ -192,7 +192,7 @@ void BallFollower::Process(Point2D ball_pos)
 			if(m_FBStep < m_GoalFBStep)
 				m_FBStep += m_UnitFBStep;
 			else if(m_FBStep > m_GoalFBStep)
-				m_FBStep -= m_UnitFBStep;
+				m_FBStep = m_GoalFBStep;
 			Walking::GetInstance()->X_MOVE_AMPLITUDE = m_FBStep;
 
 			if(m_RLTurn < m_GoalRLTurn)
