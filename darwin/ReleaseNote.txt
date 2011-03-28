@@ -3,6 +3,26 @@ https://sourceforge.net/projects/darwinop/
 
 
 =====================================
+          DARwIn-OP v1.0.1
+=====================================
+>>> Date: 28 Mar 2011
+
+>>> Changes
+    
+    * LinuxCM730 : Move semaphore init code to constructor
+    * action_script : Stand-up motion page number changed from 16 to 1.
+    * demo : at the start of soccer mode, reset the gyro sensor calibration
+    * Some walking parameters changed.
+
+
+>>> Bug fixes
+    
+    * action_editor : page 255 access problem fixed.
+    * Walking : Y move amplitude bug fixed.
+
+
+
+=====================================
           DARwIn-OP v1.0.0
 =====================================
 >>> Date: 1 Feb 2011
