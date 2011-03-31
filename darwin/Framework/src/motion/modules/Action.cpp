@@ -430,7 +430,7 @@ void Action::Process()
 						if( (wUnitTimeTotalNum - wAccelStep) == 0 ) // 등속 구간이 전혀 없다면
 							ipMainAngle1024[bID] = 0;
 						else
-							ipMainAngle1024[bID] = (short)(((long)(ipMovingAngle1024[bID] - ipAccelAngle1024[bID])) * wUnitTimeNum) / (wUnitTimeTotalNum - wAccelStep);
+							ipMainAngle1024[bID] = (short)((((long)(ipMovingAngle1024[bID] - ipAccelAngle1024[bID])) * wUnitTimeNum) / (wUnitTimeTotalNum - wAccelStep));
 					}
 					else // ZERO_FINISH
 						ipMainAngle1024[bID] = ipMovingAngle1024[bID] - ipAccelAngle1024[bID] - (short int)((((long)ipMainSpeed1024[bID] * wAccelStep * 12) / 5) >> 8);
