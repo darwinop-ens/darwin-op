@@ -3,6 +3,33 @@ https://sourceforge.net/projects/darwinop/
 
 
 =====================================
+          DARwIn-OP v1.1.0
+=====================================
+>>> Date: 8 Apr 2011
+
+>>> New functionality/features
+
+    * firmware_installer : CM-730 & RX-28M firmware installer
+    * CM-730 : Low battery alert added.
+
+
+>>> Changes
+    
+    * RX-28M resolution changed from 1024 to 4096.
+
+
+>>> Bug fixes
+    
+    * Action class : type casting bug fixed.
+    * dxl_monitor : CM-730 control table dump bug fixed.
+    * action_editor : command line first char backspace bug fixed.
+                      save command bug fixed.
+    * walk_tuner : command line first char backspace bug fixed.
+    * some minor bug fixed.
+
+
+
+=====================================
           DARwIn-OP v1.0.1
 =====================================
 >>> Date: 28 Mar 2011
