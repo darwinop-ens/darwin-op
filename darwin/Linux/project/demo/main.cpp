@@ -17,9 +17,14 @@
 #include "StatusCheck.h"
 #include "VisionMode.h"
 
+#ifdef RX28M_1024
+#define MOTION_FILE_PATH    "../../../Data/motion_1024.bin"
+#else
+#define MOTION_FILE_PATH    "../../../Data/motion_4096.bin"
+#endif
+
 #define INI_FILE_PATH       "config.ini"
 #define SCRIPT_FILE_PATH    "script.asc"
-#define MOTION_FILE_PATH    "../../../Data/motion.bin"
 
 #define U2D_DEV_NAME0       "/dev/ttyUSB0"
 #define U2D_DEV_NAME1       "/dev/ttyUSB1"
@@ -65,10 +70,6 @@ int main(void)
     blue_finder->LoadINISettings(ini, "BLUE");
     httpd::blue_finder = blue_finder;
 
-    Action::GetInstance()->LoadFile(MOTION_FILE_PATH);
-
-    //MotionManager::GetInstance()->DEBUG_PRINT = true;
-
     //////////////////// Framework Initialize ////////////////////////////
     if(MotionManager::GetInstance()->Initialize(&cm730) == false)
     {
@@ -79,11 +80,44 @@ int main(void)
             return 0;
         }
     }
+
+    Walking::GetInstance()->LoadINISettings(ini);
+
     MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
     MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());
     MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
     LinuxMotionTimer::Initialize(MotionManager::GetInstance());
     /////////////////////////////////////////////////////////////////////
+
+    int firm_ver = 0;
+    if(cm730.ReadByte(JointData::ID_HEAD_PAN, RX28M::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
+    {
+        fprintf(stderr, "Can't read firmware version from Dynamixel ID %d!! \n\n", JointData::ID_HEAD_PAN);
+        exit(0);
+    }
+
+    if(0 < firm_ver && firm_ver < 27)
+    {
+#ifdef RX28M_1024
+        Action::GetInstance()->LoadFile(MOTION_FILE_PATH);
+#else
+        fprintf(stderr, "RX-28M's firmware is not support 4096 resolution!! \n");
+        fprintf(stderr, "Upgrade RX-28M's firmware to version 27(0x1B) or higher.\n\n");
+        exit(0);
+#endif
+    }
+    else if(27 <= firm_ver)
+    {
+#ifdef RX28M_1024
+        fprintf(stderr, "RX-28M's firmware is not support 1024 resolution!! \n");
+        fprintf(stderr, "Remove '#define RX28M_1024' from 'RX28M.h' file and rebuild.\n\n");
+        exit(0);
+#else
+        Action::GetInstance()->LoadFile(MOTION_FILE_PATH);
+#endif
+    }
+    else
+        exit(0);
 
     Walking::GetInstance()->m_Joint.SetEnableBody(false);
     Head::GetInstance()->m_Joint.SetEnableBody(false);

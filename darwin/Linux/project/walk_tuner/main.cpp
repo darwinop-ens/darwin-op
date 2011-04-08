@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 	char filename[128];
 	change_current_dir();
 	if(argc < 2)
-		strcpy(filename, "walk_tuner.ini"); // Set default config file path
+		strcpy(filename, "config.ini"); // Set default config file path
 	else
 		strcpy(filename, argv[1]);
 	minIni* ini = new minIni(filename);
@@ -97,12 +97,36 @@ int main(int argc, char *argv[])
 			char strParam[20][30];
 			int num_param;
 
+            int idx = 0;
+
 			BeginCommandMode();
 
 			printf("%c", ch);
-			input[0] = (char)ch;
+            input[idx++] = (char)ch;
 
-			gets(&input[1]);
+            while(1)
+            {
+                ch = _getch();
+                if( ch == 0x0A )
+                    break;
+                else if( ch == 0x7F )
+                {
+                    if(idx > 0)
+                    {
+                        printf("%c", ch);
+                        input[--idx] = 0;
+                    }
+                }
+                else if( ch >= 'A' && ch <= 'z' )
+                {
+                    if(idx < 127)
+                    {
+                        printf("%c", ch);
+                        input[idx++] = (char)ch;
+                    }
+                }
+            }
+
 			fflush(stdin);
 			input_len = strlen(input);
 			if(input_len > 0)

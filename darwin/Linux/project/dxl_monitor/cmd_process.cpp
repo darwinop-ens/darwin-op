@@ -87,7 +87,7 @@ void Help()
 	printf( " exit : Exits the program\n" );
 	printf( " scan : Outputs the current status of all Dynamixels\n" );
 	printf( " id [ID] : Go to [ID]\n" );
-	printf( " dump : Dumps the current control table of CM-730 and all Dynamixels\n" );
+	printf( " d : Dumps the current control table of CM-730 and all Dynamixels\n" );
 	printf( " reset : Defaults the value of current Dynamixel\n" );
 	printf( " reset all : Defaults the value of all Dynamixels\n" );
 	printf( " wr [ADDR] [VALUE] : Writes value [VALUE] to address [ADDR] of current Dynamixel\n" );
@@ -127,7 +127,7 @@ void Dump(CM730 *cm730, int id)
 
 	if(id == CM730::ID_CM) // Sub board
 	{
-		if(cm730->ReadTable(id, CM730::P_MODEL_NUMBER_L, CM730::P_ACCEL_Z_H, &table[CM730::P_MODEL_NUMBER_L], 0) != CM730::SUCCESS)
+		if(cm730->ReadTable(id, CM730::P_MODEL_NUMBER_L, CM730::P_RIGHT_MIC_H, &table[CM730::P_MODEL_NUMBER_L], 0) != CM730::SUCCESS)
 		{
 			printf(" Can not read table!\n");
 			return;
@@ -159,24 +159,24 @@ void Dump(CM730 *cm730, int id)
 		printf( " LED_EYE                (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 		addr = CM730::P_BUTTON; value = table[addr];
 		printf( " BUTTON                  (R) [%.3d]:%5d\n", addr, value);
-		addr = CM730::P_VOLTAGE; value = table[addr];
-		printf( " VOLTAGE                 (R) [%.3d]:%5d\n", addr, value);
 		addr = CM730::P_GYRO_Z_L; value = CM730::MakeWord(table[addr], table[addr+1]);
-		printf( " P_GYRO_Z                (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		printf( " GYRO_Z                  (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 		addr = CM730::P_GYRO_Y_L; value = CM730::MakeWord(table[addr], table[addr+1]);
-		printf( " P_GYRO_Y                (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		printf( " GYRO_Y                  (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 		addr = CM730::P_GYRO_X_L; value = CM730::MakeWord(table[addr], table[addr+1]);
-		printf( " P_GYRO_X                (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		printf( " GYRO_X                  (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 		addr = CM730::P_ACCEL_X_L; value = CM730::MakeWord(table[addr], table[addr+1]);
-		printf( " P_ACCEL_X               (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		printf( " ACCEL_X                 (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 		addr = CM730::P_ACCEL_Y_L; value = CM730::MakeWord(table[addr], table[addr+1]);
-		printf( " P_ACCEL_Y               (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		printf( " ACCEL_Y                 (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 		addr = CM730::P_ACCEL_Z_L; value = CM730::MakeWord(table[addr], table[addr+1]);
-		printf( " P_ACCEL_Z               (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		printf( " ACCEL_Z                 (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+        addr = CM730::P_VOLTAGE; value = table[addr];
+        printf( " VOLTAGE                 (R) [%.3d]:%5d\n", addr, value);
 		addr = CM730::P_LEFT_MIC_L; value = CM730::MakeWord(table[addr], table[addr+1]);
-		printf( " P_LEFT_MIC              (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		printf( " LEFT_MIC                (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 		addr = CM730::P_RIGHT_MIC_L; value = CM730::MakeWord(table[addr], table[addr+1]);
-		printf( " P_RIGHT_MIC             (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		printf( " RIGHT_MIC               (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 
 		printf( "\n" );
 	}
@@ -224,6 +224,7 @@ void Dump(CM730 *cm730, int id)
 		printf( " TORQUE_ENABLE          (R/W)[%.3d]:%5d\n", addr, value);
 		addr = RX28M::P_LED; value = table[addr];
 		printf( " LED                    (R/W)[%.3d]:%5d\n", addr, value);
+#ifdef RX28M_1024
 		addr = RX28M::P_CW_COMPLIANCE_MARGIN; value = table[addr];
 		printf( " CW_COMPLIANCE_MARGIN   (R/W)[%.3d]:%5d\n", addr, value);
 		addr = RX28M::P_CCW_COMPLIANCE_MARGIN; value = table[addr];
@@ -232,6 +233,16 @@ void Dump(CM730 *cm730, int id)
 		printf( " CW_COMPLIANCE_SLOPE    (R/W)[%.3d]:%5d\n", addr, value);
 		addr = RX28M::P_CCW_COMPLIANCE_SLOPE; value = table[addr];
 		printf( " CCW_COMPLIANCE_SLOPE   (R/W)[%.3d]:%5d\n", addr, value);
+#else
+        addr = RX28M::P_P_GAIN; value = table[addr];
+        printf( " P_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
+        addr = RX28M::P_I_GAIN; value = table[addr];
+        printf( " I_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
+        addr = RX28M::P_D_GAIN; value = table[addr];
+        printf( " D_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
+        addr = RX28M::P_RESERVED; value = table[addr];
+        printf( " RESERVED               (R/W)[%.3d]:%5d\n", addr, value);
+#endif
 		addr = RX28M::P_GOAL_POSITION_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " GOAL_POSITION          (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 		addr = RX28M::P_MOVING_SPEED_L; value = CM730::MakeWord(table[addr], table[addr+1]);
@@ -305,101 +316,101 @@ void Reset(Robot::CM730 *cm730, int id)
 
 	if(id != CM730::ID_CM)
 	{
-		int cwLimit = RX28M::MIN_VALUE;
-		int ccwLimit = RX28M::MAX_VALUE;
+		double cwLimit = RX28M::MIN_ANGLE;
+		double ccwLimit = RX28M::MAX_ANGLE;
 
 		switch(id)
 		{
 		case JointData::ID_R_SHOULDER_ROLL:
-			cwLimit = 237;
-			ccwLimit = 962;
+			cwLimit = -75.0;
+			ccwLimit = 135.0;
 			break;
 
 		case JointData::ID_L_SHOULDER_ROLL:
-			cwLimit = 51;
-			ccwLimit = 765;
+			cwLimit = -135.0;
+			ccwLimit = 75.0;
 			break;
 
 		case JointData::ID_R_ELBOW:
-			cwLimit = 186;
-			ccwLimit = 742;
+			cwLimit = -95.0;
+			ccwLimit = 70.0;
 			break;
 
 		case JointData::ID_L_ELBOW:
-			cwLimit = 270;
-			ccwLimit = 832;
+			cwLimit = -70.0;
+			ccwLimit = 95.0;
 			break;
 
 		case JointData::ID_R_HIP_YAW:
-            cwLimit = 95;
-            ccwLimit = 689;
+            cwLimit = -123.0;
+            ccwLimit = 53.0;
             break;
 
 		case JointData::ID_L_HIP_YAW:
-			cwLimit = 330;
-			ccwLimit = 805;
+			cwLimit = -53.0;
+			ccwLimit = 123.0;
 			break;
 
 		case JointData::ID_R_HIP_ROLL:
-			cwLimit = 356;
-			ccwLimit = 712;
+			cwLimit = -45.0;
+			ccwLimit = 59.0;
 			break;
 
 		case JointData::ID_L_HIP_ROLL:
-			cwLimit = 314;
-			ccwLimit = 652;
+			cwLimit = -59.0;
+			ccwLimit = 45.0;
 			break;
 
 		case JointData::ID_R_HIP_PITCH:
-			cwLimit = 177;
-			ccwLimit = 607;
+			cwLimit = -100.0;
+			ccwLimit = 29.0;
 			break;
 
 		case JointData::ID_L_HIP_PITCH:
-			cwLimit = 414;
-			ccwLimit = 854;
+			cwLimit = -29.0;
+			ccwLimit = 100.0;
 			break;
 
 		case JointData::ID_R_KNEE:
-			cwLimit = 492;
-			ccwLimit = 952;
+			cwLimit = -6.0;
+			ccwLimit = 130.0;
 			break;
 
 		case JointData::ID_L_KNEE:
-			cwLimit = 67;
-			ccwLimit = 532;
+			cwLimit = -130.0;
+			ccwLimit = 6.0;
 			break;
 
 		case JointData::ID_R_ANKLE_PITCH:
-			cwLimit = 312;
-			ccwLimit = 774;
+			cwLimit = -72.0;
+			ccwLimit = 80.0;
 			break;
 
 		case JointData::ID_L_ANKLE_PITCH:
-			cwLimit = 240;
-			ccwLimit = 756;
+			cwLimit = -80.0;
+			ccwLimit = 72.0;
 			break;
 
 		case JointData::ID_R_ANKLE_ROLL:
-			cwLimit = 362;
-			ccwLimit = 712;
+			cwLimit = -44.0;
+			ccwLimit = 63.0;
 			break;
 
 		case JointData::ID_L_ANKLE_ROLL:
-			cwLimit = 298;
-			ccwLimit = 662;
+			cwLimit = -63.0;
+			ccwLimit = 44.0;
 			break;
 
 		case JointData::ID_HEAD_TILT:
-			cwLimit = 420;
-			ccwLimit = 708;
+			cwLimit = -25.0;
+			ccwLimit = 55.0;
 			break;
 		}
 		
 		FailCount = 0;
 		while(1)
 		{
-			if(cm730->WriteWord(id, RX28M::P_CW_ANGLE_LIMIT_L, cwLimit, 0) == CM730::SUCCESS)
+			if(cm730->WriteWord(id, RX28M::P_CW_ANGLE_LIMIT_L, RX28M::Angle2Value(cwLimit), 0) == CM730::SUCCESS)
 				break;
 
 			FailCount++;
@@ -413,7 +424,7 @@ void Reset(Robot::CM730 *cm730, int id)
 		FailCount = 0;
 		while(1)
 		{
-			if(cm730->WriteWord(id, RX28M::P_CCW_ANGLE_LIMIT_L, ccwLimit, 0) == CM730::SUCCESS)
+			if(cm730->WriteWord(id, RX28M::P_CCW_ANGLE_LIMIT_L, RX28M::Angle2Value(ccwLimit), 0) == CM730::SUCCESS)
 				break;
 
 			FailCount++;
@@ -549,17 +560,24 @@ void Write(Robot::CM730 *cm730, int id, int addr, int value)
 			return;
 		}
 
-		if(addr == RX28M::P_HIGH_LIMIT_TEMPERATURE
-			|| addr == RX28M::P_LOW_LIMIT_VOLTAGE
-			|| addr == RX28M::P_HIGH_LIMIT_VOLTAGE
-			|| addr == RX28M::P_ALARM_LED
-			|| addr == RX28M::P_ALARM_SHUTDOWN
-			|| addr == RX28M::P_TORQUE_ENABLE
-			|| addr == RX28M::P_LED
-			|| addr == RX28M::P_CW_COMPLIANCE_MARGIN
-			|| addr == RX28M::P_CCW_COMPLIANCE_MARGIN
-			|| addr == RX28M::P_CW_COMPLIANCE_SLOPE
-			|| addr == RX28M::P_CCW_COMPLIANCE_SLOPE
+        if(addr == RX28M::P_HIGH_LIMIT_TEMPERATURE
+            || addr == RX28M::P_LOW_LIMIT_VOLTAGE
+            || addr == RX28M::P_HIGH_LIMIT_VOLTAGE
+            || addr == RX28M::P_ALARM_LED
+            || addr == RX28M::P_ALARM_SHUTDOWN
+            || addr == RX28M::P_TORQUE_ENABLE
+            || addr == RX28M::P_LED
+#ifdef RX28M_1024
+            || addr == RX28M::P_CW_COMPLIANCE_MARGIN
+            || addr == RX28M::P_CCW_COMPLIANCE_MARGIN
+            || addr == RX28M::P_CW_COMPLIANCE_SLOPE
+            || addr == RX28M::P_CCW_COMPLIANCE_SLOPE
+#else
+			|| addr == RX28M::P_P_GAIN
+			|| addr == RX28M::P_I_GAIN
+			|| addr == RX28M::P_D_GAIN
+			|| addr == RX28M::P_RESERVED
+#endif
 			|| addr == RX28M::P_LED
 			|| addr == RX28M::P_LED)
 		{

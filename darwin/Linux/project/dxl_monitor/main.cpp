@@ -148,6 +148,29 @@ int main()
 				Dump(&cm730, id);
 			else if(strcmp(cmd, "reset") == 0)
 			{
+			    int firm_ver = 0;
+			    if(cm730.ReadByte(JointData::ID_HEAD_PAN, RX28M::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
+			    {
+			        fprintf(stderr, "Can't read firmware version from Dynamixel ID %d!! \n\n", JointData::ID_HEAD_PAN);
+			        exit(0);
+			    }
+
+#ifdef RX28M_1024
+			    if(27 <= firm_ver)
+			    {
+			        fprintf(stderr, "\n RX-28M's firmware is not support 1024 resolution!! \n");
+			        fprintf(stderr, " Remove '#define RX28M_1024' from 'RX28M.h' file and rebuild.\n\n");
+			        continue;
+			    }
+#else
+			    if(0 < firm_ver && firm_ver < 27)
+			    {
+			        fprintf(stderr, "\n RX-28M's firmware is not support 4096 resolution!! \n");
+			        fprintf(stderr, " Upgrade RX-28M's firmware to version 27(0x1B) or higher.\n\n");
+			        continue;
+			    }
+#endif
+
 				if(num_param == 0)
 					Reset(&cm730, id);
 				else if(num_param == 1)

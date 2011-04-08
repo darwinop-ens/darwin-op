@@ -93,7 +93,7 @@ void BeginCommandMode();
 void EndCommandMode();
 void HelpCmd();
 void NextCmd();
-void BeforeCmd();
+void PrevCmd();
 void PageCmd(int index);
 void TimeCmd();
 void SpeedCmd();

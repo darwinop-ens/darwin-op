@@ -86,7 +86,7 @@ int main(void)
 	}
 	cm730.SyncWrite(RX28M::P_GOAL_POSITION_L, 5, JointData::NUMBER_OF_JOINTS - 1, param);	
 
-	printf("Start to press ENTER!\n");
+	printf("Press the ENTER key to begin!\n");
 	getchar();
 	
 	Walking::GetInstance()->m_Joint.SetEnableHeadOnly(false);

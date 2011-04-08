@@ -8,6 +8,11 @@
 #include <signal.h>
 #include "cmd_process.h"
 
+#ifdef RX28M_1024
+#define MOTION_FILE_PATH    "../../../Data/motion_1024.bin"
+#else
+#define MOTION_FILE_PATH    "../../../Data/motion_4096.bin"
+#endif
 
 using namespace Robot;
 
@@ -44,7 +49,7 @@ int main(int argc, char *argv[])
 
 	change_current_dir();
 	if(argc < 2)
-		strcpy(filename, "../../../Data/motion.bin"); // Set default motion file path
+		strcpy(filename, MOTION_FILE_PATH); // Set default motion file path
 	else
 		strcpy(filename, argv[1]);
 
@@ -71,7 +76,7 @@ int main(int argc, char *argv[])
 	//////////////////// Framework Initialize ////////////////////////////	
 	if(MotionManager::GetInstance()->Initialize(&cm730) == false)
 	{
-		printf("Fail to initialize Motion Manager!\n");
+		printf("Initializing Motion Manager failed!\n");
 			return 0;
 	}
 	MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());	
@@ -84,19 +89,20 @@ int main(int argc, char *argv[])
 	while(1)
 	{
 		ch = _getch();
+
 		if(ch == 0x1b)
 		{
 			ch = _getch();
 			if(ch == 0x5b)
 			{
 				ch = _getch();
-				if(ch == 0x41) // Up arrow key
+				if(ch == 0x41)      // Up arrow key
 					MoveUpCursor();
 				else if(ch == 0x42) // Down arrow key
 					MoveDownCursor();
 				else if(ch == 0x44) // Left arrow key
 					MoveLeftCursor();
-				else if(ch == 0x43)
+				else if(ch == 0x43) // Right arrow key
 					MoveRightCursor();
 			}
 		}
@@ -112,19 +118,43 @@ int main(int argc, char *argv[])
 			ToggleTorque(&cm730);
 		else if( ch >= 'A' && ch <= 'z' )
 		{
-			char input[128];
+			char input[128] = {0,};
 			char *token;
 			int input_len;
 			char cmd[80];
 			int num_param;
 			int iparam[30];
 
+			int idx = 0;
+
 			BeginCommandMode();
 
-			printf("%c", ch);
-			input[0] = (char)ch;
+            printf("%c", ch);
+            input[idx++] = (char)ch;
 
-			gets(&input[1]);
+			while(1)
+			{
+			    ch = _getch();
+			    if( ch == 0x0A )
+			        break;
+			    else if( ch == 0x7F )
+			    {
+			        if(idx > 0)
+			        {
+                        printf("%c", ch);
+                        input[--idx] = 0;
+			        }
+			    }
+			    else if( ch >= 'A' && ch <= 'z' )
+			    {
+                    if(idx < 127)
+                    {
+                        printf("%c", ch);
+                        input[idx++] = (char)ch;
+                    }
+			    }
+			}
+
 			fflush(stdin);
 			input_len = strlen(input);
 			if(input_len > 0)
@@ -153,7 +183,7 @@ int main(int argc, char *argv[])
 					else if(strcmp(cmd, "n") == 0)
 						NextCmd();
 					else if(strcmp(cmd, "b") == 0)
-						BeforeCmd();						
+						PrevCmd();						
 					else if(strcmp(cmd, "time") == 0)
 						TimeCmd();
 					else if(strcmp(cmd, "speed") == 0)

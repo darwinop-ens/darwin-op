@@ -919,7 +919,7 @@ void NextCmd()
 	PageCmd(indexPage + 1);
 }
 
-void BeforeCmd()
+void PrevCmd()
 {
 	PageCmd(indexPage - 1);
 }
@@ -1036,6 +1036,8 @@ void PlayCmd(CM730 *cm730)
 	GoToCursor(CMD_COL, CMD_ROW);
 	PrintCmd("Done.");
 	
+	usleep(10000);
+
 	ReadStep(cm730);
 	DrawStep(7);
 }
@@ -1074,7 +1076,7 @@ void ListCmd()
 			printf("\n");
 		}
 
-		printf("\nAction Page List (%d/3) - Press key n(Next), b(Before), q(Quit)", index + 1);
+		printf("\nAction Page List (%d/3) - Press key n(Next), b(Prev), q(Quit)", index + 1);
 		while(1)
 		{
 			int ch = _getch();
@@ -1136,6 +1138,7 @@ void WriteStepCmd(int index)
 	{
 		Page.step[index] = Step;
 		DrawStep(index);
+		bEdited = true;
 	}
 	else
 		PrintCmd("Invalid step index");

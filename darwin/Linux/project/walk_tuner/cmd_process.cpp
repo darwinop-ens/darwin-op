@@ -109,7 +109,7 @@ void MoveUpCursor()
 {
 	if(Col == PARAM_COL)
 	{
-		if(Row > WALKING_MODE_ROW)
+		if(Row > 0)
 			GoToCursor(Col, Row-1);
 	}
 }
@@ -118,7 +118,7 @@ void MoveDownCursor()
 {
 	if(Col == PARAM_COL)
 	{
-		if(Row < BAL_ANKLE_ROLL_GAIN_ROW)
+		if(Row < CMD_ROW - 1)
 			GoToCursor(Col, Row+1);
 	}
 }
@@ -175,6 +175,8 @@ void DrawIntro(CM730 *cm730)
 	printf("Press any key to start program...\n");
 	_getch();
 
+	MotionManager::GetInstance()->ResetGyroCalibration();
+
 	DrawScreen();
 }
 
@@ -195,7 +197,7 @@ void DrawScreen()
 	GoToCursor(0, 0);
 
 	// Display menu
-	//      01234567890123456789012345678901234  Total:35x25
+	//      01234567890123456789012345678901234  Total:35x29
 	printf("Walking Mode(on/off)      \n"); // 0
 	printf("X offset(mm)              \n"); // 1
 	printf("Y offset(mm)              \n"); // 2
@@ -203,24 +205,28 @@ void DrawScreen()
 	printf("Roll(x) offset(degree)    \n"); // 4
 	printf("Pitch(y) offset(degree)   \n"); // 5
 	printf("Yaw(z) offset(degree)     \n"); // 6
-	printf("Hip pitch offset(motor)   \n"); // 7
+	printf("Hip pitch offset(degree)  \n"); // 7
 	printf("Auto balance(on/off)      \n"); // 8
 	printf("Period time(msec)         \n"); // 9
 	printf("DSP ratio                 \n"); // 0
-	printf("Step forward/back(mm)     \n"); // 1
-	printf("Step right/left(mm)       \n"); // 2
-	printf("Step direction(degree)    \n"); // 3
-	printf("Turning aim(on/off)       \n"); // 4
-	printf("Foot height(mm)           \n"); // 5
-	printf("Swing right/left(mm)      \n"); // 6
-	printf("Swing top/down(mm)        \n"); // 7
-	printf("Pelvis offset(motor)      \n"); // 8
-	printf("Arm swing gain            \n"); // 9
-	printf("Balance knee gain         \n"); // 0
-	printf("Balance ankle pitch gain  \n"); // 1
-	printf("Balance hip roll gain     \n"); // 2
-	printf("Balance ankle roll gain   \n"); // 3
-	ClearCmd(); // 4
+    printf("Step forward/back ratio   \n"); // 1
+	printf("Step forward/back(mm)     \n"); // 2
+	printf("Step right/left(mm)       \n"); // 3
+	printf("Step direction(degree)    \n"); // 4
+	printf("Turning aim(on/off)       \n"); // 5
+	printf("Foot height(mm)           \n"); // 6
+	printf("Swing right/left(mm)      \n"); // 7
+	printf("Swing top/down(mm)        \n"); // 8
+	printf("Pelvis offset(degree)     \n"); // 9
+	printf("Arm swing gain            \n"); // 0
+	printf("Balance knee gain         \n"); // 1
+	printf("Balance ankle pitch gain  \n"); // 2
+	printf("Balance hip roll gain     \n"); // 3
+	printf("Balance ankle roll gain   \n"); // 4
+    printf("P gain                    \n"); // 5
+    printf("I gain                    \n"); // 6
+    printf("D gain                    \n"); // 7
+    ClearCmd(); // 8
 
 	GoToCursor(PARAM_COL, WALKING_MODE_ROW);
 	if(Walking::GetInstance()->IsRunning() == true)
@@ -247,7 +253,7 @@ void DrawScreen()
 	printf("%.1f    ", Walking::GetInstance()->A_OFFSET);
 
 	GoToCursor(PARAM_COL, HIP_PITCH_OFFSET_ROW);
-	printf("%d    ", Walking::GetInstance()->HIP_PITCH_OFFSET);
+	printf("%.1f    ", Walking::GetInstance()->HIP_PITCH_OFFSET);
 
 	GoToCursor(PARAM_COL, AUTO_BALANCE_ROW);
 	if(Walking::GetInstance()->BALANCE_ENABLE == true)
@@ -260,6 +266,9 @@ void DrawScreen()
 
 	GoToCursor(PARAM_COL, DSP_RATIO_ROW);
 	printf("%.2f    ", Walking::GetInstance()->DSP_RATIO);
+
+    GoToCursor(PARAM_COL, STEP_FORWARDBACK_RATIO_ROW);
+    printf("%.2f    ", Walking::GetInstance()->STEP_FB_RATIO);
 
 	GoToCursor(PARAM_COL, STEP_FORWARDBACK_ROW);
 	printf("%d    ", (int)Walking::GetInstance()->X_MOVE_AMPLITUDE);
@@ -286,7 +295,7 @@ void DrawScreen()
 	printf("%d    ", (int)Walking::GetInstance()->Z_SWAP_AMPLITUDE);
 
 	GoToCursor(PARAM_COL, PELVIS_OFFSET_ROW);
-	printf("%d    ", Walking::GetInstance()->PELVIS_OFFSET);
+	printf("%.1f    ", Walking::GetInstance()->PELVIS_OFFSET);
 
 	GoToCursor(PARAM_COL, ARM_SWING_GAIN_ROW);
 	printf("%.1f    ", Walking::GetInstance()->ARM_SWING_GAIN);
@@ -302,6 +311,15 @@ void DrawScreen()
 
 	GoToCursor(PARAM_COL, BAL_ANKLE_ROLL_GAIN_ROW);
 	printf("%.2f    ", Walking::GetInstance()->BALANCE_ANKLE_ROLL_GAIN);
+
+    GoToCursor(PARAM_COL, P_GAIN_ROW);
+    printf("%d    ", Walking::GetInstance()->P_GAIN);
+
+    GoToCursor(PARAM_COL, I_GAIN_ROW);
+    printf("%d    ", Walking::GetInstance()->I_GAIN);
+
+    GoToCursor(PARAM_COL, D_GAIN_ROW);
+    printf("%d    ", Walking::GetInstance()->D_GAIN);
 
 	GoToCursor(old_col, old_row);
 }
@@ -400,10 +418,10 @@ void IncreaseValue(bool large)
 
 	case HIP_PITCH_OFFSET_ROW:
 		if(large == true)
-			Walking::GetInstance()->HIP_PITCH_OFFSET += 10;
+			Walking::GetInstance()->HIP_PITCH_OFFSET += 1.0;
 		else
-			Walking::GetInstance()->HIP_PITCH_OFFSET += 1;
-		printf("%d    ", Walking::GetInstance()->HIP_PITCH_OFFSET);
+			Walking::GetInstance()->HIP_PITCH_OFFSET += 0.1;
+		printf("%.1f    ", Walking::GetInstance()->HIP_PITCH_OFFSET);
 		break;
 
 	case AUTO_BALANCE_ROW:
@@ -426,6 +444,14 @@ void IncreaseValue(bool large)
 			Walking::GetInstance()->DSP_RATIO += 0.01;
 		printf("%.2f    ", Walking::GetInstance()->DSP_RATIO);
 		break;
+
+    case STEP_FORWARDBACK_RATIO_ROW:
+        if(large == true)
+            Walking::GetInstance()->STEP_FB_RATIO += 0.1;
+        else
+            Walking::GetInstance()->STEP_FB_RATIO += 0.01;
+        printf("%.2f    ", Walking::GetInstance()->STEP_FB_RATIO);
+        break;
 
 	case STEP_FORWARDBACK_ROW:
 		if(large == true)
@@ -482,10 +508,10 @@ void IncreaseValue(bool large)
 
 	case PELVIS_OFFSET_ROW:
 		if(large == true)
-			Walking::GetInstance()->PELVIS_OFFSET += 10;
+			Walking::GetInstance()->PELVIS_OFFSET += 1.0;
 		else
-			Walking::GetInstance()->PELVIS_OFFSET += 1;
-		printf("%d    ", Walking::GetInstance()->PELVIS_OFFSET);
+			Walking::GetInstance()->PELVIS_OFFSET += 0.1;
+		printf("%.1f    ", Walking::GetInstance()->PELVIS_OFFSET);
 		break;
 
 	case ARM_SWING_GAIN_ROW:
@@ -527,6 +553,30 @@ void IncreaseValue(bool large)
 			Walking::GetInstance()->BALANCE_ANKLE_ROLL_GAIN += 0.01;
 		printf("%.2f    ", Walking::GetInstance()->BALANCE_ANKLE_ROLL_GAIN);
 		break;
+
+    case P_GAIN_ROW:
+        if(large == true)
+            Walking::GetInstance()->P_GAIN += 10;
+        else
+            Walking::GetInstance()->P_GAIN += 1;
+        printf("%d    ", Walking::GetInstance()->P_GAIN);
+        break;
+
+    case I_GAIN_ROW:
+        if(large == true)
+            Walking::GetInstance()->I_GAIN += 10;
+        else
+            Walking::GetInstance()->I_GAIN += 1;
+        printf("%d    ", Walking::GetInstance()->I_GAIN);
+        break;
+
+    case D_GAIN_ROW:
+        if(large == true)
+            Walking::GetInstance()->D_GAIN += 10;
+        else
+            Walking::GetInstance()->D_GAIN += 1;
+        printf("%d    ", Walking::GetInstance()->D_GAIN);
+        break;
 	}
 
 	GoToCursor(col, row);
@@ -618,10 +668,10 @@ void DecreaseValue(bool large)
 
 	case HIP_PITCH_OFFSET_ROW:
 		if(large == true)
-			Walking::GetInstance()->HIP_PITCH_OFFSET -= 10;
+			Walking::GetInstance()->HIP_PITCH_OFFSET -= 1.0;
 		else
-			Walking::GetInstance()->HIP_PITCH_OFFSET -= 1;
-		printf("%d    ", Walking::GetInstance()->HIP_PITCH_OFFSET);
+			Walking::GetInstance()->HIP_PITCH_OFFSET -= 0.1;
+		printf("%.1f    ", Walking::GetInstance()->HIP_PITCH_OFFSET);
 		break;
 
 	case AUTO_BALANCE_ROW:
@@ -644,6 +694,14 @@ void DecreaseValue(bool large)
 			Walking::GetInstance()->DSP_RATIO -= 0.01;
 		printf("%.2f    ", Walking::GetInstance()->DSP_RATIO);
 		break;
+
+    case STEP_FORWARDBACK_RATIO_ROW:
+        if(large == true)
+            Walking::GetInstance()->STEP_FB_RATIO -= 0.1;
+        else
+            Walking::GetInstance()->STEP_FB_RATIO -= 0.01;
+        printf("%.2f    ", Walking::GetInstance()->STEP_FB_RATIO);
+        break;
 
 	case STEP_FORWARDBACK_ROW:
 		if(large == true)
@@ -700,10 +758,10 @@ void DecreaseValue(bool large)
 
 	case PELVIS_OFFSET_ROW:
 		if(large == true)
-			Walking::GetInstance()->PELVIS_OFFSET -= 10;
+			Walking::GetInstance()->PELVIS_OFFSET -= 1.0;
 		else
-			Walking::GetInstance()->PELVIS_OFFSET -= 1;
-		printf("%d    ", Walking::GetInstance()->PELVIS_OFFSET);
+			Walking::GetInstance()->PELVIS_OFFSET -= 0.1;
+		printf("%.1f    ", Walking::GetInstance()->PELVIS_OFFSET);
 		break;
 
 	case ARM_SWING_GAIN_ROW:
@@ -745,6 +803,30 @@ void DecreaseValue(bool large)
 			Walking::GetInstance()->BALANCE_ANKLE_ROLL_GAIN -= 0.01;
 		printf("%.2f    ", Walking::GetInstance()->BALANCE_ANKLE_ROLL_GAIN);
 		break;
+
+	case P_GAIN_ROW:
+	    if(large == true)
+	        Walking::GetInstance()->P_GAIN -= 10;
+	    else
+	        Walking::GetInstance()->P_GAIN -= 1;
+	    printf("%d    ", Walking::GetInstance()->P_GAIN);
+	    break;
+
+    case I_GAIN_ROW:
+        if(large == true)
+            Walking::GetInstance()->I_GAIN -= 10;
+        else
+            Walking::GetInstance()->I_GAIN -= 1;
+        printf("%d    ", Walking::GetInstance()->I_GAIN);
+        break;
+
+    case D_GAIN_ROW:
+        if(large == true)
+            Walking::GetInstance()->D_GAIN -= 10;
+        else
+            Walking::GetInstance()->D_GAIN -= 1;
+        printf("%d    ", Walking::GetInstance()->D_GAIN);
+        break;
 	}
 	
 	GoToCursor(col, row);

@@ -25,7 +25,11 @@
 #include "LinuxCM730.h"
 #include "LinuxActionScript.h"
 
-#define MOTION_FILE_PATH    "../../../../Data/motion.bin"
+#ifdef RX28M_1024
+#define MOTION_FILE_PATH    "../../../../Data/motion_1024.bin"
+#else
+#define MOTION_FILE_PATH    "../../../../Data/motion_4096.bin"
+#endif
 
 void change_current_dir()
 {
@@ -59,7 +63,7 @@ int main(void)
     Action::GetInstance()->Start(1);    /* Init(stand up) pose */
     while(Action::GetInstance()->IsRunning()) usleep(8*1000);
 
-    printf("Start to press ENTER!\n");
+    printf("Press the ENTER key to begin!\n");
     getchar();
 
     LinuxActionScript::ScriptStart("script.asc");

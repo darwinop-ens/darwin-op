@@ -10,9 +10,14 @@
 #include <libgen.h>
 #include "LinuxDARwIn.h"
 
-
 using namespace Robot;
 using namespace std;
+
+#ifdef RX28M_1024
+#define MOTION_FILE_PATH    "../../../Data/motion_1024.bin"
+#else
+#define MOTION_FILE_PATH    "../../../Data/motion_4096.bin"
+#endif
 
 #define VERSION					"1.000"
 #define TCPIP_PORT				6501
@@ -77,9 +82,13 @@ int main(int argc, char *argv[])
 	int ch;
 	char filename[128];
 
+    fprintf(stderr, "\n***********************************************************************\n");
+    fprintf(stderr,   "*                      RoboPlus Server Program                        *\n");
+    fprintf(stderr,   "***********************************************************************\n\n");
+
 	change_current_dir();
 	if(argc < 2)
-		strcpy(filename, "../../../Data/motion.bin"); // Set default motion file path
+		strcpy(filename, MOTION_FILE_PATH); // Set default motion file path
 	else
 		strcpy(filename, argv[1]);
 
@@ -115,6 +124,18 @@ int main(int argc, char *argv[])
 	LinuxMotionTimer::Stop();
 	/////////////////////////////////////////////////////////////////////
 
+    int firm_ver = 0;
+    if(cm730.ReadByte(JointData::ID_HEAD_PAN, RX28M::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
+    {
+        fprintf(stderr, "Can't read firmware version from Dynamixel ID %d!! \n\n", JointData::ID_HEAD_PAN);
+        exit(0);
+    }
+
+    if(27 <= firm_ver)
+    {
+        fprintf(stderr, "The RoboPlus Motion is not yet supported 4096 resolution..\n\n");
+        exit(0);
+    }
 
 	cout << "[Running....]\n";
     try
