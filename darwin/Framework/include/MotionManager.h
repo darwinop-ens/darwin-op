@@ -50,7 +50,7 @@ namespace Robot
 		void AddModule(MotionModule *module);
 		void RemoveModule(MotionModule *module);
 
-		void GyroCalibrationReset() { m_SensorCalibrated = false; m_CalibrationTime = 0; m_FBGyroCenter = 0; m_RLGyroCenter = 0; }
+		void ResetGyroCalibration() { m_SensorCalibrated = false; m_CalibrationTime = 0; m_FBGyroCenter = 0; m_RLGyroCenter = 0; }
 	};
 }
 

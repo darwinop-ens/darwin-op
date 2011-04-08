@@ -16,8 +16,8 @@ using namespace Robot;
 #define ERRBIT				(4)
 #define PARAMETER			(5)
 #define DEFAULT_BAUDNUMBER	(1)
-#define MAXNUM_TXPARAM		(150)
-#define MAXNUM_RXPARAM		(60)
+#define MAXNUM_TXPARAM		(256)
+#define MAXNUM_RXPARAM		(256)
 
 #define INST_PING			(1)
 #define INST_READ			(2)

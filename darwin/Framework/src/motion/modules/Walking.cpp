@@ -22,25 +22,29 @@ Walking* Walking::m_UniqueInstance = new Walking();
 
 Walking::Walking()
 {
-	X_OFFSET = 0;
+	X_OFFSET = -15;
 	Y_OFFSET = 5;
-	Z_OFFSET = 10;
-	A_OFFSET = 0;
+	Z_OFFSET = 20;
+    R_OFFSET = 0;
 	P_OFFSET = 0;
-	R_OFFSET = 0;
+    A_OFFSET = 0;
+    HIP_PITCH_OFFSET = 13.0;
 	PERIOD_TIME = 600;
 	DSP_RATIO = 0.1;
-	Z_MOVE_AMPLITUDE = 35;
-	BALANCE_KNEE_GAIN = 0.25;
-	BALANCE_ANKLE_PITCH_GAIN = 0.75;
-	BALANCE_HIP_ROLL_GAIN = 0.75;
-	BALANCE_ANKLE_ROLL_GAIN = 1.5;
-	Y_SWAP_AMPLITUDE = 19.0;
-	Z_SWAP_AMPLITUDE = 6;
-	ARM_SWING_GAIN = 0.8;
-	PELVIS_OFFSET = 10;
-	HIP_PITCH_OFFSET = HIP_PITCH_OFFSET_DEFAULT;
+	STEP_FB_RATIO = 0.28;
+	Z_MOVE_AMPLITUDE = 40;
+    Y_SWAP_AMPLITUDE = 20.0;
+    Z_SWAP_AMPLITUDE = 5;
+    PELVIS_OFFSET = 3.0;
+    ARM_SWING_GAIN = 1.5;
+	BALANCE_KNEE_GAIN = 0.3;
+	BALANCE_ANKLE_PITCH_GAIN = 0.9;
+	BALANCE_HIP_ROLL_GAIN = 0.5;
+	BALANCE_ANKLE_ROLL_GAIN = 1.0;
 
+	P_GAIN = JointData::P_GAIN_DEFAULT;
+    I_GAIN = JointData::I_GAIN_DEFAULT;
+    D_GAIN = JointData::D_GAIN_DEFAULT;
 
 	X_MOVE_AMPLITUDE = 0;
 	Y_MOVE_AMPLITUDE = 0;
@@ -48,12 +52,13 @@ Walking::Walking()
 	A_MOVE_AIM_ON = false;
 	BALANCE_ENABLE = true;
 
-	m_Joint.SetValue(JointData::ID_R_SHOULDER_PITCH, 347);
-	m_Joint.SetValue(JointData::ID_L_SHOULDER_PITCH, 653);
-	m_Joint.SetValue(JointData::ID_L_SHOULDER_ROLL, 572);
-	m_Joint.SetValue(JointData::ID_R_SHOULDER_ROLL, 451);
-	m_Joint.SetValue(JointData::ID_R_ELBOW, 612);
-	m_Joint.SetValue(JointData::ID_L_ELBOW, 411);
+	m_Joint.SetAngle(JointData::ID_R_SHOULDER_PITCH, -48.345);
+	m_Joint.SetAngle(JointData::ID_L_SHOULDER_PITCH, 41.313);
+	m_Joint.SetAngle(JointData::ID_R_SHOULDER_ROLL, -17.873);
+    m_Joint.SetAngle(JointData::ID_L_SHOULDER_ROLL, 17.580);
+	m_Joint.SetAngle(JointData::ID_R_ELBOW, 29.300);
+	m_Joint.SetAngle(JointData::ID_L_ELBOW, -29.593);
+
 	m_Joint.SetAngle(JointData::ID_HEAD_TILT, Kinematics::EYE_TILT_OFFSET_ANGLE);
 
 	m_Joint.SetSlope(JointData::ID_R_SHOULDER_PITCH, JointData::SLOPE_EXTRASOFT, JointData::SLOPE_EXTRASOFT);
@@ -63,6 +68,13 @@ Walking::Walking()
     m_Joint.SetSlope(JointData::ID_R_ELBOW, JointData::SLOPE_EXTRASOFT, JointData::SLOPE_EXTRASOFT);
     m_Joint.SetSlope(JointData::ID_L_ELBOW, JointData::SLOPE_EXTRASOFT, JointData::SLOPE_EXTRASOFT);
 	m_Joint.SetSlope(JointData::ID_HEAD_PAN, JointData::SLOPE_EXTRASOFT, JointData::SLOPE_EXTRASOFT);
+
+    m_Joint.SetPGain(JointData::ID_R_SHOULDER_PITCH, 2);
+    m_Joint.SetPGain(JointData::ID_L_SHOULDER_PITCH, 2);
+    m_Joint.SetPGain(JointData::ID_R_SHOULDER_ROLL, 2);
+    m_Joint.SetPGain(JointData::ID_L_SHOULDER_ROLL, 2);
+    m_Joint.SetPGain(JointData::ID_R_ELBOW, 2);
+    m_Joint.SetPGain(JointData::ID_L_ELBOW, 2);
 }
 
 Walking::~Walking()
@@ -80,23 +92,28 @@ void Walking::LoadINISettings(minIni* ini, const std::string &section)
     if((value = ini->getd(section, "x_offset", INVALID_VALUE)) != INVALID_VALUE)                X_OFFSET = value;
     if((value = ini->getd(section, "y_offset", INVALID_VALUE)) != INVALID_VALUE)                Y_OFFSET = value;
     if((value = ini->getd(section, "z_offset", INVALID_VALUE)) != INVALID_VALUE)                Z_OFFSET = value;
-    if((value = ini->getd(section, "a_offset", INVALID_VALUE)) != INVALID_VALUE)                A_OFFSET = value;
-    if((value = ini->getd(section, "p_offset", INVALID_VALUE)) != INVALID_VALUE)                P_OFFSET = value;
-    if((value = ini->getd(section, "r_offset", INVALID_VALUE)) != INVALID_VALUE)                R_OFFSET = value;
+    if((value = ini->getd(section, "roll_offset", INVALID_VALUE)) != INVALID_VALUE)             R_OFFSET = value;
+    if((value = ini->getd(section, "pitch_offset", INVALID_VALUE)) != INVALID_VALUE)            P_OFFSET = value;
+    if((value = ini->getd(section, "yaw_offset", INVALID_VALUE)) != INVALID_VALUE)              A_OFFSET = value;
+    if((value = ini->getd(section, "hip_pitch_offset", INVALID_VALUE)) != INVALID_VALUE)        HIP_PITCH_OFFSET = value;
     if((value = ini->getd(section, "period_time", INVALID_VALUE)) != INVALID_VALUE)             PERIOD_TIME = value;
     if((value = ini->getd(section, "dsp_ratio", INVALID_VALUE)) != INVALID_VALUE)               DSP_RATIO = value;
-    if((value = ini->getd(section, "z_move_amplitude", INVALID_VALUE)) != INVALID_VALUE)        Z_MOVE_AMPLITUDE = value;
+    if((value = ini->getd(section, "step_forward_back_ratio", INVALID_VALUE)) != INVALID_VALUE) STEP_FB_RATIO = value;
+    if((value = ini->getd(section, "foot_height", INVALID_VALUE)) != INVALID_VALUE)             Z_MOVE_AMPLITUDE = value;
+    if((value = ini->getd(section, "swing_right_left", INVALID_VALUE)) != INVALID_VALUE)        Y_SWAP_AMPLITUDE = value;
+    if((value = ini->getd(section, "swing_top_down", INVALID_VALUE)) != INVALID_VALUE)          Z_SWAP_AMPLITUDE = value;
+    if((value = ini->getd(section, "pelvis_offset", INVALID_VALUE)) != INVALID_VALUE)           PELVIS_OFFSET = value;
+    if((value = ini->getd(section, "arm_swing_gain", INVALID_VALUE)) != INVALID_VALUE)          ARM_SWING_GAIN = value;
     if((value = ini->getd(section, "balance_knee_gain", INVALID_VALUE)) != INVALID_VALUE)       BALANCE_KNEE_GAIN = value;
     if((value = ini->getd(section, "balance_ankle_pitch_gain", INVALID_VALUE)) != INVALID_VALUE)BALANCE_ANKLE_PITCH_GAIN = value;
     if((value = ini->getd(section, "balance_hip_roll_gain", INVALID_VALUE)) != INVALID_VALUE)   BALANCE_HIP_ROLL_GAIN = value;
     if((value = ini->getd(section, "balance_ankle_roll_gain", INVALID_VALUE)) != INVALID_VALUE) BALANCE_ANKLE_ROLL_GAIN = value;
-    if((value = ini->getd(section, "y_swap_amplitude", INVALID_VALUE)) != INVALID_VALUE)        Y_SWAP_AMPLITUDE = value;
-    if((value = ini->getd(section, "z_swap_amplitude", INVALID_VALUE)) != INVALID_VALUE)        Z_SWAP_AMPLITUDE = value;
-    if((value = ini->getd(section, "arm_swing_gain", INVALID_VALUE)) != INVALID_VALUE)          ARM_SWING_GAIN = value;
 
-    int ivalue = (int)INVALID_VALUE;
-    if((ivalue = ini->geti(section, "pelvis_offset", INVALID_VALUE)) != INVALID_VALUE)          PELVIS_OFFSET = ivalue;
-    if((ivalue = ini->geti(section, "hip_pitch_offset", INVALID_VALUE)) != INVALID_VALUE)       HIP_PITCH_OFFSET = ivalue;
+    int ivalue = INVALID_VALUE;
+
+    if((ivalue = ini->geti(section, "p_gain", INVALID_VALUE)) != INVALID_VALUE)                 P_GAIN = ivalue;
+    if((ivalue = ini->geti(section, "i_gain", INVALID_VALUE)) != INVALID_VALUE)                 I_GAIN = ivalue;
+    if((ivalue = ini->geti(section, "d_gain", INVALID_VALUE)) != INVALID_VALUE)                 D_GAIN = ivalue;
 }
 void Walking::SaveINISettings(minIni* ini)
 {
@@ -107,22 +124,26 @@ void Walking::SaveINISettings(minIni* ini, const std::string &section)
     ini->put(section,   "x_offset",                 X_OFFSET);
     ini->put(section,   "y_offset",                 Y_OFFSET);
     ini->put(section,   "z_offset",                 Z_OFFSET);
-    ini->put(section,   "a_offset",                 A_OFFSET);
-    ini->put(section,   "p_offset",                 P_OFFSET);
-    ini->put(section,   "r_offset",                 R_OFFSET);
+    ini->put(section,   "roll_offset",              R_OFFSET);
+    ini->put(section,   "pitch_offset",             P_OFFSET);
+    ini->put(section,   "yaw_offset",               A_OFFSET);
+    ini->put(section,   "hip_pitch_offset",         HIP_PITCH_OFFSET);
     ini->put(section,   "period_time",              PERIOD_TIME);
     ini->put(section,   "dsp_ratio",                DSP_RATIO);
-    ini->put(section,   "z_move_amplitude",         Z_MOVE_AMPLITUDE);
+    ini->put(section,   "step_forward_back_ratio",  STEP_FB_RATIO);
+    ini->put(section,   "foot_height",              Z_MOVE_AMPLITUDE);
+    ini->put(section,   "swing_right_left",         Y_SWAP_AMPLITUDE);
+    ini->put(section,   "swing_top_down",           Z_SWAP_AMPLITUDE);
+    ini->put(section,   "pelvis_offset",            PELVIS_OFFSET);
+    ini->put(section,   "arm_swing_gain",           ARM_SWING_GAIN);
     ini->put(section,   "balance_knee_gain",        BALANCE_KNEE_GAIN);
     ini->put(section,   "balance_ankle_pitch_gain", BALANCE_ANKLE_PITCH_GAIN);
     ini->put(section,   "balance_hip_roll_gain",    BALANCE_HIP_ROLL_GAIN);
     ini->put(section,   "balance_ankle_roll_gain",  BALANCE_ANKLE_ROLL_GAIN);
-    ini->put(section,   "y_swap_amplitude",         Y_SWAP_AMPLITUDE);
-    ini->put(section,   "z_swap_amplitude",         Z_SWAP_AMPLITUDE);
-    ini->put(section,   "arm_swing_gain",           ARM_SWING_GAIN);
 
-    ini->put(section,   "pelvis_offset",            PELVIS_OFFSET);
-    ini->put(section,   "hip_pitch_offset",         HIP_PITCH_OFFSET);
+    ini->put(section,   "p_gain",                   P_GAIN);
+    ini->put(section,   "i_gain",                   I_GAIN);
+    ini->put(section,   "d_gain",                   D_GAIN);
 }
 
 double Walking::wsin(double time, double period, double period_shift, double mag, double mag_shift)
@@ -233,18 +254,16 @@ void Walking::update_param_time()
     m_Phase_Time2 = (m_SSP_Time_Start_R + m_SSP_Time_End_L) / 2;
     m_Phase_Time3 = (m_SSP_Time_End_R + m_SSP_Time_Start_R) / 2;
 
-    m_Pelvis_Offset = PELVIS_OFFSET;
+    m_Pelvis_Offset = PELVIS_OFFSET*RX28M::RATIO_ANGLE2VALUE;
     m_Pelvis_Swing = m_Pelvis_Offset * 0.35;
     m_Arm_Swing_Gain = ARM_SWING_GAIN;
 }
 
 void Walking::update_param_move()
 {
-    HIP_PITCH_OFFSET = HIP_PITCH_OFFSET_DEFAULT + (X_MOVE_AMPLITUDE*HIP_PITCH_OFFSET_GAIN);
-
 	// Forward/Back
     m_X_Move_Amplitude = X_MOVE_AMPLITUDE;
-    m_X_Swap_Amplitude = X_MOVE_AMPLITUDE * 0.5;
+    m_X_Swap_Amplitude = X_MOVE_AMPLITUDE * STEP_FB_RATIO;
 
     // Right/Left
     m_Y_Move_Amplitude = Y_MOVE_AMPLITUDE / 2;
@@ -286,7 +305,7 @@ void Walking::update_param_balance()
     m_R_Offset = R_OFFSET * PI / 180.0;
     m_P_Offset = P_OFFSET * PI / 180.0;
     m_A_Offset = A_OFFSET * PI / 180.0;
-    m_Hip_Pitch_Offset = HIP_PITCH_OFFSET;
+    m_Hip_Pitch_Offset = HIP_PITCH_OFFSET*RX28M::RATIO_ANGLE2VALUE;
 }
 
 void Walking::Initialize()
@@ -343,9 +362,9 @@ void Walking::Process()
     double angle[14], ep[12];
 	double offset;
 	double TIME_UNIT = MotionModule::TIME_UNIT;
-	//                   R_HIP_YAW, R_HIP_ROLL, R_HIP_PITCH, R_KNEE, R_ANKLE_PITCH, R_ANKLE_ROLL, L_HIP_YAW, L_HIP_ROLL, L_HIP_PITCH, L_KNEE, L_ANKLE_PITCH, L_ANKLE_ROLL, R_ARM_SWING, L_ARM_SWING 
-	int dir[14]       = {   -1,        -1,          1,         1,         -1,            1,          -1,        -1,         -1,         -1,         1,            1,           1,           -1      };
-	int initValue[14] = {   512,       512,        512,       512,        512,          512,         512,       512,        512,        512,       512,          512,         347,          653     };
+	//                     R_HIP_YAW, R_HIP_ROLL, R_HIP_PITCH, R_KNEE, R_ANKLE_PITCH, R_ANKLE_ROLL, L_HIP_YAW, L_HIP_ROLL, L_HIP_PITCH, L_KNEE, L_ANKLE_PITCH, L_ANKLE_ROLL, R_ARM_SWING, L_ARM_SWING
+	int dir[14]          = {   -1,        -1,          1,         1,         -1,            1,          -1,        -1,         -1,         -1,         1,            1,           1,           -1      };
+    double initAngle[14] = {   0.0,       0.0,        0.0,       0.0,        0.0,          0.0,         0.0,       0.0,        0.0,        0.0,       0.0,          0.0,       -48.345,       41.313    };
 	int outValue[14];
 
     // Update walk parameters
@@ -543,9 +562,9 @@ void Walking::Process()
         else if(i == 7) // L_HIP_ROLL
             offset += (double)dir[i] * pelvis_offset_l;
         else if(i == 2 || i == 8) // R_HIP_PITCH or L_HIP_PITCH
-            offset -= (double)dir[i] * HIP_PITCH_OFFSET;
+            offset -= (double)dir[i] * HIP_PITCH_OFFSET * RX28M::RATIO_ANGLE2VALUE;
 
-        outValue[i] = initValue[i] + (int)offset;
+        outValue[i] = RX28M::Angle2Value(initAngle[i]) + (int)offset;
     }
 
     // adjust balance offset
@@ -553,33 +572,53 @@ void Walking::Process()
     {
 		double rlGyroErr = MotionStatus::RL_GYRO;
 		double fbGyroErr = MotionStatus::FB_GYRO;
-
-		outValue[1] += (int)(dir[1] * rlGyroErr * BALANCE_HIP_ROLL_GAIN); // R_HIP_ROLL
+#ifdef RX28M_1024
+        outValue[1] += (int)(dir[1] * rlGyroErr * BALANCE_HIP_ROLL_GAIN); // R_HIP_ROLL
         outValue[7] += (int)(dir[7] * rlGyroErr * BALANCE_HIP_ROLL_GAIN); // L_HIP_ROLL
 
         outValue[3] -= (int)(dir[3] * fbGyroErr * BALANCE_KNEE_GAIN); // R_KNEE
         outValue[9] -= (int)(dir[9] * fbGyroErr * BALANCE_KNEE_GAIN); // L_KNEE
         
-		outValue[4] -= (int)(dir[4] * fbGyroErr * BALANCE_ANKLE_PITCH_GAIN); // R_ANKLE_PITCH
+        outValue[4] -= (int)(dir[4] * fbGyroErr * BALANCE_ANKLE_PITCH_GAIN); // R_ANKLE_PITCH
         outValue[10] -= (int)(dir[10] * fbGyroErr * BALANCE_ANKLE_PITCH_GAIN); // L_ANKLE_PITCH        
         
-		outValue[5] -= (int)(dir[5] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN); // R_ANKLE_ROLL
+        outValue[5] -= (int)(dir[5] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN); // R_ANKLE_ROLL
         outValue[11] -= (int)(dir[11] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN); // L_ANKLE_ROLL
+#else
+		outValue[1] += (int)(dir[1] * rlGyroErr * BALANCE_HIP_ROLL_GAIN*4); // R_HIP_ROLL
+        outValue[7] += (int)(dir[7] * rlGyroErr * BALANCE_HIP_ROLL_GAIN*4); // L_HIP_ROLL
+
+        outValue[3] -= (int)(dir[3] * fbGyroErr * BALANCE_KNEE_GAIN*4); // R_KNEE
+        outValue[9] -= (int)(dir[9] * fbGyroErr * BALANCE_KNEE_GAIN*4); // L_KNEE
+
+		outValue[4] -= (int)(dir[4] * fbGyroErr * BALANCE_ANKLE_PITCH_GAIN*4); // R_ANKLE_PITCH
+        outValue[10] -= (int)(dir[10] * fbGyroErr * BALANCE_ANKLE_PITCH_GAIN*4); // L_ANKLE_PITCH
+
+		outValue[5] -= (int)(dir[5] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN*4); // R_ANKLE_ROLL
+        outValue[11] -= (int)(dir[11] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN*4); // L_ANKLE_ROLL
+#endif
     }
 
-	m_Joint.SetValue(JointData::ID_R_HIP_YAW, outValue[0]);
-	m_Joint.SetValue(JointData::ID_R_HIP_ROLL, outValue[1]);
-	m_Joint.SetValue(JointData::ID_R_HIP_PITCH, outValue[2]);
-	m_Joint.SetValue(JointData::ID_R_KNEE, outValue[3]);
-	m_Joint.SetValue(JointData::ID_R_ANKLE_PITCH, outValue[4]);
-	m_Joint.SetValue(JointData::ID_R_ANKLE_ROLL, outValue[5]);
-	m_Joint.SetValue(JointData::ID_L_HIP_YAW, outValue[6]);
-	m_Joint.SetValue(JointData::ID_L_HIP_ROLL, outValue[7]);
-	m_Joint.SetValue(JointData::ID_L_HIP_PITCH, outValue[8]);
-	m_Joint.SetValue(JointData::ID_L_KNEE, outValue[9]);
-	m_Joint.SetValue(JointData::ID_L_ANKLE_PITCH, outValue[10]);
-	m_Joint.SetValue(JointData::ID_L_ANKLE_ROLL, outValue[11]);
-	m_Joint.SetValue(JointData::ID_R_SHOULDER_PITCH, outValue[12]);
-	m_Joint.SetValue(JointData::ID_L_SHOULDER_PITCH, outValue[13]);
+	m_Joint.SetValue(JointData::ID_R_HIP_YAW,           outValue[0]);
+	m_Joint.SetValue(JointData::ID_R_HIP_ROLL,          outValue[1]);
+	m_Joint.SetValue(JointData::ID_R_HIP_PITCH,         outValue[2]);
+	m_Joint.SetValue(JointData::ID_R_KNEE,              outValue[3]);
+	m_Joint.SetValue(JointData::ID_R_ANKLE_PITCH,       outValue[4]);
+	m_Joint.SetValue(JointData::ID_R_ANKLE_ROLL,        outValue[5]);
+	m_Joint.SetValue(JointData::ID_L_HIP_YAW,           outValue[6]);
+	m_Joint.SetValue(JointData::ID_L_HIP_ROLL,          outValue[7]);
+	m_Joint.SetValue(JointData::ID_L_HIP_PITCH,         outValue[8]);
+	m_Joint.SetValue(JointData::ID_L_KNEE,              outValue[9]);
+	m_Joint.SetValue(JointData::ID_L_ANKLE_PITCH,       outValue[10]);
+	m_Joint.SetValue(JointData::ID_L_ANKLE_ROLL,        outValue[11]);
+	m_Joint.SetValue(JointData::ID_R_SHOULDER_PITCH,    outValue[12]);
+	m_Joint.SetValue(JointData::ID_L_SHOULDER_PITCH,    outValue[13]);
 	m_Joint.SetAngle(JointData::ID_HEAD_PAN, A_MOVE_AMPLITUDE);
+
+	for(int id = JointData::ID_R_HIP_YAW; id <= JointData::ID_L_ANKLE_ROLL; id++)
+	{
+	    m_Joint.SetPGain(id, P_GAIN);
+        m_Joint.SetIGain(id, I_GAIN);
+        m_Joint.SetDGain(id, D_GAIN);
+	}
 }

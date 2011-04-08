@@ -1,10 +1,10 @@
 CXX = g++
 
-TARGET = cm730_installer
+TARGET = firmware_installer
 
 INCLUDE_DIRS = -I../../include -I../../../Framework/include
-CXXFLAGS +=	-O2 -g -Wall -fmessage-length=0 $(INCLUDE_DIRS)
-LIBS += -lpthread -lncurses -lrt
+CXXFLAGS +=	-O2 -DLINUX -g -Wall -fmessage-length=0 $(INCLUDE_DIRS)
+LIBS += 
 
 OBJS =	./hex2bin.o \
 		./main.o
@@ -18,8 +18,3 @@ $(TARGET): $(OBJS)
 	
 clean:
 	rm -f $(OBJS) $(TARGET)
-
-
-
-
-

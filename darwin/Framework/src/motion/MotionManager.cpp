@@ -183,12 +183,16 @@ void MotionManager::Process()
 				{
 					MotionStatus::m_CurrentJoints.SetSlope(id, (*i)->m_Joint.GetCWSlope(id), (*i)->m_Joint.GetCCWSlope(id));
 					MotionStatus::m_CurrentJoints.SetValue(id, (*i)->m_Joint.GetValue(id));
+
+					MotionStatus::m_CurrentJoints.SetPGain(id, (*i)->m_Joint.GetPGain(id));
+                    MotionStatus::m_CurrentJoints.SetIGain(id, (*i)->m_Joint.GetIGain(id));
+                    MotionStatus::m_CurrentJoints.SetDGain(id, (*i)->m_Joint.GetDGain(id));
 				}
 			}
         }
     }
 
-	int param[JointData::NUMBER_OF_JOINTS * 5];
+	int param[JointData::NUMBER_OF_JOINTS * RX28M::PARAM_BYTES];
 	int n = 0;
 	int joint_num = 0;
 	for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
@@ -196,8 +200,15 @@ void MotionManager::Process()
 		if(MotionStatus::m_CurrentJoints.GetEnable(id) == true)
 		{
 			param[n++] = id;
-			param[n++] = MotionStatus::m_CurrentJoints.GetCWSlope(id);
-			param[n++] = MotionStatus::m_CurrentJoints.GetCCWSlope(id);
+#ifdef RX28M_1024
+            param[n++] = MotionStatus::m_CurrentJoints.GetCWSlope(id);
+            param[n++] = MotionStatus::m_CurrentJoints.GetCCWSlope(id);
+#else
+            param[n++] = MotionStatus::m_CurrentJoints.GetPGain(id);
+            param[n++] = MotionStatus::m_CurrentJoints.GetIGain(id);
+            param[n++] = MotionStatus::m_CurrentJoints.GetDGain(id);
+            param[n++] = 0;
+#endif
 			param[n++] = CM730::GetLowByte(MotionStatus::m_CurrentJoints.GetValue(id));
 			param[n++] = CM730::GetHighByte(MotionStatus::m_CurrentJoints.GetValue(id));
 			joint_num++;
@@ -207,7 +218,11 @@ void MotionManager::Process()
 			fprintf(stderr, "ID[%d] : %d \n", id, MotionStatus::m_CurrentJoints.GetValue(id));
 	}
 	if(joint_num > 0)
-	    m_CM730->SyncWrite(RX28M::P_CW_COMPLIANCE_SLOPE, 5, joint_num, param);
+#ifdef RX28M_1024
+        m_CM730->SyncWrite(RX28M::P_CW_COMPLIANCE_SLOPE, RX28M::PARAM_BYTES, joint_num, param);
+#else
+    m_CM730->SyncWrite(RX28M::P_P_GAIN, RX28M::PARAM_BYTES, joint_num, param);
+#endif
 
 	m_IsRunning = false;
 }

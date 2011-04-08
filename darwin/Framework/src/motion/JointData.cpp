@@ -19,6 +19,9 @@ JointData::JointData()
 		m_Angle[i] = 0.0;
 		m_CWSlope[i] = SLOPE_DEFAULT;
 		m_CCWSlope[i] = SLOPE_DEFAULT;
+		m_PGain[i] = P_GAIN_DEFAULT;
+        m_IGain[i] = I_GAIN_DEFAULT;
+        m_DGain[i] = D_GAIN_DEFAULT;
 	}
 }
 
@@ -146,7 +149,7 @@ void JointData::SetValue(int id, int value)
 		value = RX28M::MAX_VALUE;
 
 	m_Value[id] = value;
-	m_Angle[id] = (double)(value - RX28M::CENTER_VALUE) * RX28M::RATIO_VALUE2ANGLE;
+	m_Angle[id] = RX28M::Value2Angle(value);
 }
 
 int JointData::GetValue(int id)
@@ -162,7 +165,7 @@ void JointData::SetAngle(int id, double angle)
 		angle = RX28M::MAX_ANGLE;
 
 	m_Angle[id] = angle;
-	m_Value[id] = (int)(angle * RX28M::RATIO_ANGLE2VALUE) + RX28M::CENTER_VALUE;
+	m_Value[id] = RX28M::Angle2Value(angle);
 }
 
 double JointData::GetAngle(int id)

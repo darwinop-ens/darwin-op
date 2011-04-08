@@ -29,7 +29,7 @@ BallFollower::BallFollower()
 	m_KickRightAngle = -30.0;
 	m_KickLeftAngle = 30.0;
 
-	m_FollowMaxFBStep = 25.0;
+	m_FollowMaxFBStep = 30.0;
     m_FollowMinFBStep = 5.0;
 	m_FollowMaxRLTurn = 35.0;
 	m_FitFBStep = 3.0;

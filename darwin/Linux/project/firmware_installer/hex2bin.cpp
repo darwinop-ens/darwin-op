@@ -21,7 +21,7 @@ bool hex2bin(char *hexFile, unsigned char *pBinBuffer, long *StartAddress, long 
 	unsigned int 	temp;
 	int i, iIndex, len;
 	bool bRead = true;
-	long dwRemainData, dwRead, dwWritten;
+	long dwRead;
 	
 	fp = fopen(hexFile, "r");
 	if (!fp)

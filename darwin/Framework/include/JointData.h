@@ -47,6 +47,13 @@ namespace Robot
 			SLOPE_EXTRASOFT		= 128
 		};
 
+		enum
+		{
+		    P_GAIN_DEFAULT      = 8,
+		    I_GAIN_DEFAULT      = 0,
+		    D_GAIN_DEFAULT      = 0
+		};
+
 	private:		
 
 	protected:
@@ -55,6 +62,9 @@ namespace Robot
 		double m_Angle[NUMBER_OF_JOINTS];
 		int m_CWSlope[NUMBER_OF_JOINTS];
 		int m_CCWSlope[NUMBER_OF_JOINTS];
+		int m_PGain[NUMBER_OF_JOINTS];
+        int m_IGain[NUMBER_OF_JOINTS];
+        int m_DGain[NUMBER_OF_JOINTS];
 
 	public:
 		JointData();
@@ -83,9 +93,16 @@ namespace Robot
 
 		void SetSlope(int id, int cwSlope, int ccwSlope);
 		void SetCWSlope(int id, int cwSlope);
-		int GetCWSlope(int id);
+		int  GetCWSlope(int id);
 		void SetCCWSlope(int id, int ccwSlope);
-		int GetCCWSlope(int id);
+		int  GetCCWSlope(int id);
+
+        void SetPGain(int id, int pgain) { m_PGain[id] = pgain; }
+        int  GetPGain(int id)            { return m_PGain[id]; }
+        void SetIGain(int id, int igain) { m_IGain[id] = igain; }
+        int  GetIGain(int id)            { return m_IGain[id]; }
+        void SetDGain(int id, int dgain) { m_DGain[id] = dgain; }
+        int  GetDGain(int id)            { return m_DGain[id]; }
 	};
 }
 
