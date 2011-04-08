@@ -24,84 +24,84 @@ void change_current_dir()
 
 void sighandler(int sig)
 {
-	struct termios term;
-	tcgetattr( STDIN_FILENO, &term );
-	term.c_lflag |= ICANON | ECHO;
-	tcsetattr( STDIN_FILENO, TCSANOW, &term );
+    struct termios term;
+    tcgetattr( STDIN_FILENO, &term );
+    term.c_lflag |= ICANON | ECHO;
+    tcsetattr( STDIN_FILENO, TCSANOW, &term );
 
-	exit(0);
+    exit(0);
 }
 
 int main(int argc, char *argv[])
 {
-	signal(SIGABRT, &sighandler);
+    signal(SIGABRT, &sighandler);
     signal(SIGTERM, &sighandler);
-	signal(SIGQUIT, &sighandler);
-	signal(SIGINT, &sighandler);
+    signal(SIGQUIT, &sighandler);
+    signal(SIGINT, &sighandler);
 
-	char filename[128];
-	change_current_dir();
-	if(argc < 2)
-		strcpy(filename, "config.ini"); // Set default config file path
-	else
-		strcpy(filename, argv[1]);
-	minIni* ini = new minIni(filename);
+    char filename[128];
+    change_current_dir();
+    if(argc < 2)
+        strcpy(filename, "config.ini"); // Set default config file path
+    else
+        strcpy(filename, argv[1]);
+    minIni* ini = new minIni(filename);
 
-	//////////////////// Framework Initialize ////////////////////////////	
-	if(MotionManager::GetInstance()->Initialize(&cm730) == false)
-	{
-		printf("Fail to initialize Motion Manager!\n");
-		return 0;
-	}
-	Walking::GetInstance()->LoadINISettings(ini);
-	MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
-	LinuxMotionTimer::Initialize(MotionManager::GetInstance());
-	/////////////////////////////////////////////////////////////////////
+    //////////////////// Framework Initialize ////////////////////////////
+    if(MotionManager::GetInstance()->Initialize(&cm730) == false)
+    {
+        printf("Fail to initialize Motion Manager!\n");
+        return 0;
+    }
+    Walking::GetInstance()->LoadINISettings(ini);
+    MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
+    LinuxMotionTimer::Initialize(MotionManager::GetInstance());
+    /////////////////////////////////////////////////////////////////////
 
-	DrawIntro(&cm730);
-	MotionManager::GetInstance()->SetEnable(true);
+    DrawIntro(&cm730);
+    MotionManager::GetInstance()->SetEnable(true);
 
-	while(1)
-	{
-		int ch = _getch();
-		if(ch == 0x1b)
-		{
-			ch = _getch();
-			if(ch == 0x5b)
-			{
-				ch = _getch();
-				if(ch == 0x41) // Up arrow key
-					MoveUpCursor();
-				else if(ch == 0x42) // Down arrow key
-					MoveDownCursor();
-				else if(ch == 0x44) // Left arrow key
-					MoveLeftCursor();
-				else if(ch == 0x43)
-					MoveRightCursor();
-			}
-		}
-		else if( ch == '[' )
-			DecreaseValue(false);
-		else if( ch == ']' )
-			IncreaseValue(false);
-		else if( ch == '{' )
-			DecreaseValue(true);
-		else if( ch == '}' )
-			IncreaseValue(true);
-		else if( ch >= 'A' && ch <= 'z' )
-		{
-			char input[128];
-			char *token;
-			int input_len;
-			char cmd[80];
-			char strParam[20][30];
-			int num_param;
+    while(1)
+    {
+        int ch = _getch();
+        if(ch == 0x1b)
+        {
+            ch = _getch();
+            if(ch == 0x5b)
+            {
+                ch = _getch();
+                if(ch == 0x41) // Up arrow key
+                    MoveUpCursor();
+                else if(ch == 0x42) // Down arrow key
+                    MoveDownCursor();
+                else if(ch == 0x44) // Left arrow key
+                    MoveLeftCursor();
+                else if(ch == 0x43)
+                    MoveRightCursor();
+            }
+        }
+        else if( ch == '[' )
+            DecreaseValue(false);
+        else if( ch == ']' )
+            IncreaseValue(false);
+        else if( ch == '{' )
+            DecreaseValue(true);
+        else if( ch == '}' )
+            IncreaseValue(true);
+        else if( ch >= 'A' && ch <= 'z' )
+        {
+            char input[128] = {0,};
+            char *token;
+            int input_len;
+            char cmd[80];
+            char strParam[20][30];
+            int num_param;
 
             int idx = 0;
 
-			BeginCommandMode();
+            BeginCommandMode();
 
-			printf("%c", ch);
+            printf("%c", ch);
             input[idx++] = (char)ch;
 
             while(1)
@@ -127,49 +127,49 @@ int main(int argc, char *argv[])
                 }
             }
 
-			fflush(stdin);
-			input_len = strlen(input);
-			if(input_len > 0)
-			{
-				token = strtok( input, " " );
-				if(token != 0)
-				{
-					strcpy( cmd, token );
-					token = strtok( 0, " " );
-					num_param = 0;
-					while(token != 0)
-					{
-						strcpy(strParam[num_param++], token);
-						token = strtok( 0, " " );
-					}
+            fflush(stdin);
+            input_len = strlen(input);
+            if(input_len > 0)
+            {
+                token = strtok( input, " " );
+                if(token != 0)
+                {
+                    strcpy( cmd, token );
+                    token = strtok( 0, " " );
+                    num_param = 0;
+                    while(token != 0)
+                    {
+                        strcpy(strParam[num_param++], token);
+                        token = strtok( 0, " " );
+                    }
 
-					if(strcmp(cmd, "exit") == 0)
-					{
-						if(AskSave() == false)
-							break;
-					}
-					if(strcmp(cmd, "re") == 0)
-						DrawScreen();
-					else if(strcmp(cmd, "save") == 0)
-					{
-						Walking::GetInstance()->SaveINISettings(ini);
-						SaveCmd();
-					}
-					else if(strcmp(cmd, "mon") == 0)
-					{
-						MonitorCmd();
-					}
-					else if(strcmp(cmd, "help") == 0)
-						HelpCmd();
-					else
-						PrintCmd("Bad command! please input 'help'");
-				}
-			}
+                    if(strcmp(cmd, "exit") == 0)
+                    {
+                        if(AskSave() == false)
+                            break;
+                    }
+                    if(strcmp(cmd, "re") == 0)
+                        DrawScreen();
+                    else if(strcmp(cmd, "save") == 0)
+                    {
+                        Walking::GetInstance()->SaveINISettings(ini);
+                        SaveCmd();
+                    }
+                    else if(strcmp(cmd, "mon") == 0)
+                    {
+                        MonitorCmd();
+                    }
+                    else if(strcmp(cmd, "help") == 0)
+                        HelpCmd();
+                    else
+                        PrintCmd("Bad command! please input 'help'");
+                }
+            }
 
-			EndCommandMode();
-		}
-	}
+            EndCommandMode();
+        }
+    }
 
-	DrawEnding();
-	return 0;
+    DrawEnding();
+    return 0;
 }
