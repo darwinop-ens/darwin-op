@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
                         input[--idx] = 0;
 			        }
 			    }
-			    else if( ch >= 'A' && ch <= 'z' )
+			    else if( ( ch >= 'A' && ch <= 'z' ) || ch == ' ' || ( ch >= '0' && ch <= '9'))
 			    {
                     if(idx < 127)
                     {
