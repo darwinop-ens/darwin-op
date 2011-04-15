@@ -884,27 +884,32 @@ void EndCommandMode()
 void HelpCmd()
 {
 	system("clear");
-	printf(" exit: Exits the program\n");
-	printf(" re: Refreshes the screen\n");
-	printf(" b: Move to previous page\n");
-	printf(" n: Move to next page\n");
-	printf(" page [index]: Move to page [index]\n");
-	printf(" list: View list of pages\n");
-	printf(" new: Clears data of current page and initializes page\n");
-	printf(" copy [index]: Copy data from page [index]\n");
-	printf(" set [value]: Sets value on cursor [value]\n");
-	printf(" save: Saves changes\n");
-	printf(" play: Motion playback of current page\n");
-	printf(" name: Name for current page or changes the name of current page\n");
-	printf(" time: Change time base playing\n");
-	printf(" speed: Change speed base playing\n");
-	printf(" w [index]: Overwrites data from STP[index] with STP7\n");
-	printf(" i: Inserts data from STP7 to STP0. Moves data from STP[x] to STP[x+1]\n");
-	printf(" i [index]: Inserts data from STP7 to STP[index]. Moves data from STP[index] to STP[index+1]\n");
-	printf(" m [index] [index2]: Moves data from [index] to [index2] step\n");
-	printf(" d [index]: Deletes data from STP[index]. Pushes data from STP[index] to STP[index-1]\n");
-	printf(" on/off: Turn On/Off torque from ALL actuators\n");
-	printf(" on/off [index1] [index2] ...: turns On/Off torque from ID[index1] ID[index2]...\n");
+	printf(" exit               Exits the program.\n");
+	printf(" re                 Refreshes the screen.\n");
+	printf(" b                  Move to previous page.\n");
+	printf(" n                  Move to next page.\n");
+	printf(" page [index]       Move to page [index].\n");
+	printf(" list               View list of pages.\n");
+	printf(" new                Clears data of current page and initializes page.\n");
+	printf(" copy [index]       Copy data from page [index].\n");
+	printf(" set [value]        Sets value on cursor [value].\n");
+	printf(" save               Saves changes.\n");
+	printf(" play               Motion playback of current page.\n");
+    printf(" g [index]          Motion playback of STP[index].\n");
+	printf(" name               Name for current page or changes the name of current page.\n");
+	printf(" time               Change time base playing.\n");
+	printf(" speed              Change speed base playing.\n");
+	printf(" w [index]          Overwrites data from STP[index] with STP7.\n");
+	printf(" i                  Inserts data from STP7 to STP0. \n" \
+	       "                    Moves data from STP[x] to STP[x+1].\n");
+	printf(" i [index]          Inserts data from STP7 to STP[index]. \n" \
+	       "                    Moves data from STP[index] to STP[index+1].\n");
+	printf(" m [index] [index2] Moves data from [index] to [index2] step.\n");
+	printf(" d [index]          Deletes data from STP[index]. \n"
+	       "                    Pushes data from STP[index] to STP[index-1].\n");
+	printf(" on/off             Turn On/Off torque from ALL actuators.\n");
+	printf(" on/off [index1] [index2] ...  \n"
+	       "                    turns On/Off torque from ID[index1] ID[index2]...\n");
 	printf("\n");
 	printf("       Copyright ROBOTIS CO.,LTD.\n");
 	printf("\n");
