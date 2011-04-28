@@ -30,7 +30,6 @@ namespace Robot
 		static void Start()			{ m_TimerRunning = true; }
 		static void Stop()			{ m_TimerRunning = false; }
 		static bool IsRunning()		{ return m_TimerRunning; }
-		static void msleep(int Miliseconds);
 	};
 }
 
