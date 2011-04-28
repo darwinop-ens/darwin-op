@@ -36,11 +36,24 @@ void change_current_dir()
 {
     char exepath[1024] = {0};
     if(readlink("/proc/self/exe", exepath, sizeof(exepath)) != -1)
-        chdir(dirname(exepath));
+    {
+        if(chdir(dirname(exepath)))
+            fprintf(stderr, "chdir error!! \n");
+    }
+}
+
+void sighandler(int sig)
+{
+    exit(0);
 }
 
 int main(void)
 {
+    signal(SIGABRT, &sighandler);
+    signal(SIGTERM, &sighandler);
+    signal(SIGQUIT, &sighandler);
+    signal(SIGINT, &sighandler);
+
     change_current_dir();
 
     minIni* ini = new minIni(INI_FILE_PATH);
@@ -113,7 +126,7 @@ int main(void)
         fprintf(stderr, "Remove '#define RX28M_1024' from 'RX28M.h' file and rebuild.\n\n");
         exit(0);
 #else
-        Action::GetInstance()->LoadFile(MOTION_FILE_PATH);
+        Action::GetInstance()->LoadFile((char*)MOTION_FILE_PATH);
 #endif
     }
     else

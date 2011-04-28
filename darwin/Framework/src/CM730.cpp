@@ -319,7 +319,11 @@ bool CM730::DXLPowerOn()
 
 void CM730::Disconnect()
 {
-	WriteWord(CM730::ID_CM, CM730::P_LED_HEAD_L, MakeColor(0, 255, 0), 0);
+    // Make the Head LED to green
+	//WriteWord(CM730::ID_CM, CM730::P_LED_HEAD_L, MakeColor(0, 255, 0), 0);
+	unsigned char txpacket[] = {0xFF, 0xFF, 0xC8, 0x05, 0x03, 0x1A, 0xE0, 0x03, 0x32};
+	m_Platform->WritePort(txpacket, 9);
+
 	m_Platform->ClosePort();
 }
 
