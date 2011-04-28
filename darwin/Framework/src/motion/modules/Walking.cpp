@@ -22,7 +22,7 @@ Walking* Walking::m_UniqueInstance = new Walking();
 
 Walking::Walking()
 {
-	X_OFFSET = -15;
+	X_OFFSET = -10;
 	Y_OFFSET = 5;
 	Z_OFFSET = 20;
     R_OFFSET = 0;
