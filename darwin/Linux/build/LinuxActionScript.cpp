@@ -69,6 +69,8 @@ int LinuxActionScript::ScriptStart(const char* filename)
     pthread_detach(m_pthread_id);
 
     m_is_running = 1;
+
+    return 0;
 }
 
 void* LinuxActionScript::ScriptThreadProc(void* data)
@@ -103,7 +105,6 @@ void* LinuxActionScript::ScriptThreadProc(void* data)
                 else usleep(8000);
             }
             sleep(1);
-            //LinuxMotionTimer::msleep(1000);
         }
     }
 

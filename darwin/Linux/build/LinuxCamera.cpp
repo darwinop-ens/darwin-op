@@ -51,6 +51,8 @@ LinuxCamera::~LinuxCamera()
     /* close device */
     close(camera_fd);
     camera_fd = -1;
+
+    delete fbuffer;
 }
 
 void LinuxCamera::ErrorExit(const char* s)

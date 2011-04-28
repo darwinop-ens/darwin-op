@@ -20,8 +20,8 @@ ColorFinder::ColorFinder() :
         m_min_value(10),
         m_min_percent(0.07),
         m_max_percent(30.0),
-        m_result(0),
-        color_section("")
+        color_section(""),
+        m_result(0)
 { }
 
 ColorFinder::ColorFinder(int hue, int hue_tol, int min_sat, int min_val, double min_per, double max_per) :
@@ -31,8 +31,8 @@ ColorFinder::ColorFinder(int hue, int hue_tol, int min_sat, int min_val, double 
         m_min_value(min_val),
         m_min_percent(min_per),
         m_max_percent(max_per),
-        m_result(0),
-        color_section("")
+        color_section(""),
+        m_result(0)
 { }
 
 ColorFinder::~ColorFinder()
