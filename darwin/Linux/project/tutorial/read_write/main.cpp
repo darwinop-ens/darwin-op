@@ -21,6 +21,9 @@ int main()
 	/////////////////////////////////////////////////////////////////////
 
 	int value;
+    cm730.WriteWord(JointData::ID_R_SHOULDER_PITCH, RX28M::P_TORQUE_ENABLE, 0, 0);
+    cm730.WriteWord(JointData::ID_R_SHOULDER_ROLL,  RX28M::P_TORQUE_ENABLE, 0, 0);
+    cm730.WriteWord(JointData::ID_R_ELBOW,          RX28M::P_TORQUE_ENABLE, 0, 0);
 
 	while(1)
 	{
