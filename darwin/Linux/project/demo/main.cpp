@@ -99,7 +99,8 @@ int main(void)
     MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
     MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());
     MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
-    LinuxMotionTimer::Initialize(MotionManager::GetInstance());
+
+    MotionManager::GetInstance()->StartThread();
     /////////////////////////////////////////////////////////////////////
 
     int firm_ver = 0;
@@ -132,9 +133,7 @@ int main(void)
     else
         exit(0);
 
-    Walking::GetInstance()->m_Joint.SetEnableBody(false);
-    Head::GetInstance()->m_Joint.SetEnableBody(false);
-    Action::GetInstance()->m_Joint.SetEnableBody(true);
+    Action::GetInstance()->m_Joint.SetEnableBody(true, true);
     MotionManager::GetInstance()->SetEnable(true);
 
     cm730.WriteByte(CM730::P_LED_PANNEL, 0x01|0x02|0x04, NULL);
@@ -159,68 +158,68 @@ int main(void)
             yellow_pos = yellow_finder->GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame);
             blue_pos = blue_finder->GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame);
 
-			unsigned char r, g, b;
+            unsigned char r, g, b;
             for(int i = 0; i < rgb_output->m_NumberOfPixels; i++)
             {
-				r = 0; g = 0; b = 0;				
+                r = 0; g = 0; b = 0;
                 if(tracker.finder.m_result->m_ImageData[i] == 1)
                 {
-					r = 255;
+                    r = 255;
                     g = 128;
-					b = 0;
+                    b = 0;
                 }
                 if(red_finder->m_result->m_ImageData[i] == 1)
                 {
-					if(tracker.finder.m_result->m_ImageData[i] == 1)
-					{
-						r = 0;
-						g = 255;
-						b = 0;
-					}
-					else
-					{
-						r = 255;
-						g = 0;
-						b = 0;
-					}
+                    if(tracker.finder.m_result->m_ImageData[i] == 1)
+                    {
+                        r = 0;
+                        g = 255;
+                        b = 0;
+                    }
+                    else
+                    {
+                        r = 255;
+                        g = 0;
+                        b = 0;
+                    }
                 }
                 if(yellow_finder->m_result->m_ImageData[i] == 1)
                 {
-					if(tracker.finder.m_result->m_ImageData[i] == 1)
-					{
-						r = 0;
-						g = 255;
-						b = 0;
-					}
-					else
-					{
-						r = 255;
-						g = 255;
-						b = 0;
-					}
+                    if(tracker.finder.m_result->m_ImageData[i] == 1)
+                    {
+                        r = 0;
+                        g = 255;
+                        b = 0;
+                    }
+                    else
+                    {
+                        r = 255;
+                        g = 255;
+                        b = 0;
+                    }
                 }
                 if(blue_finder->m_result->m_ImageData[i] == 1)
                 {
                     if(tracker.finder.m_result->m_ImageData[i] == 1)
-					{
-						r = 0;
-						g = 255;
-						b = 0;
-					}
-					else
-					{
-						r = 0;
-						g = 0;
-						b = 255;
-					}
+                    {
+                        r = 0;
+                        g = 255;
+                        b = 0;
+                    }
+                    else
+                    {
+                        r = 0;
+                        g = 0;
+                        b = 255;
+                    }
                 }
 
-				if(r > 0 || g > 0 || b > 0)
-				{
-					rgb_output->m_ImageData[i * rgb_output->m_PixelSize + 0] = r;
-					rgb_output->m_ImageData[i * rgb_output->m_PixelSize + 1] = g;
-					rgb_output->m_ImageData[i * rgb_output->m_PixelSize + 2] = b;
-				}
+                if(r > 0 || g > 0 || b > 0)
+                {
+                    rgb_output->m_ImageData[i * rgb_output->m_PixelSize + 0] = r;
+                    rgb_output->m_ImageData[i * rgb_output->m_PixelSize + 1] = g;
+                    rgb_output->m_ImageData[i * rgb_output->m_PixelSize + 2] = b;
+                }
             }
         }
         else if(StatusCheck::m_cur_mode == SOCCER)
@@ -250,17 +249,15 @@ int main(void)
         case SOCCER:
             if(Action::GetInstance()->IsRunning() == 0)
             {
-                Head::GetInstance()->m_Joint.SetEnableHeadOnly(true);
-                Walking::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true);
-                Action::GetInstance()->m_Joint.SetEnableBody(false);
+                Head::GetInstance()->m_Joint.SetEnableHeadOnly(true, true);
+                Walking::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true, true);
 
                 follower.Process(tracker.ball_position);
 
                 if(follower.KickBall != 0)
                 {
-                    Head::GetInstance()->m_Joint.SetEnableHeadOnly(true);
-                    Walking::GetInstance()->m_Joint.SetEnableBody(false);
-                    Action::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true);
+                    Head::GetInstance()->m_Joint.SetEnableHeadOnly(true, true);
+                    Action::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true, true);
 
                     if(follower.KickBall == -1)
                     {

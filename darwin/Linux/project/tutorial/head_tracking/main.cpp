@@ -54,10 +54,11 @@ int main(void)
 	MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());	
 	LinuxMotionTimer::Initialize(MotionManager::GetInstance());
 
-	MotionStatus::m_CurrentJoints.SetEnableBody(false);
-	MotionStatus::m_CurrentJoints.SetEnableHeadOnly(true);
+	MotionStatus::m_CurrentJoints.SetEnableBodyWithoutHead(false);
 	MotionManager::GetInstance()->SetEnable(true);
 	/////////////////////////////////////////////////////////////////////
+
+	Head::GetInstance()->m_Joint.SetEnableHeadOnly(true, true);
 
     while(1)
     {

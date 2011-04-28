@@ -89,7 +89,8 @@ int main(void)
 	printf("Press the ENTER key to begin!\n");
 	getchar();
 	
-	Walking::GetInstance()->m_Joint.SetEnableHeadOnly(false);
+    Head::GetInstance()->m_Joint.SetEnableHeadOnly(true, true);
+    Walking::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true, true);
 	MotionManager::GetInstance()->SetEnable(true);
 
     while(1)

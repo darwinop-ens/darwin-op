@@ -8,9 +8,28 @@
 #ifndef _CM_730_H_
 #define _CM_730_H_
 
+#include "RX28M.h"
+
+#define MAXNUM_TXPARAM      (256)
+#define MAXNUM_RXPARAM      (1024)
 
 namespace Robot
 {
+    class BulkReadData
+    {
+    public:
+        int start_address;
+        int length;
+        int error;
+        unsigned char table[RX28M::MAXNUM_ADDRESS];
+
+        BulkReadData();
+        virtual ~BulkReadData() {}
+
+        int ReadByte(int address);
+        int ReadWord(int address);
+    };
+
 	class PlatformCM730
 	{
 	public:
@@ -139,12 +158,15 @@ namespace Robot
 		static const int RefreshTime = 6; //msec
 		unsigned char m_ControlTable[MAXNUM_ADDRESS];
 
+		unsigned char m_BulkReadTxPacket[MAXNUM_TXPARAM + 10];
+
 		int TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int priority);
 		unsigned char CalculateChecksum(unsigned char *packet);
 		int UpdateTable(int *error);	
 
 	public:
 		bool DEBUG_PRINT;
+        BulkReadData m_BulkReadData[ID_BROADCAST];
 
 		CM730(PlatformCM730 *platform);
 		~CM730();
@@ -170,6 +192,9 @@ namespace Robot
 
 		// For motion control
 		int SyncWrite(int start_addr, int each_length, int number, int *pParam);
+
+		void MakeBulkReadPacket();
+        int BulkRead();
 
 		// Utility
 		static int MakeWord(int lowbyte, int highbyte);

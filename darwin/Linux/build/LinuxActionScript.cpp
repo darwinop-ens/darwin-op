@@ -115,6 +115,9 @@ void* LinuxActionScript::ScriptThreadProc(void* data)
 
 int LinuxActionScript::PlayMP3(const char* filename)
 {
+    if(mp3_pid != -1)
+        kill(mp3_pid, SIGKILL);
+
     mp3_pid = fork();
 
     switch(mp3_pid)
@@ -124,7 +127,7 @@ int LinuxActionScript::PlayMP3(const char* filename)
         break;
     case 0:
         fprintf(stderr, "Playing MPEG stream from \"%s\" ...\n", filename);
-        execl("/usr/bin/mpg321", "mpg321", filename, "-q", (char*)0);
+        execl("/usr/bin/madplay", "madplay", filename, "-q", (char*)0);
         fprintf(stderr, "exec failed!! \n");
         break;
     default:

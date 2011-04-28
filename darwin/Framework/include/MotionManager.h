@@ -51,6 +51,10 @@ namespace Robot
 		void RemoveModule(MotionModule *module);
 
 		void ResetGyroCalibration() { m_SensorCalibrated = false; m_CalibrationTime = 0; m_FBGyroCenter = 0; m_RLGyroCenter = 0; }
+		void SetJointDisable(int index);
+
+		void StartThread();
+		static void* ThreadFunc(void* args);
 	};
 }
 

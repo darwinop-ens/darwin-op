@@ -70,16 +70,26 @@ namespace Robot
 		JointData();
 		~JointData();
 
-		void SetEnable(int id, bool enable);
+        void SetEnable(int id, bool enable);
+		void SetEnable(int id, bool enable, bool exclusive);
 		void SetEnableHeadOnly(bool enable);
+        void SetEnableHeadOnly(bool enable, bool exclusive);
 		void SetEnableRightArmOnly(bool enable);
+        void SetEnableRightArmOnly(bool enable, bool exclusive);
 		void SetEnableLeftArmOnly(bool enable);
+        void SetEnableLeftArmOnly(bool enable, bool exclusive);
 		void SetEnableRightLegOnly(bool enable);
+        void SetEnableRightLegOnly(bool enable, bool exclusive);
 		void SetEnableLeftLegOnly(bool enable);
+        void SetEnableLeftLegOnly(bool enable, bool exclusive);
 		void SetEnableUpperBodyWithoutHead(bool enable);
+        void SetEnableUpperBodyWithoutHead(bool enable, bool exclusive);
 		void SetEnableLowerBody(bool enable);
+        void SetEnableLowerBody(bool enable, bool exclusive);
 		void SetEnableBodyWithoutHead(bool enable);
+        void SetEnableBodyWithoutHead(bool enable, bool exclusive);
 		void SetEnableBody(bool enable);
+        void SetEnableBody(bool enable, bool exclusive);
 		bool GetEnable(int id);
 
 		void SetValue(int id, int value);

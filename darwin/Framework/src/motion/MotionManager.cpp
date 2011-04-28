@@ -6,6 +6,9 @@
  */
 
 #include <stdio.h>
+#include <sys/time.h>
+#include <signal.h>
+#include <pthread.h>
 #include "RX28M.h"
 #include "MotionManager.h"
 
@@ -13,14 +16,13 @@ using namespace Robot;
 
 MotionManager* MotionManager::m_UniqueInstance = new MotionManager();
 
-MotionManager::MotionManager()
+MotionManager::MotionManager() :
+        m_CM730(0),
+        m_ProcessEnable(false),
+        m_Enabled(false),
+        m_IsRunning(false),
+        DEBUG_PRINT(false)
 {
-	m_CM730 = 0;
-	m_ProcessEnable = false;
-	m_Enabled = false;
-	DEBUG_PRINT = false;	
-
-	m_IsRunning = false;
 }
 
 MotionManager::~MotionManager()
@@ -102,6 +104,40 @@ bool MotionManager::Reinitialize()
 	}
 
 	m_ProcessEnable = true;
+	return true;
+}
+
+void MotionManager::StartThread()
+{
+    pthread_t motion_thread = 0;
+    pthread_create(&motion_thread, NULL, ThreadFunc, NULL);
+    pthread_detach(motion_thread);
+}
+
+void* MotionManager::ThreadFunc(void* args)
+{
+    sigset_t sigs;
+    sigfillset(&sigs);
+    pthread_sigmask(SIG_BLOCK, &sigs, NULL);
+
+    struct timespec t;
+    clock_gettime(CLOCK_REALTIME, &t);
+
+    while(1)
+    {
+        t.tv_nsec += 8*1000*1000;   // 8 ms
+        if(t.tv_nsec > 1000*1000*1000)
+        {
+            t.tv_nsec = t.tv_nsec - 1000*1000*1000;
+            t.tv_sec += 1;
+        }
+        clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &t, NULL);
+
+        MotionManager::GetInstance()->Process();
+
+        pthread_testcancel();
+    }
+    return 0;
 }
 
 #define WINDOW_SIZE 30
@@ -112,34 +148,43 @@ void MotionManager::Process()
 
     m_IsRunning = true;
 
-    int value, error, sum = 0, avr = 512;
-    static int fb_array[WINDOW_SIZE] = {512};
-    static int buf_idx = 0;
-
-    if(m_CM730->ReadWord(CM730::P_BUTTON, &value, &error) == CM730::SUCCESS)
-        MotionStatus::BUTTON = value;
-
-	if(m_Enabled == false)
-	{
-	    m_IsRunning = false;
-		return;
-	}
-
-	if(m_SensorCalibrated == true)
-	{		
-		if(m_CM730->ReadWord(CM730::P_GYRO_Y_L, &value, &error) == CM730::SUCCESS)
-			MotionStatus::FB_GYRO = value - m_FBGyroCenter;
-		if(m_CM730->ReadWord(CM730::P_GYRO_X_L, &value, &error) == CM730::SUCCESS)
-			MotionStatus::RL_GYRO = value - m_RLGyroCenter;			
-		if(m_CM730->ReadWord(CM730::P_ACCEL_X_L, &value, &error) == CM730::SUCCESS)
-			MotionStatus::RL_ACCEL = value;
-        if(m_CM730->ReadWord(CM730::P_ACCEL_Y_L, &value, &error) == CM730::SUCCESS)
+    // calibrate gyro sensor
+    if(m_SensorCalibrated == false)
+    {
+        if(m_CalibrationTime <= 20)
         {
-            MotionStatus::FB_ACCEL = value;
-            fb_array[buf_idx] = value;
+            if(m_CM730->m_BulkReadData[CM730::ID_CM].error == 0)
+            {
+                m_FBGyroCenter += m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_GYRO_Y_L);
+                m_RLGyroCenter += m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_GYRO_X_L);
+                m_CalibrationTime++;
+            }
+        }
+        else
+        {
+            m_FBGyroCenter = (int)((double)m_FBGyroCenter / (double)m_CalibrationTime);
+            m_RLGyroCenter = (int)((double)m_RLGyroCenter / (double)m_CalibrationTime);
+            m_SensorCalibrated = true;
+            if(DEBUG_PRINT == true)
+                fprintf(stderr, "FBGyroCenter:%d , RLGyroCenter:%d \n", m_FBGyroCenter, m_RLGyroCenter);
+        }
+    }
+
+    if(m_SensorCalibrated == true && m_Enabled == true)
+    {
+        static int fb_array[WINDOW_SIZE] = {512};
+        static int buf_idx = 0;
+        if(m_CM730->m_BulkReadData[CM730::ID_CM].error == 0)
+        {
+            MotionStatus::FB_GYRO = m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_GYRO_Y_L) - m_FBGyroCenter;
+            MotionStatus::RL_GYRO = m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_GYRO_X_L) - m_RLGyroCenter;
+            MotionStatus::RL_ACCEL = m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_ACCEL_X_L);
+            MotionStatus::FB_ACCEL = m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_ACCEL_Y_L);
+            fb_array[buf_idx] = MotionStatus::FB_ACCEL;
             if(++buf_idx >= WINDOW_SIZE) buf_idx = 0;
         }
 
+        int sum = 0, avr = 512;
         for(int idx = 0; idx < WINDOW_SIZE; idx++)
             sum += fb_array[idx];
         avr = sum / WINDOW_SIZE;
@@ -150,81 +195,67 @@ void MotionManager::Process()
             MotionStatus::FALLEN = BACKWARD;
         else
             MotionStatus::FALLEN = STANDUP;
-	}
-	else
-	{
-		if(m_CalibrationTime <= 20)
-		{
-			if(m_CM730->ReadWord(CM730::P_GYRO_Y_L, &value, &error) == CM730::SUCCESS)
-				m_FBGyroCenter += value;
-			if(m_CM730->ReadWord(CM730::P_GYRO_X_L, &value, &error) == CM730::SUCCESS)
-				m_RLGyroCenter += value;
-			m_CalibrationTime++;
-		}
-		else
-		{
-			m_FBGyroCenter = (int)((double)m_FBGyroCenter / (double)m_CalibrationTime);
-			m_RLGyroCenter = (int)((double)m_RLGyroCenter / (double)m_CalibrationTime);
-			m_SensorCalibrated = true;
-		}
 
-        m_IsRunning = false;
-        return;
-	}
-
-	if(m_Modules.size() != 0)
-    {
-        for(std::list<MotionModule*>::iterator i = m_Modules.begin(); i != m_Modules.end(); i++)
+        if(m_Modules.size() != 0)
         {
-			(*i)->Process();
-			for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
-			{
-				if((*i)->m_Joint.GetEnable(id) == true)
-				{
-					MotionStatus::m_CurrentJoints.SetSlope(id, (*i)->m_Joint.GetCWSlope(id), (*i)->m_Joint.GetCCWSlope(id));
-					MotionStatus::m_CurrentJoints.SetValue(id, (*i)->m_Joint.GetValue(id));
+            for(std::list<MotionModule*>::iterator i = m_Modules.begin(); i != m_Modules.end(); i++)
+            {
+                (*i)->Process();
+                for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
+                {
+                    if((*i)->m_Joint.GetEnable(id) == true)
+                    {
+                        MotionStatus::m_CurrentJoints.SetSlope(id, (*i)->m_Joint.GetCWSlope(id), (*i)->m_Joint.GetCCWSlope(id));
+                        MotionStatus::m_CurrentJoints.SetValue(id, (*i)->m_Joint.GetValue(id));
 
-					MotionStatus::m_CurrentJoints.SetPGain(id, (*i)->m_Joint.GetPGain(id));
-                    MotionStatus::m_CurrentJoints.SetIGain(id, (*i)->m_Joint.GetIGain(id));
-                    MotionStatus::m_CurrentJoints.SetDGain(id, (*i)->m_Joint.GetDGain(id));
-				}
-			}
+                        MotionStatus::m_CurrentJoints.SetPGain(id, (*i)->m_Joint.GetPGain(id));
+                        MotionStatus::m_CurrentJoints.SetIGain(id, (*i)->m_Joint.GetIGain(id));
+                        MotionStatus::m_CurrentJoints.SetDGain(id, (*i)->m_Joint.GetDGain(id));
+                    }
+                }
+            }
         }
+
+        int param[JointData::NUMBER_OF_JOINTS * RX28M::PARAM_BYTES];
+        int n = 0;
+        int joint_num = 0;
+        for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
+        {
+            if(MotionStatus::m_CurrentJoints.GetEnable(id) == true)
+            {
+                param[n++] = id;
+#ifdef RX28M_1024
+                param[n++] = MotionStatus::m_CurrentJoints.GetCWSlope(id);
+                param[n++] = MotionStatus::m_CurrentJoints.GetCCWSlope(id);
+#else
+                param[n++] = MotionStatus::m_CurrentJoints.GetPGain(id);
+                param[n++] = MotionStatus::m_CurrentJoints.GetIGain(id);
+                param[n++] = MotionStatus::m_CurrentJoints.GetDGain(id);
+                param[n++] = 0;
+#endif
+                param[n++] = CM730::GetLowByte(MotionStatus::m_CurrentJoints.GetValue(id));
+                param[n++] = CM730::GetHighByte(MotionStatus::m_CurrentJoints.GetValue(id));
+                joint_num++;
+            }
+
+            if(DEBUG_PRINT == true)
+                fprintf(stderr, "ID[%d] : %d \n", id, MotionStatus::m_CurrentJoints.GetValue(id));
+        }
+
+        if(joint_num > 0)
+#ifdef RX28M_1024
+            m_CM730->SyncWrite(RX28M::P_CW_COMPLIANCE_SLOPE, RX28M::PARAM_BYTES, joint_num, param);
+#else
+            m_CM730->SyncWrite(RX28M::P_P_GAIN, RX28M::PARAM_BYTES, joint_num, param);
+#endif
     }
 
-	int param[JointData::NUMBER_OF_JOINTS * RX28M::PARAM_BYTES];
-	int n = 0;
-	int joint_num = 0;
-	for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
-	{
-		if(MotionStatus::m_CurrentJoints.GetEnable(id) == true)
-		{
-			param[n++] = id;
-#ifdef RX28M_1024
-            param[n++] = MotionStatus::m_CurrentJoints.GetCWSlope(id);
-            param[n++] = MotionStatus::m_CurrentJoints.GetCCWSlope(id);
-#else
-            param[n++] = MotionStatus::m_CurrentJoints.GetPGain(id);
-            param[n++] = MotionStatus::m_CurrentJoints.GetIGain(id);
-            param[n++] = MotionStatus::m_CurrentJoints.GetDGain(id);
-            param[n++] = 0;
-#endif
-			param[n++] = CM730::GetLowByte(MotionStatus::m_CurrentJoints.GetValue(id));
-			param[n++] = CM730::GetHighByte(MotionStatus::m_CurrentJoints.GetValue(id));
-			joint_num++;
-		}
+    m_CM730->BulkRead();
 
-		if(DEBUG_PRINT == true)
-			fprintf(stderr, "ID[%d] : %d \n", id, MotionStatus::m_CurrentJoints.GetValue(id));
-	}
-	if(joint_num > 0)
-#ifdef RX28M_1024
-        m_CM730->SyncWrite(RX28M::P_CW_COMPLIANCE_SLOPE, RX28M::PARAM_BYTES, joint_num, param);
-#else
-    m_CM730->SyncWrite(RX28M::P_P_GAIN, RX28M::PARAM_BYTES, joint_num, param);
-#endif
+    if(m_CM730->m_BulkReadData[CM730::ID_CM].error == 0)
+        MotionStatus::BUTTON = m_CM730->m_BulkReadData[CM730::ID_CM].ReadByte(CM730::P_BUTTON);
 
-	m_IsRunning = false;
+    m_IsRunning = false;
 }
 
 void MotionManager::SetEnable(bool enable)
@@ -243,4 +274,13 @@ void MotionManager::AddModule(MotionModule *module)
 void MotionManager::RemoveModule(MotionModule *module)
 {
 	m_Modules.remove(module);
+}
+
+void MotionManager::SetJointDisable(int index)
+{
+    if(m_Modules.size() != 0)
+    {
+        for(std::list<MotionModule*>::iterator i = m_Modules.begin(); i != m_Modules.end(); i++)
+            (*i)->m_Joint.SetEnable(index, false);
+    }
 }
