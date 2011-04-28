@@ -15,6 +15,11 @@
 #include <getopt.h>
 #include <iostream>
 
+#include "LinuxDARwIn.h"
+
+using namespace Robot;
+
+
 int _getch()
 {
     struct termios oldt, newt;
@@ -85,16 +90,269 @@ void help(char *progname)
     fprintf(stderr, "Usage: %s\n" \
                     " [-h | --help]........: display this help\n" \
                     " [-d | --device]......: port to open                    (/dev/ttyUSB0)\n" \
-                    " [-f | --firmware]....: firmware file name      (cm730_rx28m_4096.hex)\n", progname);
+                    " [-c | --controller]..: controller firmware file      (cm730_0x12.hex)\n" \
+                    " [-a | --actuator]....: actuator firmware file   (rx28m_0x1C_4096.hex)\n", progname);
     fprintf(stderr, "-----------------------------------------------------------------------\n");
     fprintf(stderr, "Example #1:\n" \
                     " To open a default port and install with firmware file \"cm730.hex\":\n" \
-                    "  %s -f cm730.hex\n", progname);
+                    "  %s -c cm730.hex\n", progname);
     fprintf(stderr, "-----------------------------------------------------------------------\n");
     fprintf(stderr, "Example #2:\n" \
                     " To open a /dev/ttyUSB1 and install with default firmware file name:\n" \
                     "  %s -d /dev/ttyUSB1 \n", progname);
     fprintf(stderr, "-----------------------------------------------------------------------\n");
+}
+
+void Reset(CM730 *cm730, int id)
+{
+    int FailCount = 0;
+    int FailMaxCount = 10;
+    printf(" Reset ID:%d...", id);
+
+    if(cm730->Ping(id, 0) != CM730::SUCCESS)
+    {
+        printf("Fail\n");
+        return;
+    }
+
+    FailCount = 0;
+    while(1)
+    {
+        if(cm730->WriteByte(id, RX28M::P_RETURN_DELAY_TIME, 0, 0) == CM730::SUCCESS)
+            break;
+
+        FailCount++;
+        if(FailCount > FailMaxCount)
+        {
+            printf("Fail\n");
+            return;
+        }
+        usleep(10000);
+    }
+
+    FailCount = 0;
+    while(1)
+    {
+        if(cm730->WriteByte(id, RX28M::P_RETURN_LEVEL, 2, 0) == CM730::SUCCESS)
+            break;
+
+        FailCount++;
+        if(FailCount > FailMaxCount)
+        {
+            printf("Fail\n");
+            return;
+        }
+        usleep(10000);
+    }
+
+    if(id != CM730::ID_CM)
+    {
+        double cwLimit = RX28M::MIN_ANGLE;
+        double ccwLimit = RX28M::MAX_ANGLE;
+
+        switch(id)
+        {
+        case JointData::ID_R_SHOULDER_ROLL:
+            cwLimit = -75.0;
+            ccwLimit = 135.0;
+            break;
+
+        case JointData::ID_L_SHOULDER_ROLL:
+            cwLimit = -135.0;
+            ccwLimit = 75.0;
+            break;
+
+        case JointData::ID_R_ELBOW:
+            cwLimit = -95.0;
+            ccwLimit = 70.0;
+            break;
+
+        case JointData::ID_L_ELBOW:
+            cwLimit = -70.0;
+            ccwLimit = 95.0;
+            break;
+
+        case JointData::ID_R_HIP_YAW:
+            cwLimit = -123.0;
+            ccwLimit = 53.0;
+            break;
+
+        case JointData::ID_L_HIP_YAW:
+            cwLimit = -53.0;
+            ccwLimit = 123.0;
+            break;
+
+        case JointData::ID_R_HIP_ROLL:
+            cwLimit = -45.0;
+            ccwLimit = 59.0;
+            break;
+
+        case JointData::ID_L_HIP_ROLL:
+            cwLimit = -59.0;
+            ccwLimit = 45.0;
+            break;
+
+        case JointData::ID_R_HIP_PITCH:
+            cwLimit = -100.0;
+            ccwLimit = 29.0;
+            break;
+
+        case JointData::ID_L_HIP_PITCH:
+            cwLimit = -29.0;
+            ccwLimit = 100.0;
+            break;
+
+        case JointData::ID_R_KNEE:
+            cwLimit = -6.0;
+            ccwLimit = 130.0;
+            break;
+
+        case JointData::ID_L_KNEE:
+            cwLimit = -130.0;
+            ccwLimit = 6.0;
+            break;
+
+        case JointData::ID_R_ANKLE_PITCH:
+            cwLimit = -72.0;
+            ccwLimit = 80.0;
+            break;
+
+        case JointData::ID_L_ANKLE_PITCH:
+            cwLimit = -80.0;
+            ccwLimit = 72.0;
+            break;
+
+        case JointData::ID_R_ANKLE_ROLL:
+            cwLimit = -44.0;
+            ccwLimit = 63.0;
+            break;
+
+        case JointData::ID_L_ANKLE_ROLL:
+            cwLimit = -63.0;
+            ccwLimit = 44.0;
+            break;
+
+        case JointData::ID_HEAD_TILT:
+            cwLimit = -25.0;
+            ccwLimit = 55.0;
+            break;
+        }
+
+        FailCount = 0;
+        while(1)
+        {
+            if(cm730->WriteWord(id, RX28M::P_CW_ANGLE_LIMIT_L, RX28M::Angle2Value(cwLimit), 0) == CM730::SUCCESS)
+                break;
+
+            FailCount++;
+            if(FailCount > FailMaxCount)
+            {
+                printf("Fail\n");
+                return;
+            }
+            usleep(10000);
+        }
+        FailCount = 0;
+        while(1)
+        {
+            if(cm730->WriteWord(id, RX28M::P_CCW_ANGLE_LIMIT_L, RX28M::Angle2Value(ccwLimit), 0) == CM730::SUCCESS)
+                break;
+
+            FailCount++;
+            if(FailCount > FailMaxCount)
+            {
+                printf("Fail\n");
+                return;
+            }
+            usleep(10000);
+        }
+        FailCount = 0;
+        while(1)
+        {
+            if(cm730->WriteByte(id, RX28M::P_HIGH_LIMIT_TEMPERATURE, 80, 0) == CM730::SUCCESS)
+                break;
+
+            FailCount++;
+            if(FailCount > FailMaxCount)
+            {
+                printf("Fail\n");
+                return;
+            }
+            usleep(10000);
+        }
+        FailCount = 0;
+        while(1)
+        {
+            if(cm730->WriteByte(id, RX28M::P_LOW_LIMIT_VOLTAGE, 60, 0) == CM730::SUCCESS)
+                break;
+
+            FailCount++;
+            if(FailCount > FailMaxCount)
+            {
+                printf("Fail\n");
+                return;
+            }
+            usleep(10000);
+        }
+        FailCount = 0;
+        while(1)
+        {
+            if(cm730->WriteByte(id, RX28M::P_HIGH_LIMIT_VOLTAGE, 140, 0) == CM730::SUCCESS)
+                break;
+
+            FailCount++;
+            if(FailCount > FailMaxCount)
+            {
+                printf("Fail\n");
+                return;
+            }
+            usleep(10000);
+        }
+        FailCount = 0;
+        while(1)
+        {
+            if(cm730->WriteWord(id, RX28M::P_MAX_TORQUE_L, RX28M::MAX_VALUE, 0) == CM730::SUCCESS)
+                break;
+
+            FailCount++;
+            if(FailCount > FailMaxCount)
+            {
+                printf("Fail\n");
+                return;
+            }
+            usleep(10000);
+        }
+        FailCount = 0;
+        while(1)
+        {
+            if(cm730->WriteByte(id, RX28M::P_ALARM_LED, 36, 0) == CM730::SUCCESS) // Overload, Overheat
+                break;
+
+            FailCount++;
+            if(FailCount > FailMaxCount)
+            {
+                printf("Fail\n");
+                return;
+            }
+            usleep(10000);
+        }
+        FailCount = 0;
+        while(1)
+        {
+            if(cm730->WriteByte(id, RX28M::P_ALARM_SHUTDOWN, 36, 0) == CM730::SUCCESS) // Overload, Overheat
+                break;
+
+            FailCount++;
+            if(FailCount > FailMaxCount)
+            {
+                printf("Fail\n");
+                return;
+            }
+            usleep(10000);
+        }
+    }
+
+    printf("Success\n");
 }
 
 int main(int argc, char *argv[])
@@ -105,7 +363,8 @@ int main(int argc, char *argv[])
     fprintf(stderr,   "*                CM-730 & Actuator Firmware Installer                 *\n");
     fprintf(stderr,   "***********************************************************************\n\n");
 
-    char *filename = (char*)"cm730_rx28m_4096.hex";
+    char *controller_fw = (char*)"cm730_0x12.hex";
+    char *actuator_fw = (char*)"rx28m_0x1C_4096.hex";
     char *dev = (char*)"/dev/ttyUSB0";
 
     /* parameter parsing */
@@ -117,8 +376,10 @@ int main(int argc, char *argv[])
                 {"help", no_argument, 0, 0},
                 {"d", required_argument, 0, 0},
                 {"device", required_argument, 0, 0},
-                {"f", required_argument, 0, 0},
-                {"firmware", required_argument, 0, 0},
+                {"c", required_argument, 0, 0},
+                {"controller", required_argument, 0, 0},
+                {"a", required_argument, 0, 0},
+                {"actuator", required_argument, 0, 0},
                 {0, 0, 0, 0}
         };
 
@@ -152,7 +413,13 @@ int main(int argc, char *argv[])
             /* c, controller */
         case 4:
         case 5:
-            filename = strdup(optarg);
+            controller_fw = strdup(optarg);
+            break;
+
+            /* a, actuator */
+        case 6:
+        case 7:
+            actuator_fw = strdup(optarg);
             break;
 
         default:
@@ -162,8 +429,8 @@ int main(int argc, char *argv[])
     }
 
     fprintf(stderr, "You can choose to: \n\n"
-                    "  (1) CM-730 Firmware install from PC to CM-730\n" \
-                    "  (2) Actuator Firmware install from CM-730 to actuator\n\n");
+                    "  (1) CM-730 firmware installation.    (with \"%s\")\n" \
+                    "  (2) Dynamixel firmware installation. (with \"%s\")\n\n", controller_fw, actuator_fw);
     char choice = 0;
     do{
         fprintf(stderr, "Enter your choice: ");
@@ -177,16 +444,21 @@ int main(int argc, char *argv[])
 
     if(mode == 1)
     {
-        fprintf(stderr, "\n [ CM-730 Firmware install mode ]\n\n");
-        fprintf(stderr, "Load %s... ", filename);
+        fprintf(stderr, "\n [ CM-730 firmware installation mode ]\n\n");
+        fprintf(stderr, "Load %s... ", controller_fw);
 
-        if(hex2bin(filename, binMem, &startAddr, &binSize) == false)
+        if(hex2bin(controller_fw, binMem, &startAddr, &binSize) == false)
             return 0;
         fprintf(stderr, "Success!! \nBinary size: %ld byte\n\n", binSize);
     }
     else if(mode == 2)
     {
-        fprintf(stderr, "\n [ Actuator Firmware install mode ]\n\n");
+        fprintf(stderr, "\n [ Dynamixel firmware installation mode ]\n\n");
+        fprintf(stderr, "Load %s... ", actuator_fw);
+
+        if(hex2bin(actuator_fw, binMem, &startAddr, &binSize) == false)
+            return 0;
+        fprintf(stderr, "Success!! \nBinary size: %ld byte\n\n", binSize);
     }
 
     // Open port
@@ -232,8 +504,6 @@ int main(int argc, char *argv[])
                 r = write(fd, "\r", 1);
                 break;
             }
-//            else
-//                printf("%s", RcvBuff);
         }
 
         if(kbhit())
@@ -246,9 +516,8 @@ int main(int argc, char *argv[])
 
     if(mode == 1)
     {
-        /*+++ start download block[0] (128KB) +++*/
-        r = write(fd, "l", 1);
-        r = write(fd, "\r", 1);
+        /*+++ start download +++*/
+        r = write(fd, "l\r", 2);
 
         while(1)
         {
@@ -263,7 +532,7 @@ int main(int argc, char *argv[])
                 break;
         }
 
-        fprintf(stderr, "\nErase block[0] complete...\n");
+        fprintf(stderr, "\nErase block complete...\n");
         usleep(100000);
 
 
@@ -276,9 +545,9 @@ int main(int argc, char *argv[])
         long max_unit = 64;
         long unit;
         int res;
-        while(size < 128*1024)
+        while(size < binSize)
         {
-            unit = 128*1024 - size;
+            unit = binSize - size;
             if(unit > max_unit)
                 unit = max_unit;
 
@@ -286,7 +555,7 @@ int main(int argc, char *argv[])
             if(res > 0)
             {
                 size += res;
-                printf("\rDownloading Firmware block[0] (%ld/%d byte)", size, 128*1024);
+                printf("\rDownloading Firmware (%ld/%ld byte)", size, binSize);
             }
         }
         do
@@ -306,11 +575,22 @@ int main(int argc, char *argv[])
                 fprintf(stderr, "%s", RcvBuff);
             }
         }
-        /*--- end download block[0] (128KB) ---*/
+        /*--- end download ---*/
 
         usleep(10000);
 
-        /*+++ start download block[1] (Total - 128KB) +++*/
+        r = write(fd, "\rgo\r", 4); // Exit bootloader
+        usleep(50000);
+        RcvNum = read(fd, RcvBuff, 256);
+        if(RcvNum > 0)
+        {
+            RcvBuff[RcvNum] = 0;
+            printf("%s", RcvBuff);
+        }
+    }
+    else if(mode == 2)
+    {
+        /*+++ start download +++*/
         r = write(fd, "l 8023000\r", 10);
 
         while(1)
@@ -326,28 +606,29 @@ int main(int argc, char *argv[])
                 break;
         }
 
-        fprintf(stderr, "\nErase block[1] complete...\n");
+        fprintf(stderr, "\nErase block complete...\n");
         usleep(100000);
 
-
-        bytesum = 0x00;
-        for(long n=128*1024; n<binSize; n++)
+        unsigned char bytesum = 0x00;
+        for(long n=0; n<binSize; n++)
             bytesum += binMem[startAddr + n];
 
         printf("\n");
-        size = 0;
-        max_unit = 64;
-        while(size < binSize-128*1024)
+        long size = 0;
+        long max_unit = 64;
+        long unit;
+        int res;
+        while(size < binSize)
         {
-            unit = binSize - 128*1024 - size;
+            unit = binSize - size;
             if(unit > max_unit)
                 unit = max_unit;
 
-            res = write(fd, &binMem[startAddr + 128*1024 + size], unit);
+            res = write(fd, &binMem[startAddr + size], unit);
             if(res > 0)
             {
                 size += res;
-                printf("\rDownloading Firmware block[1] (%ld/%ld byte)", size, binSize - 128*1024);
+                printf("\rDownloading Firmware (%ld/%ld byte)", size, binSize);
             }
         }
         do
@@ -367,24 +648,13 @@ int main(int argc, char *argv[])
                 fprintf(stderr, "%s", RcvBuff);
             }
         }
-        /*--- end download block[1] (Total - 128KB) ---*/
+        /*--- end download ---*/
 
-
-        r = write(fd, "\rgo\r", 4); // Exit bootloader
-        usleep(50000);
-        RcvNum = read(fd, RcvBuff, 256);
-        if(RcvNum > 0)
-        {
-            RcvBuff[RcvNum] = 0;
-            printf("%s", RcvBuff);
-        }
-    }
-    else if(mode == 2)
-    {
         r = write(fd, "go 8023000", 10);
         r = write(fd, "\r", 1);
 
         int wait_count = 0;
+        char last_char = 0;
         while(1)
         {
             if(kbhit())
@@ -403,16 +673,59 @@ int main(int argc, char *argv[])
             {
                 RcvBuff[RcvNum] = 0;
                 printf("%s", RcvBuff);
+                last_char = RcvBuff[RcvNum-1];
                 wait_count = 0;
             }
             else
                 wait_count++;
 
-            if(wait_count > 400)
+            if(wait_count > 200 && last_char == '!')
                 break;
 
             usleep(20000);
         }
+
+        reset_stdin();
+
+        tcsetattr(fd, TCSANOW, &oldtio);
+        close(fd);
+
+        fprintf(stderr, "\n\n");
+        LinuxCM730 linux_cm730(dev);
+        CM730 cm730(&linux_cm730);
+        if(cm730.Connect() == true)
+        {
+            int firm_ver = 0;
+            if(cm730.ReadByte(JointData::ID_HEAD_PAN, RX28M::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
+            {
+                fprintf(stderr, "Can't read firmware version from Dynamixel ID %d!! \n\n", JointData::ID_HEAD_PAN);
+                goto EXIT;
+            }
+
+#ifdef RX28M_1024
+            if(27 <= firm_ver)
+            {
+                fprintf(stderr, "\n RX-28M's firmware is not support 1024 resolution!! \n");
+                fprintf(stderr, " Remove '#define RX28M_1024' from 'RX28M.h' file and rebuild.\n\n");
+                goto EXIT;
+            }
+#else
+            if(0 < firm_ver && firm_ver < 27)
+            {
+                fprintf(stderr, "\n RX-28M's firmware is not support 4096 resolution!! \n");
+                fprintf(stderr, " Upgrade RX-28M's firmware to version 27(0x1B) or higher.\n\n");
+                goto EXIT;
+            }
+#endif
+            for(int i=JointData::ID_R_SHOULDER_PITCH; i<JointData::NUMBER_OF_JOINTS; i++)
+                Reset(&cm730, i);
+
+            Reset(&cm730, CM730::ID_CM);
+        }
+        else
+            fprintf(stderr, "CM-730 Connect fail!! \n");
+
+        return 0;
     }
 
     EXIT:
