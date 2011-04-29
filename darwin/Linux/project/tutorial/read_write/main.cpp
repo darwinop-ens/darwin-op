@@ -21,9 +21,9 @@ int main()
 	/////////////////////////////////////////////////////////////////////
 
 	int value;
-    cm730.WriteWord(JointData::ID_R_SHOULDER_PITCH, RX28M::P_TORQUE_ENABLE, 0, 0);
-    cm730.WriteWord(JointData::ID_R_SHOULDER_ROLL,  RX28M::P_TORQUE_ENABLE, 0, 0);
-    cm730.WriteWord(JointData::ID_R_ELBOW,          RX28M::P_TORQUE_ENABLE, 0, 0);
+    cm730.WriteWord(JointData::ID_R_SHOULDER_PITCH, MX28::P_TORQUE_ENABLE, 0, 0);
+    cm730.WriteWord(JointData::ID_R_SHOULDER_ROLL,  MX28::P_TORQUE_ENABLE, 0, 0);
+    cm730.WriteWord(JointData::ID_R_ELBOW,          MX28::P_TORQUE_ENABLE, 0, 0);
 
 	while(1)
 	{
@@ -60,28 +60,28 @@ int main()
 			printf("----");
 
 		printf(" ID[%d]:", JointData::ID_R_SHOULDER_PITCH);
-		if(cm730.ReadWord(JointData::ID_R_SHOULDER_PITCH, RX28M::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
+		if(cm730.ReadWord(JointData::ID_R_SHOULDER_PITCH, MX28::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
 		{
 			printf("%4d", value);
-			cm730.WriteWord(JointData::ID_L_SHOULDER_PITCH, RX28M::P_GOAL_POSITION_L, RX28M::GetMirrorValue(value), 0);
+			cm730.WriteWord(JointData::ID_L_SHOULDER_PITCH, MX28::P_GOAL_POSITION_L, MX28::GetMirrorValue(value), 0);
 		}
 		else
 			printf("----");
 
 		printf(" ID[%d]:", JointData::ID_R_SHOULDER_ROLL);
-		if(cm730.ReadWord(JointData::ID_R_SHOULDER_ROLL, RX28M::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
+		if(cm730.ReadWord(JointData::ID_R_SHOULDER_ROLL, MX28::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
 		{
 			printf("%4d", value);
-			cm730.WriteWord(JointData::ID_L_SHOULDER_ROLL, RX28M::P_GOAL_POSITION_L, RX28M::GetMirrorValue(value), 0);
+			cm730.WriteWord(JointData::ID_L_SHOULDER_ROLL, MX28::P_GOAL_POSITION_L, MX28::GetMirrorValue(value), 0);
 		}
 		else
 			printf("----");
 
 		printf(" ID[%d]:", JointData::ID_R_ELBOW);
-		if(cm730.ReadWord(JointData::ID_R_ELBOW, RX28M::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
+		if(cm730.ReadWord(JointData::ID_R_ELBOW, MX28::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
 		{
 			printf("%4d", value);
-			cm730.WriteWord(JointData::ID_L_ELBOW, RX28M::P_GOAL_POSITION_L, RX28M::GetMirrorValue(value), 0);
+			cm730.WriteWord(JointData::ID_L_ELBOW, MX28::P_GOAL_POSITION_L, MX28::GetMirrorValue(value), 0);
 		}
 		else
 			printf("----");

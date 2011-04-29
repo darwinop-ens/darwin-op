@@ -33,7 +33,7 @@ BulkReadData::BulkReadData() :
         length(0),
         error(-1)
 {
-    for(int i = 0; i < RX28M::MAXNUM_ADDRESS; i++)
+    for(int i = 0; i < MX28::MAXNUM_ADDRESS; i++)
         table[i] = 0;
 }
 
@@ -429,7 +429,7 @@ void CM730::MakeBulkReadPacket()
         {
             m_BulkReadTxPacket[PARAMETER+3*number+1] = 2;   // length
             m_BulkReadTxPacket[PARAMETER+3*number+2] = id;  // id
-            m_BulkReadTxPacket[PARAMETER+3*number+3] = RX28M::P_PRESENT_POSITION_L; // start address
+            m_BulkReadTxPacket[PARAMETER+3*number+3] = MX28::P_PRESENT_POSITION_L; // start address
             number++;
         }
     }

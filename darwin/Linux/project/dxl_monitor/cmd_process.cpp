@@ -182,7 +182,7 @@ void Dump(CM730 *cm730, int id)
 	}
 	else // Actuator
 	{		
-		if(cm730->ReadTable(id, RX28M::P_MODEL_NUMBER_L, RX28M::P_PUNCH_H, &table[RX28M::P_MODEL_NUMBER_L], 0) != CM730::SUCCESS)
+		if(cm730->ReadTable(id, MX28::P_MODEL_NUMBER_L, MX28::P_PUNCH_H, &table[MX28::P_MODEL_NUMBER_L], 0) != CM730::SUCCESS)
 		{
 			printf(" Can not read table!\n");
 			return;
@@ -190,82 +190,82 @@ void Dump(CM730 *cm730, int id)
 
 		printf( "\n" );
 		printf( " [EEPROM AREA]\n" );
-		addr = RX28M::P_MODEL_NUMBER_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		addr = MX28::P_MODEL_NUMBER_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " MODEL_NUMBER            (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
-		addr = RX28M::P_VERSION; value = table[addr];
+		addr = MX28::P_VERSION; value = table[addr];
 		printf( " VERSION                 (R) [%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_ID; value = table[addr];
+		addr = MX28::P_ID; value = table[addr];
 		printf( " ID                     (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_BAUD_RATE; value = table[addr];
+		addr = MX28::P_BAUD_RATE; value = table[addr];
 		printf( " BAUD_RATE              (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_RETURN_DELAY_TIME; value = table[addr];
+		addr = MX28::P_RETURN_DELAY_TIME; value = table[addr];
 		printf( " RETURN_DELAY_TIME      (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_CW_ANGLE_LIMIT_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		addr = MX28::P_CW_ANGLE_LIMIT_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " CW_ANGLE_LIMIT         (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
-		addr = RX28M::P_CCW_ANGLE_LIMIT_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		addr = MX28::P_CCW_ANGLE_LIMIT_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " CCW_ANGLE_LIMIT        (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
-		addr = RX28M::P_HIGH_LIMIT_TEMPERATURE; value = table[addr];
+		addr = MX28::P_HIGH_LIMIT_TEMPERATURE; value = table[addr];
 		printf( " HIGH_LIMIT_TEMPERATURE (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_LOW_LIMIT_VOLTAGE; value = table[addr];
+		addr = MX28::P_LOW_LIMIT_VOLTAGE; value = table[addr];
 		printf( " LOW_LIMIT_VOLTAGE      (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_HIGH_LIMIT_VOLTAGE; value = table[addr];
+		addr = MX28::P_HIGH_LIMIT_VOLTAGE; value = table[addr];
 		printf( " HIGH_LIMIT_VOLTAGE     (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_MAX_TORQUE_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		addr = MX28::P_MAX_TORQUE_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " MAX_TORQUE             (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
-		addr = RX28M::P_RETURN_LEVEL; value = table[addr];
+		addr = MX28::P_RETURN_LEVEL; value = table[addr];
 		printf( " RETURN_LEVEL           (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_ALARM_LED; value = table[addr];
+		addr = MX28::P_ALARM_LED; value = table[addr];
 		printf( " ALARM_LED              (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_ALARM_SHUTDOWN; value = table[addr];
+		addr = MX28::P_ALARM_SHUTDOWN; value = table[addr];
 		printf( " ALARM_SHUTDOWN         (R/W)[%.3d]:%5d\n", addr, value);
 		printf( "\n" );
 		printf( " [RAM AREA]\n" );
-		addr = RX28M::P_TORQUE_ENABLE; value = table[addr];
+		addr = MX28::P_TORQUE_ENABLE; value = table[addr];
 		printf( " TORQUE_ENABLE          (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_LED; value = table[addr];
+		addr = MX28::P_LED; value = table[addr];
 		printf( " LED                    (R/W)[%.3d]:%5d\n", addr, value);
-#ifdef RX28M_1024
-		addr = RX28M::P_CW_COMPLIANCE_MARGIN; value = table[addr];
+#ifdef MX28_1024
+		addr = MX28::P_CW_COMPLIANCE_MARGIN; value = table[addr];
 		printf( " CW_COMPLIANCE_MARGIN   (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_CCW_COMPLIANCE_MARGIN; value = table[addr];
+		addr = MX28::P_CCW_COMPLIANCE_MARGIN; value = table[addr];
 		printf( " CCW_COMPLIANCE_MARGIN  (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_CW_COMPLIANCE_SLOPE; value = table[addr];
+		addr = MX28::P_CW_COMPLIANCE_SLOPE; value = table[addr];
 		printf( " CW_COMPLIANCE_SLOPE    (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_CCW_COMPLIANCE_SLOPE; value = table[addr];
+		addr = MX28::P_CCW_COMPLIANCE_SLOPE; value = table[addr];
 		printf( " CCW_COMPLIANCE_SLOPE   (R/W)[%.3d]:%5d\n", addr, value);
 #else
-        addr = RX28M::P_P_GAIN; value = table[addr];
+        addr = MX28::P_P_GAIN; value = table[addr];
         printf( " P_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
-        addr = RX28M::P_I_GAIN; value = table[addr];
+        addr = MX28::P_I_GAIN; value = table[addr];
         printf( " I_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
-        addr = RX28M::P_D_GAIN; value = table[addr];
+        addr = MX28::P_D_GAIN; value = table[addr];
         printf( " D_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
-        addr = RX28M::P_RESERVED; value = table[addr];
+        addr = MX28::P_RESERVED; value = table[addr];
         printf( " RESERVED               (R/W)[%.3d]:%5d\n", addr, value);
 #endif
-		addr = RX28M::P_GOAL_POSITION_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		addr = MX28::P_GOAL_POSITION_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " GOAL_POSITION          (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
-		addr = RX28M::P_MOVING_SPEED_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		addr = MX28::P_MOVING_SPEED_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " MOVING_SPEED           (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
-		addr = RX28M::P_TORQUE_LIMIT_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		addr = MX28::P_TORQUE_LIMIT_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " TORQUE_LIMIT           (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
-		addr = RX28M::P_PRESENT_POSITION_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		addr = MX28::P_PRESENT_POSITION_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " PRESENT_POSITION       (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
-		addr = RX28M::P_PRESENT_SPEED_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		addr = MX28::P_PRESENT_SPEED_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " PRESENT_SPEED          (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
-		addr = RX28M::P_PRESENT_LOAD_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		addr = MX28::P_PRESENT_LOAD_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " PRESENT_LOAD           (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
-		addr = RX28M::P_PRESENT_VOLTAGE; value = table[addr];
+		addr = MX28::P_PRESENT_VOLTAGE; value = table[addr];
 		printf( " PRESENT_VOLTAGE        (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_PRESENT_TEMPERATURE; value = table[addr];
+		addr = MX28::P_PRESENT_TEMPERATURE; value = table[addr];
 		printf( " PRESENT_TEMPERATURE    (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_REGISTERED_INSTRUCTION; value = table[addr];
+		addr = MX28::P_REGISTERED_INSTRUCTION; value = table[addr];
 		printf( " REGISTERED_INSTRUC     (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_MOVING; value = table[addr];
+		addr = MX28::P_MOVING; value = table[addr];
 		printf( " MOVING                 (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_LOCK; value = table[addr];
+		addr = MX28::P_LOCK; value = table[addr];
 		printf( " LOCK                   (R/W)[%.3d]:%5d\n", addr, value);
-		addr = RX28M::P_PUNCH_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		addr = MX28::P_PUNCH_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " PUNCH                  (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 
 		printf( "\n" );
@@ -287,7 +287,7 @@ void Reset(Robot::CM730 *cm730, int id)
 	FailCount = 0;
 	while(1)
 	{
-		if(cm730->WriteByte(id, RX28M::P_RETURN_DELAY_TIME, 0, 0) == CM730::SUCCESS)
+		if(cm730->WriteByte(id, MX28::P_RETURN_DELAY_TIME, 0, 0) == CM730::SUCCESS)
 			break;
 
 		FailCount++;
@@ -302,7 +302,7 @@ void Reset(Robot::CM730 *cm730, int id)
 	FailCount = 0;
 	while(1)
 	{
-		if(cm730->WriteByte(id, RX28M::P_RETURN_LEVEL, 2, 0) == CM730::SUCCESS)
+		if(cm730->WriteByte(id, MX28::P_RETURN_LEVEL, 2, 0) == CM730::SUCCESS)
 			break;
 
 		FailCount++;
@@ -316,8 +316,8 @@ void Reset(Robot::CM730 *cm730, int id)
 
 	if(id != CM730::ID_CM)
 	{
-		double cwLimit = RX28M::MIN_ANGLE;
-		double ccwLimit = RX28M::MAX_ANGLE;
+		double cwLimit = MX28::MIN_ANGLE;
+		double ccwLimit = MX28::MAX_ANGLE;
 
 		switch(id)
 		{
@@ -410,7 +410,7 @@ void Reset(Robot::CM730 *cm730, int id)
 		FailCount = 0;
 		while(1)
 		{
-			if(cm730->WriteWord(id, RX28M::P_CW_ANGLE_LIMIT_L, RX28M::Angle2Value(cwLimit), 0) == CM730::SUCCESS)
+			if(cm730->WriteWord(id, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(cwLimit), 0) == CM730::SUCCESS)
 				break;
 
 			FailCount++;
@@ -424,7 +424,7 @@ void Reset(Robot::CM730 *cm730, int id)
 		FailCount = 0;
 		while(1)
 		{
-			if(cm730->WriteWord(id, RX28M::P_CCW_ANGLE_LIMIT_L, RX28M::Angle2Value(ccwLimit), 0) == CM730::SUCCESS)
+			if(cm730->WriteWord(id, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(ccwLimit), 0) == CM730::SUCCESS)
 				break;
 
 			FailCount++;
@@ -438,7 +438,7 @@ void Reset(Robot::CM730 *cm730, int id)
 		FailCount = 0;
 		while(1)
 		{
-			if(cm730->WriteByte(id, RX28M::P_HIGH_LIMIT_TEMPERATURE, 80, 0) == CM730::SUCCESS)
+			if(cm730->WriteByte(id, MX28::P_HIGH_LIMIT_TEMPERATURE, 80, 0) == CM730::SUCCESS)
 				break;
 
 			FailCount++;
@@ -452,7 +452,7 @@ void Reset(Robot::CM730 *cm730, int id)
 		FailCount = 0;
 		while(1)
 		{
-			if(cm730->WriteByte(id, RX28M::P_LOW_LIMIT_VOLTAGE, 60, 0) == CM730::SUCCESS)
+			if(cm730->WriteByte(id, MX28::P_LOW_LIMIT_VOLTAGE, 60, 0) == CM730::SUCCESS)
 				break;
 
 			FailCount++;
@@ -466,7 +466,7 @@ void Reset(Robot::CM730 *cm730, int id)
 		FailCount = 0;
 		while(1)
 		{
-			if(cm730->WriteByte(id, RX28M::P_HIGH_LIMIT_VOLTAGE, 140, 0) == CM730::SUCCESS)
+			if(cm730->WriteByte(id, MX28::P_HIGH_LIMIT_VOLTAGE, 140, 0) == CM730::SUCCESS)
 				break;
 
 			FailCount++;
@@ -480,7 +480,7 @@ void Reset(Robot::CM730 *cm730, int id)
 		FailCount = 0;
 		while(1)
 		{
-			if(cm730->WriteWord(id, RX28M::P_MAX_TORQUE_L, RX28M::MAX_VALUE, 0) == CM730::SUCCESS)
+			if(cm730->WriteWord(id, MX28::P_MAX_TORQUE_L, MX28::MAX_VALUE, 0) == CM730::SUCCESS)
 				break;
 
 			FailCount++;
@@ -494,7 +494,7 @@ void Reset(Robot::CM730 *cm730, int id)
 		FailCount = 0;
 		while(1)
 		{
-			if(cm730->WriteByte(id, RX28M::P_ALARM_LED, 36, 0) == CM730::SUCCESS) // Overload, Overheat
+			if(cm730->WriteByte(id, MX28::P_ALARM_LED, 36, 0) == CM730::SUCCESS) // Overload, Overheat
 				break;
 
 			FailCount++;
@@ -508,7 +508,7 @@ void Reset(Robot::CM730 *cm730, int id)
 		FailCount = 0;
 		while(1)
 		{
-			if(cm730->WriteByte(id, RX28M::P_ALARM_SHUTDOWN, 36, 0) == CM730::SUCCESS) // Overload, Overheat
+			if(cm730->WriteByte(id, MX28::P_ALARM_SHUTDOWN, 36, 0) == CM730::SUCCESS) // Overload, Overheat
 				break;
 
 			FailCount++;
@@ -526,7 +526,7 @@ void Reset(Robot::CM730 *cm730, int id)
 
 void Write(Robot::CM730 *cm730, int id, int addr, int value)
 {
-	if(addr == RX28M::P_ID || addr == RX28M::P_BAUD_RATE || addr == RX28M::P_RETURN_DELAY_TIME || addr == RX28M::P_RETURN_LEVEL)
+	if(addr == MX28::P_ID || addr == MX28::P_BAUD_RATE || addr == MX28::P_RETURN_DELAY_TIME || addr == MX28::P_RETURN_LEVEL)
 	{
 		printf( " Can not change this address[%d]\n", addr);
 		return;
@@ -554,32 +554,32 @@ void Write(Robot::CM730 *cm730, int id, int addr, int value)
 	}
 	else
 	{
-		if(addr >= RX28M::MAXNUM_ADDRESS)
+		if(addr >= MX28::MAXNUM_ADDRESS)
 		{
 			printf( " Invalid address\n");
 			return;
 		}
 
-        if(addr == RX28M::P_HIGH_LIMIT_TEMPERATURE
-            || addr == RX28M::P_LOW_LIMIT_VOLTAGE
-            || addr == RX28M::P_HIGH_LIMIT_VOLTAGE
-            || addr == RX28M::P_ALARM_LED
-            || addr == RX28M::P_ALARM_SHUTDOWN
-            || addr == RX28M::P_TORQUE_ENABLE
-            || addr == RX28M::P_LED
-#ifdef RX28M_1024
-            || addr == RX28M::P_CW_COMPLIANCE_MARGIN
-            || addr == RX28M::P_CCW_COMPLIANCE_MARGIN
-            || addr == RX28M::P_CW_COMPLIANCE_SLOPE
-            || addr == RX28M::P_CCW_COMPLIANCE_SLOPE
+        if(addr == MX28::P_HIGH_LIMIT_TEMPERATURE
+            || addr == MX28::P_LOW_LIMIT_VOLTAGE
+            || addr == MX28::P_HIGH_LIMIT_VOLTAGE
+            || addr == MX28::P_ALARM_LED
+            || addr == MX28::P_ALARM_SHUTDOWN
+            || addr == MX28::P_TORQUE_ENABLE
+            || addr == MX28::P_LED
+#ifdef MX28_1024
+            || addr == MX28::P_CW_COMPLIANCE_MARGIN
+            || addr == MX28::P_CCW_COMPLIANCE_MARGIN
+            || addr == MX28::P_CW_COMPLIANCE_SLOPE
+            || addr == MX28::P_CCW_COMPLIANCE_SLOPE
 #else
-			|| addr == RX28M::P_P_GAIN
-			|| addr == RX28M::P_I_GAIN
-			|| addr == RX28M::P_D_GAIN
-			|| addr == RX28M::P_RESERVED
+			|| addr == MX28::P_P_GAIN
+			|| addr == MX28::P_I_GAIN
+			|| addr == MX28::P_D_GAIN
+			|| addr == MX28::P_RESERVED
 #endif
-			|| addr == RX28M::P_LED
-			|| addr == RX28M::P_LED)
+			|| addr == MX28::P_LED
+			|| addr == MX28::P_LED)
 		{
 			res = cm730->WriteByte(id, addr, value, &error);
 		}

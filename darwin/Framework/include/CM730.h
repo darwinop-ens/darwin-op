@@ -8,7 +8,7 @@
 #ifndef _CM_730_H_
 #define _CM_730_H_
 
-#include "RX28M.h"
+#include "MX28.h"
 
 #define MAXNUM_TXPARAM      (256)
 #define MAXNUM_RXPARAM      (1024)
@@ -21,7 +21,7 @@ namespace Robot
         int start_address;
         int length;
         int error;
-        unsigned char table[RX28M::MAXNUM_ADDRESS];
+        unsigned char table[MX28::MAXNUM_ADDRESS];
 
         BulkReadData();
         virtual ~BulkReadData() {}

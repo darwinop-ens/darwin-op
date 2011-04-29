@@ -8,7 +8,7 @@
 #include <math.h>
 #include "Vector.h"
 #include "Matrix.h"
-#include "RX28M.h"
+#include "MX28.h"
 #include "MotionStatus.h"
 #include "Kinematics.h"
 #include "Walking.h"
@@ -254,7 +254,7 @@ void Walking::update_param_time()
     m_Phase_Time2 = (m_SSP_Time_Start_R + m_SSP_Time_End_L) / 2;
     m_Phase_Time3 = (m_SSP_Time_End_R + m_SSP_Time_Start_R) / 2;
 
-    m_Pelvis_Offset = PELVIS_OFFSET*RX28M::RATIO_ANGLE2VALUE;
+    m_Pelvis_Offset = PELVIS_OFFSET*MX28::RATIO_ANGLE2VALUE;
     m_Pelvis_Swing = m_Pelvis_Offset * 0.35;
     m_Arm_Swing_Gain = ARM_SWING_GAIN;
 }
@@ -305,7 +305,7 @@ void Walking::update_param_balance()
     m_R_Offset = R_OFFSET * PI / 180.0;
     m_P_Offset = P_OFFSET * PI / 180.0;
     m_A_Offset = A_OFFSET * PI / 180.0;
-    m_Hip_Pitch_Offset = HIP_PITCH_OFFSET*RX28M::RATIO_ANGLE2VALUE;
+    m_Hip_Pitch_Offset = HIP_PITCH_OFFSET*MX28::RATIO_ANGLE2VALUE;
 }
 
 void Walking::Initialize()
@@ -556,15 +556,15 @@ void Walking::Process()
     // Compute motor value
     for(int i=0; i<14; i++)
     {
-		offset = (double)dir[i] * angle[i] * RX28M::RATIO_ANGLE2VALUE;
+		offset = (double)dir[i] * angle[i] * MX28::RATIO_ANGLE2VALUE;
         if(i == 1) // R_HIP_ROLL
             offset += (double)dir[i] * pelvis_offset_r;
         else if(i == 7) // L_HIP_ROLL
             offset += (double)dir[i] * pelvis_offset_l;
         else if(i == 2 || i == 8) // R_HIP_PITCH or L_HIP_PITCH
-            offset -= (double)dir[i] * HIP_PITCH_OFFSET * RX28M::RATIO_ANGLE2VALUE;
+            offset -= (double)dir[i] * HIP_PITCH_OFFSET * MX28::RATIO_ANGLE2VALUE;
 
-        outValue[i] = RX28M::Angle2Value(initAngle[i]) + (int)offset;
+        outValue[i] = MX28::Angle2Value(initAngle[i]) + (int)offset;
     }
 
     // adjust balance offset
@@ -572,7 +572,7 @@ void Walking::Process()
     {
 		double rlGyroErr = MotionStatus::RL_GYRO;
 		double fbGyroErr = MotionStatus::FB_GYRO;
-#ifdef RX28M_1024
+#ifdef MX28_1024
         outValue[1] += (int)(dir[1] * rlGyroErr * BALANCE_HIP_ROLL_GAIN); // R_HIP_ROLL
         outValue[7] += (int)(dir[7] * rlGyroErr * BALANCE_HIP_ROLL_GAIN); // L_HIP_ROLL
 

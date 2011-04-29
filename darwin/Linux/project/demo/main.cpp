@@ -17,7 +17,7 @@
 #include "StatusCheck.h"
 #include "VisionMode.h"
 
-#ifdef RX28M_1024
+#ifdef MX28_1024
 #define MOTION_FILE_PATH    "../../../Data/motion_1024.bin"
 #else
 #define MOTION_FILE_PATH    "../../../Data/motion_4096.bin"
@@ -104,7 +104,7 @@ int main(void)
     /////////////////////////////////////////////////////////////////////
 
     int firm_ver = 0;
-    if(cm730.ReadByte(JointData::ID_HEAD_PAN, RX28M::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
+    if(cm730.ReadByte(JointData::ID_HEAD_PAN, MX28::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
     {
         fprintf(stderr, "Can't read firmware version from Dynamixel ID %d!! \n\n", JointData::ID_HEAD_PAN);
         exit(0);
@@ -112,19 +112,19 @@ int main(void)
 
     if(0 < firm_ver && firm_ver < 27)
     {
-#ifdef RX28M_1024
+#ifdef MX28_1024
         Action::GetInstance()->LoadFile(MOTION_FILE_PATH);
 #else
-        fprintf(stderr, "RX-28M's firmware is not support 4096 resolution!! \n");
-        fprintf(stderr, "Upgrade RX-28M's firmware to version 27(0x1B) or higher.\n\n");
+        fprintf(stderr, "MX-28's firmware is not support 4096 resolution!! \n");
+        fprintf(stderr, "Upgrade MX-28's firmware to version 27(0x1B) or higher.\n\n");
         exit(0);
 #endif
     }
     else if(27 <= firm_ver)
     {
-#ifdef RX28M_1024
-        fprintf(stderr, "RX-28M's firmware is not support 1024 resolution!! \n");
-        fprintf(stderr, "Remove '#define RX28M_1024' from 'RX28M.h' file and rebuild.\n\n");
+#ifdef MX28_1024
+        fprintf(stderr, "MX-28's firmware is not support 1024 resolution!! \n");
+        fprintf(stderr, "Remove '#define MX28_1024' from 'MX28.h' file and rebuild.\n\n");
         exit(0);
 #else
         Action::GetInstance()->LoadFile((char*)MOTION_FILE_PATH);

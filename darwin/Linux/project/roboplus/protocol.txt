@@ -30,7 +30,7 @@
 <= {[ME]}\n
 -----------------------------------------
 *VERSION: Version of roboplus_vm
-*MODEL: Model number of dynamixel (ex, 29 (RX-28M))
+*MODEL: Model number of dynamixel (ex, 29 (MX-28))
 *NUMBER: Number of connected dynamixel
 
 

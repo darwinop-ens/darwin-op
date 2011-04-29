@@ -19,13 +19,13 @@
 #include "Action.h"
 #include "Head.h"
 #include "Walking.h"
-#include "RX28M.h"
+#include "MX28.h"
 #include "MotionManager.h"
 #include "LinuxMotionTimer.h"
 #include "LinuxCM730.h"
 #include "LinuxActionScript.h"
 
-#ifdef RX28M_1024
+#ifdef MX28_1024
 #define MOTION_FILE_PATH    "../../../../Data/motion_1024.bin"
 #else
 #define MOTION_FILE_PATH    "../../../../Data/motion_4096.bin"

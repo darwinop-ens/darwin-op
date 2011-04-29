@@ -6,7 +6,7 @@
  */
 
 #include <stdio.h>
-#include "RX28M.h"
+#include "MX28.h"
 #include "Kinematics.h"
 #include "MotionStatus.h"
 #include "Head.h"

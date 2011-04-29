@@ -9,7 +9,7 @@
 #define _DARWIN_H_
 
 #include "CM730.h"
-#include "RX28M.h"
+#include "MX28.h"
 #include "MotionModule.h"
 #include "MotionManager.h"
 #include "MotionStatus.h"

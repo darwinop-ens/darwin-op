@@ -1,22 +1,22 @@
 /*
- *   RX28M.h
+ *   MX28.h
  *
  *   Author: ROBOTIS
  *
  */
 
-#ifndef _RX_28M_H_
-#define _RX_28M_H_
+#ifndef _MX_28_H_
+#define _MX_28_H_
 
-//#define RX28M_1024
+//#define MX28_1024
 
 namespace Robot
 {
-	class RX28M
+	class MX28
 	{
 	public:
 		static const int MIN_VALUE = 0;
-#ifdef RX28M_1024
+#ifdef MX28_1024
         static const int CENTER_VALUE = 512;
         static const int MAX_VALUE = 1023;
         static const double MIN_ANGLE = -150.0; // degree
@@ -43,7 +43,7 @@ namespace Robot
 		static double Value2Angle(int value) { return (double)(value-CENTER_VALUE)*RATIO_VALUE2ANGLE; }
 
 		// Address
-#ifdef RX28M_1024
+#ifdef MX28_1024
         enum
         {
             P_MODEL_NUMBER_L            = 0,

@@ -13,7 +13,7 @@
 using namespace Robot;
 using namespace std;
 
-#ifdef RX28M_1024
+#ifdef MX28_1024
 #define MOTION_FILE_PATH    "../../../Data/motion_1024.bin"
 #else
 #define MOTION_FILE_PATH    "../../../Data/motion_4096.bin"
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 	/////////////////////////////////////////////////////////////////////
 
     int firm_ver = 0;
-    if(cm730.ReadByte(JointData::ID_HEAD_PAN, RX28M::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
+    if(cm730.ReadByte(JointData::ID_HEAD_PAN, MX28::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
     {
         fprintf(stderr, "Can't read firmware version from Dynamixel ID %d!! \n\n", JointData::ID_HEAD_PAN);
         exit(0);
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
                         new_sock << "{[PC:TCP/IP][DXL:1000000(BPS)]}";
 						new_sock << "{";
 						for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
-							new_sock << "[" << id << ":029(RX-28M)]";
+							new_sock << "[" << id << ":029(MX-28)]";
 						new_sock << "}";
                         new_sock << "{[DXL:" << JointData::NUMBER_OF_JOINTS << "(PCS)]}";
                         new_sock << "{[ME]}\n";
@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
 							{
 								if(p_str_tok[i].length() > 0)
 								{
-									cm730.WriteByte(atoi(p_str_tok[i].c_str()), RX28M::P_TORQUE_ENABLE, torque, 0);
+									cm730.WriteByte(atoi(p_str_tok[i].c_str()), MX28::P_TORQUE_ENABLE, torque, 0);
 								}
 								else
 									break;
@@ -223,7 +223,7 @@ int main(int argc, char *argv[])
 							if(i == 1)
 							{
 								for(int id=1; id<JointData::NUMBER_OF_JOINTS; id++)
-									cm730.WriteByte(id, RX28M::P_TORQUE_ENABLE, torque, 0);
+									cm730.WriteByte(id, MX28::P_TORQUE_ENABLE, torque, 0);
 							}
 						}
 
@@ -235,11 +235,11 @@ int main(int argc, char *argv[])
 							cout << "[";
 							if(id >= 1 && id < JointData::NUMBER_OF_JOINTS)
 							{
-								if(cm730.ReadByte(id, RX28M::P_TORQUE_ENABLE, &torque, 0) == CM730::SUCCESS)
+								if(cm730.ReadByte(id, MX28::P_TORQUE_ENABLE, &torque, 0) == CM730::SUCCESS)
 								{
 									if(torque == 1)
 									{
-										if(cm730.ReadWord(id, RX28M::P_GOAL_POSITION_L, &position, 0) == CM730::SUCCESS)
+										if(cm730.ReadWord(id, MX28::P_GOAL_POSITION_L, &position, 0) == CM730::SUCCESS)
 										{
 											new_sock << position;
 											cout << position;
@@ -283,7 +283,7 @@ int main(int argc, char *argv[])
 						{
 							if(id >= 1 && id < JointData::NUMBER_OF_JOINTS)
 							{
-								if(cm730.ReadWord(id, RX28M::P_PRESENT_POSITION_L, &StartPosition, 0) == CM730::SUCCESS)
+								if(cm730.ReadWord(id, MX28::P_PRESENT_POSITION_L, &StartPosition, 0) == CM730::SUCCESS)
 								{
 									GoalPosition = (int)atoi(p_str_tok[id + 1].c_str());
 
@@ -296,8 +296,8 @@ int main(int argc, char *argv[])
 									if( Distance < 8 )
 										Distance = 8;
 
-									cm730.WriteWord(id, RX28M::P_MOVING_SPEED_L, Distance, 0);
-									if(cm730.WriteWord(id, RX28M::P_GOAL_POSITION_L, GoalPosition, 0) == CM730::SUCCESS)
+									cm730.WriteWord(id, MX28::P_MOVING_SPEED_L, Distance, 0);
+									if(cm730.WriteWord(id, MX28::P_GOAL_POSITION_L, GoalPosition, 0) == CM730::SUCCESS)
 									{
 										new_sock << "[" << GoalPosition << "]";
 										cout << "[" << GoalPosition << "]";
@@ -329,9 +329,9 @@ int main(int argc, char *argv[])
 						int id = (int)atoi(p_str_tok[1].c_str());
 						int position = (int)atoi(p_str_tok[2].c_str());
 
-						if(cm730.WriteWord(id, RX28M::P_GOAL_POSITION_L, position, 0) == CM730::SUCCESS)
+						if(cm730.WriteWord(id, MX28::P_GOAL_POSITION_L, position, 0) == CM730::SUCCESS)
 						{
-							if(cm730.ReadWord(id, RX28M::P_GOAL_POSITION_L, &position, 0) == CM730::SUCCESS)
+							if(cm730.ReadWord(id, MX28::P_GOAL_POSITION_L, &position, 0) == CM730::SUCCESS)
 							{
 								cout << "{[" << position << "]}";
 								new_sock << "{[" << position << "]}";
@@ -358,18 +358,18 @@ int main(int argc, char *argv[])
 						{
 							if(id >= JointData::ID_R_SHOULDER_PITCH && id <= JointData::ID_HEAD_TILT)
 							{
-								if(cm730.ReadWord(id, RX28M::P_TORQUE_ENABLE, &value, 0) == CM730::SUCCESS)
+								if(cm730.ReadWord(id, MX28::P_TORQUE_ENABLE, &value, 0) == CM730::SUCCESS)
 								{
 									if(value == 0)
 									{
-										if(cm730.ReadWord(id, RX28M::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
+										if(cm730.ReadWord(id, MX28::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
 											MotionStatus::m_CurrentJoints.SetValue(id, value);
 										else
 											cout << "[Fail to communication ID(" << id << ")]" << endl;
 									}
 									else
 									{
-										if(cm730.ReadWord(id, RX28M::P_GOAL_POSITION_L, &value, 0) == CM730::SUCCESS)
+										if(cm730.ReadWord(id, MX28::P_GOAL_POSITION_L, &value, 0) == CM730::SUCCESS)
 											MotionStatus::m_CurrentJoints.SetValue(id, value);
 										else
 											cout << "[Fail to communication ID(" << id << ")]" << endl;

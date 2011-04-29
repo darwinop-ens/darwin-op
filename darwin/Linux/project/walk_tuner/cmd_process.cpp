@@ -157,7 +157,7 @@ void DrawIntro(CM730 *cm730)
 		param[n++] = CM730::GetHighByte(wDistance);
 	}
 
-	cm730->SyncWrite(RX28M::P_GOAL_POSITION_L, 5, JointData::NUMBER_OF_JOINTS - 1, param);
+	cm730->SyncWrite(MX28::P_GOAL_POSITION_L, 5, JointData::NUMBER_OF_JOINTS - 1, param);
 	
 	int nrows, ncolumns;
     setupterm(NULL, fileno(stdout), (int *)0);

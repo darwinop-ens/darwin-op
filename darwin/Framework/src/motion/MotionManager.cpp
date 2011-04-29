@@ -9,7 +9,7 @@
 #include <sys/time.h>
 #include <signal.h>
 #include <pthread.h>
-#include "RX28M.h"
+#include "MX28.h"
 #include "MotionManager.h"
 
 using namespace Robot;
@@ -49,7 +49,7 @@ bool MotionManager::Initialize(CM730 *cm730)
 		if(DEBUG_PRINT == true)
 			fprintf(stderr, "ID:%d initializing...", id);
 		
-		if(m_CM730->ReadWord(id, RX28M::P_PRESENT_POSITION_L, &value, &error) == CM730::SUCCESS)
+		if(m_CM730->ReadWord(id, MX28::P_PRESENT_POSITION_L, &value, &error) == CM730::SUCCESS)
 		{
 			MotionStatus::m_CurrentJoints.SetValue(id, value);
 			MotionStatus::m_CurrentJoints.SetEnable(id, true);
@@ -86,7 +86,7 @@ bool MotionManager::Reinitialize()
 		if(DEBUG_PRINT == true)
 			fprintf(stderr, "ID:%d initializing...", id);
 		
-		if(m_CM730->ReadWord(id, RX28M::P_PRESENT_POSITION_L, &value, &error) == CM730::SUCCESS)
+		if(m_CM730->ReadWord(id, MX28::P_PRESENT_POSITION_L, &value, &error) == CM730::SUCCESS)
 		{
 			MotionStatus::m_CurrentJoints.SetValue(id, value);
 			MotionStatus::m_CurrentJoints.SetEnable(id, true);
@@ -216,7 +216,7 @@ void MotionManager::Process()
             }
         }
 
-        int param[JointData::NUMBER_OF_JOINTS * RX28M::PARAM_BYTES];
+        int param[JointData::NUMBER_OF_JOINTS * MX28::PARAM_BYTES];
         int n = 0;
         int joint_num = 0;
         for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
@@ -224,7 +224,7 @@ void MotionManager::Process()
             if(MotionStatus::m_CurrentJoints.GetEnable(id) == true)
             {
                 param[n++] = id;
-#ifdef RX28M_1024
+#ifdef MX28_1024
                 param[n++] = MotionStatus::m_CurrentJoints.GetCWSlope(id);
                 param[n++] = MotionStatus::m_CurrentJoints.GetCCWSlope(id);
 #else
@@ -243,10 +243,10 @@ void MotionManager::Process()
         }
 
         if(joint_num > 0)
-#ifdef RX28M_1024
-            m_CM730->SyncWrite(RX28M::P_CW_COMPLIANCE_SLOPE, RX28M::PARAM_BYTES, joint_num, param);
+#ifdef MX28_1024
+            m_CM730->SyncWrite(MX28::P_CW_COMPLIANCE_SLOPE, MX28::PARAM_BYTES, joint_num, param);
 #else
-            m_CM730->SyncWrite(RX28M::P_P_GAIN, RX28M::PARAM_BYTES, joint_num, param);
+            m_CM730->SyncWrite(MX28::P_P_GAIN, MX28::PARAM_BYTES, joint_num, param);
 #endif
     }
 
@@ -262,7 +262,7 @@ void MotionManager::SetEnable(bool enable)
 {
 	m_Enabled = enable;
 	if(m_Enabled == true)
-		m_CM730->WriteWord(CM730::ID_BROADCAST, RX28M::P_MOVING_SPEED_L, 0, 0);
+		m_CM730->WriteWord(CM730::ID_BROADCAST, MX28::P_MOVING_SPEED_L, 0, 0);
 }
 
 void MotionManager::AddModule(MotionModule *module)

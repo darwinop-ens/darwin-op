@@ -91,7 +91,7 @@ void help(char *progname)
                     " [-h | --help]........: display this help\n" \
                     " [-d | --device]......: port to open                    (/dev/ttyUSB0)\n" \
                     " [-c | --controller]..: controller firmware file      (cm730_0x12.hex)\n" \
-                    " [-a | --actuator]....: actuator firmware file   (rx28m_0x1C_4096.hex)\n", progname);
+                    " [-a | --actuator]....: actuator firmware file    (mx28_0x1C_4096.hex)\n", progname);
     fprintf(stderr, "-----------------------------------------------------------------------\n");
     fprintf(stderr, "Example #1:\n" \
                     " To open a default port and install with firmware file \"cm730.hex\":\n" \
@@ -118,7 +118,7 @@ void Reset(CM730 *cm730, int id)
     FailCount = 0;
     while(1)
     {
-        if(cm730->WriteByte(id, RX28M::P_RETURN_DELAY_TIME, 0, 0) == CM730::SUCCESS)
+        if(cm730->WriteByte(id, MX28::P_RETURN_DELAY_TIME, 0, 0) == CM730::SUCCESS)
             break;
 
         FailCount++;
@@ -133,7 +133,7 @@ void Reset(CM730 *cm730, int id)
     FailCount = 0;
     while(1)
     {
-        if(cm730->WriteByte(id, RX28M::P_RETURN_LEVEL, 2, 0) == CM730::SUCCESS)
+        if(cm730->WriteByte(id, MX28::P_RETURN_LEVEL, 2, 0) == CM730::SUCCESS)
             break;
 
         FailCount++;
@@ -147,8 +147,8 @@ void Reset(CM730 *cm730, int id)
 
     if(id != CM730::ID_CM)
     {
-        double cwLimit = RX28M::MIN_ANGLE;
-        double ccwLimit = RX28M::MAX_ANGLE;
+        double cwLimit = MX28::MIN_ANGLE;
+        double ccwLimit = MX28::MAX_ANGLE;
 
         switch(id)
         {
@@ -241,7 +241,7 @@ void Reset(CM730 *cm730, int id)
         FailCount = 0;
         while(1)
         {
-            if(cm730->WriteWord(id, RX28M::P_CW_ANGLE_LIMIT_L, RX28M::Angle2Value(cwLimit), 0) == CM730::SUCCESS)
+            if(cm730->WriteWord(id, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(cwLimit), 0) == CM730::SUCCESS)
                 break;
 
             FailCount++;
@@ -255,7 +255,7 @@ void Reset(CM730 *cm730, int id)
         FailCount = 0;
         while(1)
         {
-            if(cm730->WriteWord(id, RX28M::P_CCW_ANGLE_LIMIT_L, RX28M::Angle2Value(ccwLimit), 0) == CM730::SUCCESS)
+            if(cm730->WriteWord(id, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(ccwLimit), 0) == CM730::SUCCESS)
                 break;
 
             FailCount++;
@@ -269,7 +269,7 @@ void Reset(CM730 *cm730, int id)
         FailCount = 0;
         while(1)
         {
-            if(cm730->WriteByte(id, RX28M::P_HIGH_LIMIT_TEMPERATURE, 80, 0) == CM730::SUCCESS)
+            if(cm730->WriteByte(id, MX28::P_HIGH_LIMIT_TEMPERATURE, 80, 0) == CM730::SUCCESS)
                 break;
 
             FailCount++;
@@ -283,7 +283,7 @@ void Reset(CM730 *cm730, int id)
         FailCount = 0;
         while(1)
         {
-            if(cm730->WriteByte(id, RX28M::P_LOW_LIMIT_VOLTAGE, 60, 0) == CM730::SUCCESS)
+            if(cm730->WriteByte(id, MX28::P_LOW_LIMIT_VOLTAGE, 60, 0) == CM730::SUCCESS)
                 break;
 
             FailCount++;
@@ -297,7 +297,7 @@ void Reset(CM730 *cm730, int id)
         FailCount = 0;
         while(1)
         {
-            if(cm730->WriteByte(id, RX28M::P_HIGH_LIMIT_VOLTAGE, 140, 0) == CM730::SUCCESS)
+            if(cm730->WriteByte(id, MX28::P_HIGH_LIMIT_VOLTAGE, 140, 0) == CM730::SUCCESS)
                 break;
 
             FailCount++;
@@ -311,7 +311,7 @@ void Reset(CM730 *cm730, int id)
         FailCount = 0;
         while(1)
         {
-            if(cm730->WriteWord(id, RX28M::P_MAX_TORQUE_L, RX28M::MAX_VALUE, 0) == CM730::SUCCESS)
+            if(cm730->WriteWord(id, MX28::P_MAX_TORQUE_L, MX28::MAX_VALUE, 0) == CM730::SUCCESS)
                 break;
 
             FailCount++;
@@ -325,7 +325,7 @@ void Reset(CM730 *cm730, int id)
         FailCount = 0;
         while(1)
         {
-            if(cm730->WriteByte(id, RX28M::P_ALARM_LED, 36, 0) == CM730::SUCCESS) // Overload, Overheat
+            if(cm730->WriteByte(id, MX28::P_ALARM_LED, 36, 0) == CM730::SUCCESS) // Overload, Overheat
                 break;
 
             FailCount++;
@@ -339,7 +339,7 @@ void Reset(CM730 *cm730, int id)
         FailCount = 0;
         while(1)
         {
-            if(cm730->WriteByte(id, RX28M::P_ALARM_SHUTDOWN, 36, 0) == CM730::SUCCESS) // Overload, Overheat
+            if(cm730->WriteByte(id, MX28::P_ALARM_SHUTDOWN, 36, 0) == CM730::SUCCESS) // Overload, Overheat
                 break;
 
             FailCount++;
@@ -364,7 +364,7 @@ int main(int argc, char *argv[])
     fprintf(stderr,   "***********************************************************************\n\n");
 
     char *controller_fw = (char*)"cm730_0x12.hex";
-    char *actuator_fw = (char*)"rx28m_0x1C_4096.hex";
+    char *actuator_fw = (char*)"mx28_0x1C_4096.hex";
     char *dev = (char*)"/dev/ttyUSB0";
 
     /* parameter parsing */
@@ -696,24 +696,24 @@ int main(int argc, char *argv[])
         if(cm730.Connect() == true)
         {
             int firm_ver = 0;
-            if(cm730.ReadByte(JointData::ID_HEAD_PAN, RX28M::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
+            if(cm730.ReadByte(JointData::ID_HEAD_PAN, MX28::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
             {
                 fprintf(stderr, "Can't read firmware version from Dynamixel ID %d!! \n\n", JointData::ID_HEAD_PAN);
                 goto EXIT;
             }
 
-#ifdef RX28M_1024
+#ifdef MX28_1024
             if(27 <= firm_ver)
             {
-                fprintf(stderr, "\n RX-28M's firmware is not support 1024 resolution!! \n");
-                fprintf(stderr, " Remove '#define RX28M_1024' from 'RX28M.h' file and rebuild.\n\n");
+                fprintf(stderr, "\n MX-28's firmware is not support 1024 resolution!! \n");
+                fprintf(stderr, " Remove '#define MX28_1024' from 'MX28.h' file and rebuild.\n\n");
                 goto EXIT;
             }
 #else
             if(0 < firm_ver && firm_ver < 27)
             {
-                fprintf(stderr, "\n RX-28M's firmware is not support 4096 resolution!! \n");
-                fprintf(stderr, " Upgrade RX-28M's firmware to version 27(0x1B) or higher.\n\n");
+                fprintf(stderr, "\n MX-28's firmware is not support 4096 resolution!! \n");
+                fprintf(stderr, " Upgrade MX-28's firmware to version 27(0x1B) or higher.\n\n");
                 goto EXIT;
             }
 #endif

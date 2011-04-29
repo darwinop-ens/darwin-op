@@ -84,11 +84,11 @@ void ReadStep(CM730 *cm730)
 	{
 		if(id >= JointData::ID_R_SHOULDER_PITCH && id <= JointData::ID_HEAD_TILT)
 		{
-			if(cm730->ReadByte(id, RX28M::P_TORQUE_ENABLE, &value, 0) == CM730::SUCCESS)
+			if(cm730->ReadByte(id, MX28::P_TORQUE_ENABLE, &value, 0) == CM730::SUCCESS)
 			{
 				if(value == 1)
 				{
-					if(cm730->ReadWord(id, RX28M::P_GOAL_POSITION_L, &value, 0) == CM730::SUCCESS)
+					if(cm730->ReadWord(id, MX28::P_GOAL_POSITION_L, &value, 0) == CM730::SUCCESS)
 						Step.position[id] = value;
 					else
 						Step.position[id] = Action::INVALID_BIT_MASK;
@@ -668,12 +668,12 @@ void SetValue(CM730 *cm730, int value)
 		}
 		else
 		{
-			if(value >= 0 && value <= RX28M::MAX_VALUE)
+			if(value >= 0 && value <= MX28::MAX_VALUE)
 			{
 				if(!(Step.position[row + 1] & Action::INVALID_BIT_MASK) && !(Step.position[row + 1] & Action::TORQUE_OFF_BIT_MASK))
 				{
 					int error;
-					if(cm730->WriteWord(row + 1, RX28M::P_GOAL_POSITION_L, value, &error) == CM730::SUCCESS)
+					if(cm730->WriteWord(row + 1, MX28::P_GOAL_POSITION_L, value, &error) == CM730::SUCCESS)
 					{
 						if(!(error & CM730::ANGLE_LIMIT))
 						{
@@ -740,7 +740,7 @@ void SetValue(CM730 *cm730, int value)
 		}
 		else
 		{
-			if(value >= 0 && value <= RX28M::MAX_VALUE)
+			if(value >= 0 && value <= MX28::MAX_VALUE)
 			{
 				if(!(Page.step[i].position[row + 1] & Action::INVALID_BIT_MASK))
 				{
@@ -844,11 +844,11 @@ void ToggleTorque(CM730 *cm730)
 
 	if(Step.position[id] & Action::TORQUE_OFF_BIT_MASK)
 	{
-		if(cm730->WriteByte(id, RX28M::P_TORQUE_ENABLE, 1, 0) != CM730::SUCCESS)
+		if(cm730->WriteByte(id, MX28::P_TORQUE_ENABLE, 1, 0) != CM730::SUCCESS)
 			return;
 
 		int value;
-		if(cm730->ReadWord(id, RX28M::P_PRESENT_POSITION_L, &value, 0) != CM730::SUCCESS)
+		if(cm730->ReadWord(id, MX28::P_PRESENT_POSITION_L, &value, 0) != CM730::SUCCESS)
 			return;
 
 		Step.position[id] = value;
@@ -856,7 +856,7 @@ void ToggleTorque(CM730 *cm730)
 	}
 	else
 	{
-		if(cm730->WriteByte(id, RX28M::P_TORQUE_ENABLE, 0, 0) != CM730::SUCCESS)
+		if(cm730->WriteByte(id, MX28::P_TORQUE_ENABLE, 0, 0) != CM730::SUCCESS)
 			return;
 
 		Step.position[id] = Action::TORQUE_OFF_BIT_MASK;
@@ -981,16 +981,16 @@ void PlayCmd(CM730 *cm730)
 
 	for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
 	{
-		if(cm730->ReadByte(id, RX28M::P_TORQUE_ENABLE, &value, 0) == CM730::SUCCESS)
+		if(cm730->ReadByte(id, MX28::P_TORQUE_ENABLE, &value, 0) == CM730::SUCCESS)
 		{
 			if(value == 0)
 			{
-				if(cm730->ReadWord(id, RX28M::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
+				if(cm730->ReadWord(id, MX28::P_PRESENT_POSITION_L, &value, 0) == CM730::SUCCESS)
 					MotionStatus::m_CurrentJoints.SetValue(id, value);
 			}
 			else
 			{
-				if(cm730->ReadWord(id, RX28M::P_GOAL_POSITION_L, &value, 0) == CM730::SUCCESS)
+				if(cm730->ReadWord(id, MX28::P_GOAL_POSITION_L, &value, 0) == CM730::SUCCESS)
 					MotionStatus::m_CurrentJoints.SetValue(id, value);
 			}
 		}
@@ -1116,14 +1116,14 @@ void OnOffCmd(CM730 *cm730, bool on, int num_param, int *list)
 	if(num_param == 0)
 	{
 		for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
-			cm730->WriteByte(id, RX28M::P_TORQUE_ENABLE, (int)on, 0);
+			cm730->WriteByte(id, MX28::P_TORQUE_ENABLE, (int)on, 0);
 	}
 	else
 	{
 		for(int i=0; i<num_param; i++)
 		{
 			if(list[i] >= JointData::ID_R_SHOULDER_PITCH && list[i] <= JointData::ID_HEAD_TILT)
-				cm730->WriteByte(list[i], RX28M::P_TORQUE_ENABLE, (int)on, 0);
+				cm730->WriteByte(list[i], MX28::P_TORQUE_ENABLE, (int)on, 0);
 		}
 	}
 
@@ -1321,7 +1321,7 @@ void GoCmd(CM730 *cm730, int index)
 			return;
 		}
 
-		if(cm730->ReadWord(id, RX28M::P_PRESENT_POSITION_L, &wStartPosition, 0) != CM730::SUCCESS)
+		if(cm730->ReadWord(id, MX28::P_PRESENT_POSITION_L, &wStartPosition, 0) != CM730::SUCCESS)
 		{
 			PrintCmd("Failed to read position");
 			return;
@@ -1344,7 +1344,7 @@ void GoCmd(CM730 *cm730, int index)
 		param[n++] = CM730::GetHighByte(wDistance);
 	}
 
-	cm730->SyncWrite(RX28M::P_GOAL_POSITION_L, 5, JointData::NUMBER_OF_JOINTS - 1, param);
+	cm730->SyncWrite(MX28::P_GOAL_POSITION_L, 5, JointData::NUMBER_OF_JOINTS - 1, param);
 
 	Step = Page.step[index];
 	DrawStep(7);
