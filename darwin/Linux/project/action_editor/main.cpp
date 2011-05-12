@@ -80,8 +80,7 @@ int main(int argc, char *argv[])
 			return 0;
 	}
 	MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());	
-	LinuxMotionTimer::Initialize(MotionManager::GetInstance());
-	LinuxMotionTimer::Stop();
+	MotionManager::GetInstance()->StopThread();
 	/////////////////////////////////////////////////////////////////////
 
 	DrawIntro(&cm730);

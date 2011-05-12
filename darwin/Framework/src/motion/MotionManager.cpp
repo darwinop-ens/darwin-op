@@ -21,6 +21,7 @@ MotionManager::MotionManager() :
         m_ProcessEnable(false),
         m_Enabled(false),
         m_IsRunning(false),
+        m_IsThreadRunning(false),
         DEBUG_PRINT(false)
 {
 }
@@ -110,8 +111,14 @@ bool MotionManager::Reinitialize()
 void MotionManager::StartThread()
 {
     pthread_t motion_thread = 0;
+    m_IsThreadRunning = true;
     pthread_create(&motion_thread, NULL, ThreadFunc, NULL);
     pthread_detach(motion_thread);
+}
+
+void MotionManager::StopThread()
+{
+    m_IsThreadRunning = false;
 }
 
 void* MotionManager::ThreadFunc(void* args)
@@ -123,7 +130,7 @@ void* MotionManager::ThreadFunc(void* args)
     struct timespec t;
     clock_gettime(CLOCK_REALTIME, &t);
 
-    while(1)
+    while(MotionManager::GetInstance()->m_IsThreadRunning)
     {
         t.tv_nsec += 8*1000*1000;   // 8 ms
         if(t.tv_nsec > 1000*1000*1000)

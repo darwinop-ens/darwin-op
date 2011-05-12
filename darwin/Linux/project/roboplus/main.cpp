@@ -120,8 +120,7 @@ int main(int argc, char *argv[])
 			return 0;
 	}
 	MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());	
-	LinuxMotionTimer::Initialize(MotionManager::GetInstance());
-	LinuxMotionTimer::Stop();
+    MotionManager::GetInstance()->StopThread();
 	/////////////////////////////////////////////////////////////////////
 
     int firm_ver = 0;
@@ -380,7 +379,7 @@ int main(int argc, char *argv[])
 							}
 						}														
 						
-						LinuxMotionTimer::Start();
+					    MotionManager::GetInstance()->StartThread();
 						MotionManager::GetInstance()->SetEnable(true);
 						
 						int index = (int)atoi(p_str_tok[1].c_str());
@@ -402,7 +401,7 @@ int main(int argc, char *argv[])
 							new_sock << "{[OK]}\n";
 							cout << "[END]" << endl;
 							MotionManager::GetInstance()->SetEnable(false);
-							LinuxMotionTimer::Stop();
+						    MotionManager::GetInstance()->StopThread();
 						}
 					}
                     else if(p_str_tok[0] == "stop")
@@ -486,7 +485,7 @@ int main(int argc, char *argv[])
 					while(Action::GetInstance()->IsRunning() == 1)
 						usleep(1);
 					MotionManager::GetInstance()->SetEnable(false);
-					LinuxMotionTimer::Stop();
+				    MotionManager::GetInstance()->StopThread();
 				}
 			}
         }

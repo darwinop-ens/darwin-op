@@ -30,6 +30,7 @@ namespace Robot
 		int m_CalibrationTime;
 
 		bool m_IsRunning;
+		bool m_IsThreadRunning;
 
         MotionManager();
 
@@ -54,6 +55,7 @@ namespace Robot
 		void SetJointDisable(int index);
 
 		void StartThread();
+		void StopThread();
 		static void* ThreadFunc(void* args);
 	};
 }
