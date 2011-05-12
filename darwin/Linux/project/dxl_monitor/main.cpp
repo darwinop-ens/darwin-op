@@ -14,6 +14,7 @@ using namespace Robot;
 LinuxCM730 linux_cm730("/dev/ttyUSB0");
 CM730 cm730(&linux_cm730);
 
+int gID = CM730::ID_CM;
 
 void sighandler(int sig)
 {
@@ -27,7 +28,6 @@ int main()
 	signal(SIGQUIT, &sighandler);
 	signal(SIGINT, &sighandler);
 
-	int id = CM730::ID_CM;
 	char input[MAXNUM_INPUTCHAR];
 	char *token;
 	int input_len;
@@ -44,7 +44,7 @@ int main()
 
 		while(1)
 		{
-			Prompt(id);
+			Prompt(gID);
 			gets(input);
 			fflush(stdin);
 			input_len = strlen(input);
@@ -79,23 +79,22 @@ int main()
 				}
 				
 				iparam[0] = atoi(param[0]);
-				if(iparam[0] < JointData::ID_R_SHOULDER_PITCH || iparam[0] > JointData::ID_HEAD_TILT)
-				{
-					if(iparam[0] != CM730::ID_CM)
-					{
-						printf(" Invalid ID(%d)!\n", iparam[0]);
-						continue;
-					}
-				}
-
-				id = iparam[0];
+	            if(cm730.Ping(iparam[0], 0) == CM730::SUCCESS)
+	            {
+	                gID = iparam[0];
+	            }
+	            else
+	            {
+                    printf(" Invalid ID(%d)!\n", iparam[0]);
+                    continue;
+	            }
 			}
 			else if(strcmp(cmd, "on") == 0)
 			{
 				if(num_param == 0)
 				{
-					cm730.WriteByte(id, MX28::P_TORQUE_ENABLE, 1, 0);
-					if(id == CM730::ID_CM)
+					cm730.WriteByte(gID, MX28::P_TORQUE_ENABLE, 1, 0);
+					if(gID == CM730::ID_CM)
 						printf(" Dynamixel power on\n");
 				}
 				else if(num_param == 1)
@@ -121,8 +120,8 @@ int main()
 			{
 				if(num_param == 0)
 				{
-					cm730.WriteByte(id, MX28::P_TORQUE_ENABLE, 0, 0);
-					if(id == CM730::ID_CM)
+					cm730.WriteByte(gID, MX28::P_TORQUE_ENABLE, 0, 0);
+					if(gID == CM730::ID_CM)
 						printf(" Dynamixel power off\n");
 				}
 				else if(num_param == 1)
@@ -145,7 +144,7 @@ int main()
 				}
 			}
 			else if(strcmp(cmd, "d") == 0)
-				Dump(&cm730, id);
+				Dump(&cm730, gID);
 			else if(strcmp(cmd, "reset") == 0)
 			{
 			    int firm_ver = 0;
@@ -172,7 +171,7 @@ int main()
 #endif
 
 				if(num_param == 0)
-					Reset(&cm730, id);
+					Reset(&cm730, gID);
 				else if(num_param == 1)
 				{
 					if(strcmp(param[0], "all") == 0)
@@ -197,7 +196,7 @@ int main()
 			else if(strcmp(cmd, "wr") == 0)
 			{
 				if(num_param == 2)
-					Write(&cm730, id, atoi(param[0]), atoi(param[1]));
+					Write(&cm730, gID, atoi(param[0]), atoi(param[1]));
 				else
 				{
 					printf(" Invalid parameter!\n");

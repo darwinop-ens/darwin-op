@@ -4,6 +4,7 @@
 
 using namespace Robot;
 
+extern int gID;
 
 const char *GetIDString(int id)
 {
@@ -100,20 +101,19 @@ void Scan(CM730 *cm730)
 {
 	printf("\n");
 
-	for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
+	for(int id=1; id<254; id++)
 	{
-		printf(" Check ID:%d(%s) ...", id, GetIDString(id));
-		if(cm730->Ping(id, 0) == CM730::SUCCESS)
-			printf("OK\n");
-		else
-			printf("FAIL\n");
+        if(cm730->Ping(id, 0) == CM730::SUCCESS)
+        {
+            printf("                                  ... OK\r");
+            printf(" Check ID:%d(%s)\n", id, GetIDString(id));
+        }
+        else if(id < JointData::NUMBER_OF_JOINTS || id == CM730::ID_CM)
+        {
+            printf("                                  ... FAIL\r");
+            printf(" Check ID:%d(%s)\n", id, GetIDString(id));
+        }
 	}
-
-	printf(" Check ID:%d(%s) ...", CM730::ID_CM, GetIDString(CM730::ID_CM));
-	if(cm730->Ping(CM730::ID_CM, 0) == CM730::SUCCESS)
-		printf("OK\n");
-	else
-		printf("FAIL\n");
 
 	printf("\n");
 }
@@ -526,7 +526,7 @@ void Reset(Robot::CM730 *cm730, int id)
 
 void Write(Robot::CM730 *cm730, int id, int addr, int value)
 {
-	if(addr == MX28::P_ID || addr == MX28::P_BAUD_RATE || addr == MX28::P_RETURN_DELAY_TIME || addr == MX28::P_RETURN_LEVEL)
+	if(addr == MX28::P_BAUD_RATE || addr == MX28::P_RETURN_DELAY_TIME || addr == MX28::P_RETURN_LEVEL)
 	{
 		printf( " Can not change this address[%d]\n", addr);
 		return;
@@ -560,7 +560,20 @@ void Write(Robot::CM730 *cm730, int id, int addr, int value)
 			return;
 		}
 
-        if(addr == MX28::P_HIGH_LIMIT_TEMPERATURE
+		if(addr == MX28::P_ID)
+		{
+		    if(cm730->Ping(value, 0) == CM730::SUCCESS)
+		    {
+		        printf( " Can not change the ID. ID[%d] is in use.. \n", value);
+		        return;
+		    }
+		    else
+		    {
+		        res = cm730->WriteByte(id, addr, value, &error);
+		        gID = value;
+		    }
+		}
+		else if(addr == MX28::P_HIGH_LIMIT_TEMPERATURE
             || addr == MX28::P_LOW_LIMIT_VOLTAGE
             || addr == MX28::P_HIGH_LIMIT_VOLTAGE
             || addr == MX28::P_ALARM_LED
