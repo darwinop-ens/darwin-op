@@ -113,6 +113,11 @@ int main(int argc, char *argv[])
                 {
                     if(idx > 0)
                     {
+                        ch = 0x08;
+                        printf("%c", ch);
+                        ch = ' ';
+                        printf("%c", ch);
+                        ch = 0x08;
                         printf("%c", ch);
                         input[--idx] = 0;
                     }
