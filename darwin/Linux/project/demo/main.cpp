@@ -100,7 +100,8 @@ int main(void)
     MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());
     MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
 
-    MotionManager::GetInstance()->StartThread();
+    //MotionManager::GetInstance()->StartThread();
+    LinuxMotionTimer::Initialize(MotionManager::GetInstance());
     /////////////////////////////////////////////////////////////////////
 
     int firm_ver = 0;
