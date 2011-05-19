@@ -286,10 +286,13 @@ int CM730::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int prio
                             m_BulkReadData[rxpacket[ID]].error = (int)rxpacket[ERRBIT];
                             res = SUCCESS;
 
-                            for(int j = 0; j <= get_length - LENGTH+rxpacket[LENGTH]; j++)
-                                rxpacket[j] = rxpacket[j+LENGTH+rxpacket[LENGTH]+1];
+                            int cur_packet_length = LENGTH + 1 + rxpacket[LENGTH];
+                            to_length = get_length - cur_packet_length;
+                            for(int j = 0; j <= to_length; j++)
+                                rxpacket[j] = rxpacket[j+cur_packet_length];
 
-                            to_length = get_length -= LENGTH+rxpacket[LENGTH];
+                            get_length = to_length;
+                            num--;
                         }
                         else
                         {
@@ -301,7 +304,7 @@ int CM730::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int prio
                             to_length = get_length -= 2;
                         }
 
-                        if(--num == 0) break;
+                        if(num == 0) break;
                         else if(get_length <= 6) break;
 
                     }
