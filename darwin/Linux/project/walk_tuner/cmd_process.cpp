@@ -364,6 +364,7 @@ void IncreaseValue(bool large)
 	switch(row)
 	{
 	case WALKING_MODE_ROW:
+	    MotionManager::GetInstance()->StartLogging();
 		Walking::GetInstance()->Start();
 		printf("ON    ");
 		break;
@@ -606,6 +607,7 @@ void DecreaseValue(bool large)
 	{
 	case WALKING_MODE_ROW:
 		Walking::GetInstance()->Stop();
+		MotionManager::GetInstance()->StopLogging();
 		printf("OFF");
 		GoToCursor(PARAM_COL, STEP_FORWARDBACK_ROW);
 		Walking::GetInstance()->X_MOVE_AMPLITUDE = 0;

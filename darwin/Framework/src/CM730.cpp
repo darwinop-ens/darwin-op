@@ -5,6 +5,7 @@
  *
  */
 #include <stdio.h>
+#include "FSR.h"
 #include "CM730.h"
 #include "MotionStatus.h"
 
@@ -426,15 +427,31 @@ void CM730::MakeBulkReadPacket()
         number++;
     }
 
-    for(int id = 1; id < JointData::NUMBER_OF_JOINTS; id++)
+//    for(int id = 1; id < JointData::NUMBER_OF_JOINTS; id++)
+//    {
+//        if(MotionStatus::m_CurrentJoints.GetEnable(id))
+//        {
+//            m_BulkReadTxPacket[PARAMETER+3*number+1] = 2;   // length
+//            m_BulkReadTxPacket[PARAMETER+3*number+2] = id;  // id
+//            m_BulkReadTxPacket[PARAMETER+3*number+3] = MX28::P_PRESENT_POSITION_L; // start address
+//            number++;
+//        }
+//    }
+
+    if(Ping(FSR::ID_L_FSR, 0) == SUCCESS)
     {
-        if(MotionStatus::m_CurrentJoints.GetEnable(id))
-        {
-            m_BulkReadTxPacket[PARAMETER+3*number+1] = 2;   // length
-            m_BulkReadTxPacket[PARAMETER+3*number+2] = id;  // id
-            m_BulkReadTxPacket[PARAMETER+3*number+3] = MX28::P_PRESENT_POSITION_L; // start address
-            number++;
-        }
+        m_BulkReadTxPacket[PARAMETER+3*number+1] = 2;               // length
+        m_BulkReadTxPacket[PARAMETER+3*number+2] = FSR::ID_L_FSR;   // id
+        m_BulkReadTxPacket[PARAMETER+3*number+3] = FSR::P_FSR_X;    // start address
+        number++;
+    }
+
+    if(Ping(FSR::ID_R_FSR, 0) == SUCCESS)
+    {
+        m_BulkReadTxPacket[PARAMETER+3*number+1] = 2;               // length
+        m_BulkReadTxPacket[PARAMETER+3*number+2] = FSR::ID_R_FSR;   // id
+        m_BulkReadTxPacket[PARAMETER+3*number+3] = FSR::P_FSR_X;    // start address
+        number++;
     }
 
     fprintf(stderr, "NUMBER : %d \n", number);

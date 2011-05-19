@@ -9,6 +9,8 @@
 #define _MOTION_MANGER_H_
 
 #include <list>
+#include <fstream>
+#include <iostream>
 #include "MotionStatus.h"
 #include "MotionModule.h"
 #include "CM730.h"
@@ -31,6 +33,9 @@ namespace Robot
 
 		bool m_IsRunning;
 		bool m_IsThreadRunning;
+		bool m_IsLogging;
+
+		std::ofstream m_LogFileStream;
 
         MotionManager();
 
@@ -57,6 +62,9 @@ namespace Robot
 		void StartThread();
 		void StopThread();
 		static void* ThreadFunc(void* args);
+
+		void StartLogging();
+		void StopLogging();
 	};
 }
 

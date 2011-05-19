@@ -9,6 +9,7 @@
 #include <sys/time.h>
 #include <signal.h>
 #include <pthread.h>
+#include "FSR.h"
 #include "MX28.h"
 #include "MotionManager.h"
 
@@ -22,6 +23,7 @@ MotionManager::MotionManager() :
         m_Enabled(false),
         m_IsRunning(false),
         m_IsThreadRunning(false),
+        m_IsLogging(false),
         DEBUG_PRINT(false)
 {
 }
@@ -147,6 +149,34 @@ void* MotionManager::ThreadFunc(void* args)
     return 0;
 }
 
+void MotionManager::StartLogging()
+{
+    char szFile[32] = {0,};
+
+    int count = 0;
+    while(1)
+    {
+        sprintf(szFile, "Logs/Log%d.csv", count);
+        if(0 != access(szFile, F_OK))
+            break;
+        count++;
+		if(count > 256) return;
+    }
+
+    m_LogFileStream.open(szFile, std::ios::out);
+    for(int id = 1; id < JointData::NUMBER_OF_JOINTS; id++)
+        m_LogFileStream << "ID_" << id << "_GP,ID_" << id << "_PP,";
+    m_LogFileStream << "GyroFB,GyroRL,AccelFB,AccelRL,L_FSR_X,L_FSR_Y,R_FSR_X,R_FSR_Y" << std::endl;
+
+    m_IsLogging = true;
+}
+
+void MotionManager::StopLogging()
+{
+    m_IsLogging = false;
+    m_LogFileStream.close();
+}
+
 #define WINDOW_SIZE 30
 void MotionManager::Process()
 {
@@ -258,6 +288,22 @@ void MotionManager::Process()
     }
 
     m_CM730->BulkRead();
+
+    if(m_IsLogging)
+    {
+        for(int id = 1; id < JointData::NUMBER_OF_JOINTS; id++)
+            m_LogFileStream << MotionStatus::m_CurrentJoints.GetValue(id) << "," << m_CM730->m_BulkReadData[id].ReadWord(MX28::P_PRESENT_POSITION_L) << ",";
+
+        m_LogFileStream << m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_GYRO_Y_L) << ",";
+        m_LogFileStream << m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_GYRO_X_L) << ",";
+        m_LogFileStream << m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_ACCEL_Y_L) << ",";
+        m_LogFileStream << m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_ACCEL_X_L) << ",";
+        m_LogFileStream << m_CM730->m_BulkReadData[FSR::ID_L_FSR].ReadByte(FSR::P_FSR_X) << ",";
+        m_LogFileStream << m_CM730->m_BulkReadData[FSR::ID_L_FSR].ReadByte(FSR::P_FSR_Y) << ",";
+        m_LogFileStream << m_CM730->m_BulkReadData[FSR::ID_R_FSR].ReadByte(FSR::P_FSR_X) << ",";
+        m_LogFileStream << m_CM730->m_BulkReadData[FSR::ID_R_FSR].ReadByte(FSR::P_FSR_Y) << ",";
+        m_LogFileStream << std::endl;
+    }
 
     if(m_CM730->m_BulkReadData[CM730::ID_CM].error == 0)
         MotionStatus::BUTTON = m_CM730->m_BulkReadData[CM730::ID_CM].ReadByte(CM730::P_BUTTON);
