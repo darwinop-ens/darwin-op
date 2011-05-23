@@ -1,6 +1,6 @@
 ###############################################################
 #
-# Purpose: Makefile for "camera tutorial"
+# Purpose: Makefile for "action_script"
 # Author.: robotis
 # Version: 0.1
 # License: GPL

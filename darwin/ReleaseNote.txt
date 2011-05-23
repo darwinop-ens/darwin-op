@@ -3,6 +3,34 @@ https://sourceforge.net/projects/darwinop/
 
 
 =====================================
+          DARwIn-OP v1.2.0
+=====================================
+>>> Date: 23 May 2011
+
+>>> New functionality/features
+
+    * BulkRead instruction added.
+    * Support FSR sensor.
+
+
+>>> Changes
+    
+    * Actuator Model name changed (RX-28M -> MX-28)
+    * MX-28 firmware updated.
+    * dxl_monitor : can change ID (control table addr 3)
+
+
+>>> Bug fixes
+    
+    * action_editor : command line bug fixed. (can't input space or number)
+                      linux terminal backspace bug fixed.
+    * walk_tuner : linux terminal backspace bug fixed.
+    * read_write : at the start, torque off the right arm.
+    * firmware installer : seperate firmware of the controller and actuator
+
+
+
+=====================================
           DARwIn-OP v1.1.0
 =====================================
 >>> Date: 8 Apr 2011

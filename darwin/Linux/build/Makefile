@@ -1,7 +1,7 @@
 ###############################################################
 #
 # Purpose: Makefile for "DARwIn Linux Framework"
-# Author.: zerom
+# Author.: robotis
 # Version: 0.1
 # License: GPL
 #
