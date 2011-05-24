@@ -91,7 +91,7 @@ void help(char *progname)
                     " [-h | --help]........: display this help\n" \
                     " [-d | --device]......: port to open                    (/dev/ttyUSB0)\n" \
                     " [-c | --controller]..: controller firmware file      (cm730_0x12.hex)\n" \
-                    " [-a | --actuator]....: actuator firmware file    (mx28_0x1C_4096.hex)\n", progname);
+                    " [-a | --actuator]....: actuator firmware file    (mx28_0x1D_4096.hex)\n", progname);
     fprintf(stderr, "-----------------------------------------------------------------------\n");
     fprintf(stderr, "Example #1:\n" \
                     " To open a default port and install with firmware file \"cm730.hex\":\n" \
@@ -364,7 +364,7 @@ int main(int argc, char *argv[])
     fprintf(stderr,   "***********************************************************************\n\n");
 
     char *controller_fw = (char*)"cm730_0x12.hex";
-    char *actuator_fw = (char*)"mx28_0x1C_4096.hex";
+    char *actuator_fw = (char*)"mx28_0x1D_4096.hex";
     char *dev = (char*)"/dev/ttyUSB0";
 
     /* parameter parsing */
