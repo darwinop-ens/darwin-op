@@ -58,6 +58,9 @@ LinuxCamera::~LinuxCamera()
 void LinuxCamera::ErrorExit(const char* s)
 {
     fprintf(stderr, "%s error %d, %s\n", s, errno, strerror(errno));
+    if(errno == 16)
+        fprintf(stderr, "\nYou must free up camera resources used by running programs. \n"
+                "Kill a program that uses the camera.\n\n");
     exit(EXIT_FAILURE);
 }
 

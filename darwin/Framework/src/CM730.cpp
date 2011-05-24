@@ -76,7 +76,7 @@ int CM730::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int prio
 		m_Platform->MidPriorityWait();
 	m_Platform->HighPriorityWait();
 
-	int res;
+	int res = TX_FAIL;
 	int length = txpacket[LENGTH] + 4;
 
 	txpacket[0] = 0xFF;
@@ -240,7 +240,10 @@ int CM730::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int prio
                     get_length += length;
 
                     if(get_length == to_length)
+                    {
+                        res = SUCCESS;
                         break;
+                    }
                     else
                     {
                         if(m_Platform->IsPacketTimeout() == true)
@@ -285,7 +288,6 @@ int CM730::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int prio
                                 m_BulkReadData[rxpacket[ID]].table[m_BulkReadData[rxpacket[ID]].start_address + j] = rxpacket[PARAMETER + j];
 
                             m_BulkReadData[rxpacket[ID]].error = (int)rxpacket[ERRBIT];
-                            res = SUCCESS;
 
                             int cur_packet_length = LENGTH + 1 + rxpacket[LENGTH];
                             to_length = get_length - cur_packet_length;
@@ -305,8 +307,13 @@ int CM730::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int prio
                             to_length = get_length -= 2;
                         }
 
-                        if(num == 0) break;
-                        else if(get_length <= 6) break;
+                        if(num == 0)
+                            break;
+                        else if(get_length <= 6)
+                        {
+                            if(num != 0) res = RX_CORRUPT;
+                            break;
+                        }
 
                     }
                     else
@@ -493,8 +500,8 @@ bool CM730::Connect()
 {
 	if(m_Platform->OpenPort() == false)
 	{
-		if(DEBUG_PRINT == true)
-			fprintf(stderr, " Fail to open port\n");
+        fprintf(stderr, "\n Fail to open port\n");
+        fprintf(stderr, " If you are running a program using the CM-730, kill the program.\n\n");
 		return false;
 	}
 
