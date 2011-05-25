@@ -49,7 +49,7 @@ namespace Robot
 
 		enum
 		{
-		    P_GAIN_DEFAULT      = 8,
+		    P_GAIN_DEFAULT      = 32,
 		    I_GAIN_DEFAULT      = 0,
 		    D_GAIN_DEFAULT      = 0
 		};
