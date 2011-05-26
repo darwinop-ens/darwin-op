@@ -25,6 +25,10 @@ int main()
     cm730.WriteWord(JointData::ID_R_SHOULDER_ROLL,  MX28::P_TORQUE_ENABLE, 0, 0);
     cm730.WriteWord(JointData::ID_R_ELBOW,          MX28::P_TORQUE_ENABLE, 0, 0);
 
+    cm730.WriteByte(JointData::ID_L_SHOULDER_PITCH, MX28::P_P_GAIN, 1, 0);
+    cm730.WriteByte(JointData::ID_L_SHOULDER_ROLL,  MX28::P_P_GAIN, 1, 0);
+    cm730.WriteByte(JointData::ID_L_ELBOW,          MX28::P_P_GAIN, 1, 0);
+
 	while(1)
 	{
 		printf("\r");
