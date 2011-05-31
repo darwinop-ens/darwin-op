@@ -501,7 +501,7 @@ bool CM730::Connect()
 	if(m_Platform->OpenPort() == false)
 	{
         fprintf(stderr, "\n Fail to open port\n");
-        fprintf(stderr, " If you are running a program using the CM-730, kill the program.\n\n");
+        fprintf(stderr, " CM-730 is used by another program or do not have root privileges.\n\n");
 		return false;
 	}
 
