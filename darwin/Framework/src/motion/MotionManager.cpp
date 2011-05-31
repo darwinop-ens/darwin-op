@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include <math.h>
 #include <sys/time.h>
 #include <signal.h>
 #include <pthread.h>
@@ -69,10 +70,9 @@ bool MotionManager::Initialize(CM730 *cm730)
 		}
 	}
 
-	m_SensorCalibrated = false;
-	m_CalibrationTime = 0;
-	m_FBGyroCenter = 0;
-	m_RLGyroCenter = 0;
+	m_CalibrationStatus = 0;
+	m_FBGyroCenter = 512;
+	m_RLGyroCenter = 512;
 
 	return true;
 }
@@ -177,7 +177,9 @@ void MotionManager::StopLogging()
     m_LogFileStream.close();
 }
 
-#define WINDOW_SIZE 30
+#define GYRO_WINDOW_SIZE    100
+#define ACCEL_WINDOW_SIZE   30
+#define MARGIN_OF_SD        2.0
 void MotionManager::Process()
 {
     if(m_ProcessEnable == false || m_IsRunning == true)
@@ -186,30 +188,69 @@ void MotionManager::Process()
     m_IsRunning = true;
 
     // calibrate gyro sensor
-    if(m_SensorCalibrated == false)
+    if(m_CalibrationStatus == 0 || m_CalibrationStatus == -1)
     {
-        if(m_CalibrationTime <= 20)
+        static int fb_gyro_array[GYRO_WINDOW_SIZE] = {512,};
+        static int rl_gyro_array[GYRO_WINDOW_SIZE] = {512,};
+        static int buf_idx = 0;
+
+        if(buf_idx < GYRO_WINDOW_SIZE)
         {
             if(m_CM730->m_BulkReadData[CM730::ID_CM].error == 0)
             {
-                m_FBGyroCenter += m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_GYRO_Y_L);
-                m_RLGyroCenter += m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_GYRO_X_L);
-                m_CalibrationTime++;
+                fb_gyro_array[buf_idx] = m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_GYRO_Y_L);
+                rl_gyro_array[buf_idx] = m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_GYRO_X_L);
+                buf_idx++;
             }
         }
         else
         {
-            m_FBGyroCenter = (int)((double)m_FBGyroCenter / (double)m_CalibrationTime);
-            m_RLGyroCenter = (int)((double)m_RLGyroCenter / (double)m_CalibrationTime);
-            m_SensorCalibrated = true;
-            if(DEBUG_PRINT == true)
-                fprintf(stderr, "FBGyroCenter:%d , RLGyroCenter:%d \n", m_FBGyroCenter, m_RLGyroCenter);
+            double fb_sum = 0.0, rl_sum = 0.0;
+            double fb_sd = 0.0, rl_sd = 0.0;
+            double fb_diff, rl_diff;
+            double fb_mean = 0.0, rl_mean = 0.0;
+
+            buf_idx = 0;
+
+            for(int i = 0; i < GYRO_WINDOW_SIZE; i++)
+            {
+                fb_sum += fb_gyro_array[i];
+                rl_sum += rl_gyro_array[i];
+            }
+            fb_mean = fb_sum / GYRO_WINDOW_SIZE;
+            rl_mean = rl_sum / GYRO_WINDOW_SIZE;
+
+            fb_sum = 0.0; rl_sum = 0.0;
+            for(int i = 0; i < GYRO_WINDOW_SIZE; i++)
+            {
+                fb_diff = fb_gyro_array[i] - fb_mean;
+                rl_diff = rl_gyro_array[i] - rl_mean;
+                fb_sum += fb_diff * fb_diff;
+                rl_sum += rl_diff * rl_diff;
+            }
+            fb_sd = sqrt(fb_sum / GYRO_WINDOW_SIZE);
+            rl_sd = sqrt(rl_sum / GYRO_WINDOW_SIZE);
+
+            if(fb_sd < MARGIN_OF_SD && rl_sd < MARGIN_OF_SD)
+            {
+                m_FBGyroCenter = (int)fb_mean;
+                m_RLGyroCenter = (int)rl_mean;
+                m_CalibrationStatus = 1;
+                if(DEBUG_PRINT == true)
+                    fprintf(stderr, "FBGyroCenter:%d , RLGyroCenter:%d \n", m_FBGyroCenter, m_RLGyroCenter);
+            }
+            else
+            {
+                m_FBGyroCenter = 512;
+                m_RLGyroCenter = 512;
+                m_CalibrationStatus = -1;
+            }
         }
     }
 
-    if(m_SensorCalibrated == true && m_Enabled == true)
+    if(m_CalibrationStatus == 1 && m_Enabled == true)
     {
-        static int fb_array[WINDOW_SIZE] = {512};
+        static int fb_array[ACCEL_WINDOW_SIZE] = {512,};
         static int buf_idx = 0;
         if(m_CM730->m_BulkReadData[CM730::ID_CM].error == 0)
         {
@@ -218,13 +259,13 @@ void MotionManager::Process()
             MotionStatus::RL_ACCEL = m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_ACCEL_X_L);
             MotionStatus::FB_ACCEL = m_CM730->m_BulkReadData[CM730::ID_CM].ReadWord(CM730::P_ACCEL_Y_L);
             fb_array[buf_idx] = MotionStatus::FB_ACCEL;
-            if(++buf_idx >= WINDOW_SIZE) buf_idx = 0;
+            if(++buf_idx >= ACCEL_WINDOW_SIZE) buf_idx = 0;
         }
 
         int sum = 0, avr = 512;
-        for(int idx = 0; idx < WINDOW_SIZE; idx++)
+        for(int idx = 0; idx < ACCEL_WINDOW_SIZE; idx++)
             sum += fb_array[idx];
-        avr = sum / WINDOW_SIZE;
+        avr = sum / ACCEL_WINDOW_SIZE;
 
         if(avr < MotionStatus::FALLEN_F_LIMIT)
             MotionStatus::FALLEN = FORWARD;

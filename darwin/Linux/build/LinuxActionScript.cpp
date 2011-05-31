@@ -137,3 +137,29 @@ int LinuxActionScript::PlayMP3(const char* filename)
     return 1;
 }
 
+int LinuxActionScript::PlayMP3Wait(const char* filename)
+{
+    if(mp3_pid != -1)
+        kill(mp3_pid, SIGKILL);
+
+    mp3_pid = fork();
+
+    switch(mp3_pid)
+    {
+    case -1:
+        fprintf(stderr, "Fork failed!! \n");
+        break;
+    case 0:
+        fprintf(stderr, "Playing MPEG stream from \"%s\" ...\n", filename);
+        execl("/usr/bin/madplay", "madplay", filename, "-q", (char*)0);
+        fprintf(stderr, "exec failed!! \n");
+        break;
+    default:
+        int status;
+        waitpid(mp3_pid, &status, 0);
+        break;
+    }
+
+    return 1;
+}
+

@@ -30,6 +30,7 @@ namespace Robot
         static bool m_is_running;
 
         static int ScriptStart(const char* filename);
+        static int PlayMP3Wait(const char* filename);
         static int PlayMP3(const char* filename);
     };
 }

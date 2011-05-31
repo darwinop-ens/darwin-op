@@ -115,6 +115,20 @@ void StatusCheck::Check(CM730 &cm730)
                 Walking::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true, true);
 
                 MotionManager::GetInstance()->ResetGyroCalibration();
+                while(1)
+                {
+                    if(MotionManager::GetInstance()->GetCalibrationStatus() == 1)
+                    {
+                        LinuxActionScript::PlayMP3("../../../Data/mp3/Sensor calibration complete.mp3");
+                        break;
+                    }
+                    else if(MotionManager::GetInstance()->GetCalibrationStatus() == -1)
+                    {
+                        LinuxActionScript::PlayMP3Wait("../../../Data/mp3/Sensor calibration fail.mp3");
+                        MotionManager::GetInstance()->ResetGyroCalibration();
+                    }
+                    usleep(8000);
+                }
             }
             else if(m_cur_mode == MOTION)
             {

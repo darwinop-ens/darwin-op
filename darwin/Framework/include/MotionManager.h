@@ -28,8 +28,7 @@ namespace Robot
 		bool m_Enabled;
 		int m_FBGyroCenter;
 		int m_RLGyroCenter;
-		bool m_SensorCalibrated;
-		int m_CalibrationTime;
+		int m_CalibrationStatus;
 
 		bool m_IsRunning;
 		bool m_IsThreadRunning;
@@ -56,7 +55,8 @@ namespace Robot
 		void AddModule(MotionModule *module);
 		void RemoveModule(MotionModule *module);
 
-		void ResetGyroCalibration() { m_SensorCalibrated = false; m_CalibrationTime = 0; m_FBGyroCenter = 0; m_RLGyroCenter = 0; }
+		void ResetGyroCalibration() { m_CalibrationStatus = 0; m_FBGyroCenter = 512; m_RLGyroCenter = 512; }
+		int GetCalibrationStatus() { return m_CalibrationStatus; }
 		void SetJointDisable(int index);
 
 		void StartThread();
