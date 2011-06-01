@@ -5,7 +5,7 @@ https://sourceforge.net/projects/darwinop/
 =====================================
           DARwIn-OP v1.2.0
 =====================================
->>> Date: 23 May 2011
+>>> Date: 01 Jun 2011
 
 >>> New functionality/features
 
@@ -18,6 +18,8 @@ https://sourceforge.net/projects/darwinop/
     * Actuator Model name changed (RX-28M -> MX-28)
     * MX-28 firmware updated.
     * dxl_monitor : can change ID (control table addr 3)
+    * Get-up motion changed.
+    * Sensor calibration routine changed. (use standard deviation)
 
 
 >>> Bug fixes
