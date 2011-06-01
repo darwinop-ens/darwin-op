@@ -44,6 +44,7 @@ ColorFinder* httpd::ball_finder;
 ColorFinder* httpd::red_finder;
 ColorFinder* httpd::yellow_finder;
 ColorFinder* httpd::blue_finder;
+minIni*      httpd::ini;
 bool httpd::ClientRequest(false);
 
 /******************************************************************************
@@ -589,7 +590,7 @@ int httpd::input_cmd(in_cmd_type cmd, int value)
 
     //pthread_mutex_lock(&controls_mutex);
 
-    minIni* ini = new minIni("config.ini");
+    if(ini == NULL) ini = new minIni("config.ini");
 
     switch(cmd) {
     case IN_CMD_RELOAD:

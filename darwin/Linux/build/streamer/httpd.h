@@ -254,6 +254,7 @@ public:
     static ColorFinder* red_finder;
     static ColorFinder* yellow_finder;
     static ColorFinder* blue_finder;
+    static minIni*      ini;
 	static bool ClientRequest;
 
     static void *server_thread( void *arg );

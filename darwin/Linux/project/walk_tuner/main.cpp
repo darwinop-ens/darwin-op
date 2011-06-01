@@ -9,6 +9,7 @@
 #include <libgen.h>
 #include "cmd_process.h"
 
+#define INI_FILE_PATH       "../../../Data/config.ini"
 
 using namespace Robot;
 
@@ -39,13 +40,9 @@ int main(int argc, char *argv[])
     signal(SIGQUIT, &sighandler);
     signal(SIGINT, &sighandler);
 
-    char filename[128];
     change_current_dir();
-    if(argc < 2)
-        strcpy(filename, "config.ini"); // Set default config file path
-    else
-        strcpy(filename, argv[1]);
-    minIni* ini = new minIni(filename);
+
+    minIni* ini = new minIni(INI_FILE_PATH);
 
     //////////////////// Framework Initialize ////////////////////////////
     if(MotionManager::GetInstance()->Initialize(&cm730) == false)

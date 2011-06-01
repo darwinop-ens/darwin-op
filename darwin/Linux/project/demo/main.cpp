@@ -23,7 +23,7 @@
 #define MOTION_FILE_PATH    "../../../Data/motion_4096.bin"
 #endif
 
-#define INI_FILE_PATH       "config.ini"
+#define INI_FILE_PATH       "../../../Data/config.ini"
 #define SCRIPT_FILE_PATH    "script.asc"
 
 #define U2D_DEV_NAME0       "/dev/ttyUSB0"
@@ -82,6 +82,8 @@ int main(void)
     ColorFinder* blue_finder = new ColorFinder(225, 15, 45, 0, 0.3, 50.0);
     blue_finder->LoadINISettings(ini, "BLUE");
     httpd::blue_finder = blue_finder;
+
+    httpd::ini = ini;
 
     //////////////////// Framework Initialize ////////////////////////////
     if(MotionManager::GetInstance()->Initialize(&cm730) == false)
