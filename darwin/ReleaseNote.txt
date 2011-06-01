@@ -20,6 +20,7 @@ https://sourceforge.net/projects/darwinop/
     * dxl_monitor : can change ID (control table addr 3)
     * Get-up motion changed.
     * Sensor calibration routine changed. (use standard deviation)
+    * demo & walk_tuner share the config.ini file. (/darwin/Data/config.ini)
 
 
 >>> Bug fixes
