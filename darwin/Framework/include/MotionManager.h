@@ -14,7 +14,10 @@
 #include "MotionStatus.h"
 #include "MotionModule.h"
 #include "CM730.h"
+#include "minIni.h"
 
+#define OFFSET_SECTION "Offset"
+#define INVALID_VALUE   -1024.0
 
 namespace Robot
 {
@@ -42,6 +45,7 @@ namespace Robot
 
 	public:
 		bool DEBUG_PRINT;
+        int m_Offset[JointData::NUMBER_OF_JOINTS];
 
 		~MotionManager();
 
@@ -59,12 +63,13 @@ namespace Robot
 		int GetCalibrationStatus() { return m_CalibrationStatus; }
 		void SetJointDisable(int index);
 
-		void StartThread();
-		void StopThread();
-		static void* ThreadFunc(void* args);
-
 		void StartLogging();
 		void StopLogging();
+
+        void LoadINISettings(minIni* ini);
+        void LoadINISettings(minIni* ini, const std::string &section);
+        void SaveINISettings(minIni* ini);
+        void SaveINISettings(minIni* ini, const std::string &section);
 	};
 }
 

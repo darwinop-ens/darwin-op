@@ -26,6 +26,10 @@ darwin.a:
 $(TARGET): $(OBJS) ../../lib/darwin.a
 	$(CXX) -o $(TARGET) $(OBJS) ../../lib/darwin.a $(LIBS)
 	
+distclean:
+	make -C ../../build clean
+	rm -f $(OBJS) $(TARGET)
+	
 clean:
 	rm -f $(OBJS) $(TARGET)
 

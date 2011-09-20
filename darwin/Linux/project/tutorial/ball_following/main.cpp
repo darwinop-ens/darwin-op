@@ -41,10 +41,11 @@ int main(void)
 
     mjpg_streamer* streamer = new mjpg_streamer(Camera::WIDTH, Camera::HEIGHT);
 
-    BallTracker tracker = BallTracker();
-    tracker.LoadINISettings(ini);
-    httpd::ball_finder = &tracker.finder;
+    ColorFinder* ball_finder = new ColorFinder();
+    ball_finder->LoadINISettings(ini);
+    httpd::ball_finder = ball_finder;
 
+    BallTracker tracker = BallTracker();
     BallFollower follower = BallFollower();
 	follower.DEBUG_PRINT = true;
 
@@ -100,12 +101,12 @@ int main(void)
 
         memcpy(rgb_ball->m_ImageData, LinuxCamera::GetInstance()->fbuffer->m_RGBFrame->m_ImageData, LinuxCamera::GetInstance()->fbuffer->m_RGBFrame->m_ImageSize);
 
-        tracker.Process(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame);
+        tracker.Process(ball_finder->GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame));
         follower.Process(tracker.ball_position);
 
         for(int i = 0; i < rgb_ball->m_NumberOfPixels; i++)
         {
-            if(tracker.finder.m_result->m_ImageData[i] == 1)
+            if(ball_finder->m_result->m_ImageData[i] == 1)
             {
                 rgb_ball->m_ImageData[i*rgb_ball->m_PixelSize + 0] = 255;
                 rgb_ball->m_ImageData[i*rgb_ball->m_PixelSize + 1] = 0;

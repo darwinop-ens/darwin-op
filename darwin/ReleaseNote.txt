@@ -1,6 +1,31 @@
 You can get the latest version at below link.
 https://sourceforge.net/projects/darwinop/
 
+=====================================
+          DARwIn-OP v1.3.0
+=====================================
+>>> Date: 20 Sep 2011
+
+>>> New functionality/features
+
+    * offset_tuner added.
+    * walk_tuner web page added.
+
+
+>>> Changes
+    
+    * CM-730 firmware updated.
+    * roboplus support 4096 resolution(MX-28 firmware ver 27 or higher).
+    * dxl_monitor : can change baudrate (control table addr 4)
+    * Get-up motion changed.
+    * read_write tutorial : left arm P gain value changed. (1 -> 8)
+
+
+>>> Bug fixes
+    
+    * None.
+
+
 
 =====================================
           DARwIn-OP v1.2.0

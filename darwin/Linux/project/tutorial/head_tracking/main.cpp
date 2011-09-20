@@ -39,9 +39,11 @@ int main(void)
 
     mjpg_streamer* streamer = new mjpg_streamer(Camera::WIDTH, Camera::HEIGHT);
 
+    ColorFinder* ball_finder = new ColorFinder();
+    ball_finder->LoadINISettings(ini);
+    httpd::ball_finder = ball_finder;
+
     BallTracker tracker = BallTracker();
-    tracker.LoadINISettings(ini);
-    httpd::ball_finder = &tracker.finder;
 
 	//////////////////// Framework Initialize ////////////////////////////
 	LinuxCM730 linux_cm730(U2D_DEV_NAME);
@@ -68,12 +70,12 @@ int main(void)
         Point2D pos;
         LinuxCamera::GetInstance()->CaptureFrame();	
 
-        tracker.Process(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame);
+        tracker.Process(ball_finder->GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame));
 
 		rgb_ball = LinuxCamera::GetInstance()->fbuffer->m_RGBFrame;
         for(int i = 0; i < rgb_ball->m_NumberOfPixels; i++)
         {
-            if(tracker.finder.m_result->m_ImageData[i] == 1)
+            if(ball_finder->m_result->m_ImageData[i] == 1)
             {
                 rgb_ball->m_ImageData[i*rgb_ball->m_PixelSize + 0] = 255;
                 rgb_ball->m_ImageData[i*rgb_ball->m_PixelSize + 1] = 0;

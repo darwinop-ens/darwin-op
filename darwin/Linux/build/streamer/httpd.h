@@ -91,7 +91,39 @@ typedef enum{
     IN_CMD_MIN_SATURATION_MINUS,
     IN_CMD_MIN_VALUE_SET,
     IN_CMD_MIN_VALUE_PLUS,
-    IN_CMD_MIN_VALUE_MINUS
+    IN_CMD_MIN_VALUE_MINUS,
+    
+    /* walk tuner */
+    IN_CMD_WALK_MODE,
+    IN_CMD_WALK_SAVE,
+    IN_CMD_WALK_X_OFFSET,
+    IN_CMD_WALK_Y_OFFSET,
+    IN_CMD_WALK_Z_OFFSET,
+    IN_CMD_WALK_ROLL_OFFSET,
+    IN_CMD_WALK_PITCH_OFFSET,
+    IN_CMD_WALK_YAW_OFFSET,
+    IN_CMD_WALK_HIP_OFFSET,
+    IN_CMD_WALK_AUTO_BALANCE,
+    IN_CMD_WALK_PERIOD_TIME,
+    IN_CMD_WALK_DSP_RATIO,
+    IN_CMD_WALK_STEP_FB_RATIO,
+    IN_CMD_WALK_STEP_FB,
+    IN_CMD_WALK_STEP_RL,
+    IN_CMD_WALK_STEP_DIR,
+    IN_CMD_WALK_TURN_AIM,
+    IN_CMD_WALK_FOOT_HEIGHT,
+    IN_CMD_WALK_SWING_RL,
+    IN_CMD_WALK_SWING_TD,
+    IN_CMD_WALK_PELVIS_OFFSET,
+    IN_CMD_WALK_ARM_SWING_GAIN,
+    IN_CMD_WALK_B_KNEE_GAIN,
+    IN_CMD_WALK_B_ANKLE_PITCH_GAIN,
+    IN_CMD_WALK_B_HIP_ROLL_GAIN,
+    IN_CMD_WALK_B_ANKLE_ROLL_GAIN,
+    IN_CMD_WALK_P_GAIN,
+    IN_CMD_WALK_I_GAIN,
+    IN_CMD_WALK_D_GAIN,
+    
 }in_cmd_type;
 
 /* commands which can be send to the input plugin */
@@ -165,7 +197,37 @@ static const struct {
   { "min_saturation_minus", IN_CMD_MIN_SATURATION_MINUS },
   { "min_value_set", IN_CMD_MIN_VALUE_SET },
   { "min_value_plus", IN_CMD_MIN_VALUE_PLUS },
-  { "min_value_minus", IN_CMD_MIN_VALUE_MINUS }
+  { "min_value_minus", IN_CMD_MIN_VALUE_MINUS },
+  
+  { "walk_mode", IN_CMD_WALK_MODE },
+  { "walk_save", IN_CMD_WALK_SAVE },
+  { "walk_x_offset", IN_CMD_WALK_X_OFFSET },
+  { "walk_y_offset", IN_CMD_WALK_Y_OFFSET },
+  { "walk_z_offset", IN_CMD_WALK_Z_OFFSET },
+  { "walk_roll_offset", IN_CMD_WALK_ROLL_OFFSET },
+  { "walk_pitch_offset", IN_CMD_WALK_PITCH_OFFSET },
+  { "walk_yaw_offset", IN_CMD_WALK_YAW_OFFSET },
+  { "walk_hip_offset", IN_CMD_WALK_HIP_OFFSET },
+  { "walk_auto_balance", IN_CMD_WALK_AUTO_BALANCE },
+  { "walk_period_time", IN_CMD_WALK_PERIOD_TIME },
+  { "walk_dsp_ratio", IN_CMD_WALK_DSP_RATIO },
+  { "walk_step_fb_ratio", IN_CMD_WALK_STEP_FB_RATIO },
+  { "walk_step_fb", IN_CMD_WALK_STEP_FB },
+  { "walk_step_rl", IN_CMD_WALK_STEP_RL },
+  { "walk_step_dir", IN_CMD_WALK_STEP_DIR },
+  { "walk_turn_aim", IN_CMD_WALK_TURN_AIM },
+  { "walk_foot_height", IN_CMD_WALK_FOOT_HEIGHT },
+  { "walk_swing_rl", IN_CMD_WALK_SWING_RL },
+  { "walk_swing_td", IN_CMD_WALK_SWING_TD },
+  { "walk_pelvis_offset", IN_CMD_WALK_PELVIS_OFFSET },
+  { "walk_arm_swing_gain", IN_CMD_WALK_ARM_SWING_GAIN },
+  { "walk_b_knee_gain", IN_CMD_WALK_B_KNEE_GAIN },
+  { "walk_b_ankle_pitch_gain", IN_CMD_WALK_B_ANKLE_PITCH_GAIN },
+  { "walk_b_hip_roll_gain", IN_CMD_WALK_B_HIP_ROLL_GAIN },
+  { "walk_b_ankle_roll_gain", IN_CMD_WALK_B_ANKLE_ROLL_GAIN },
+  { "walk_p_gain", IN_CMD_WALK_P_GAIN },
+  { "walk_i_gain", IN_CMD_WALK_I_GAIN },
+  { "walk_d_gain", IN_CMD_WALK_D_GAIN },
 };
 
 
@@ -243,7 +305,7 @@ private:
     static void send_stream(int fd);
     static void send_file(int fd, char *parameter);
     static void command(int fd, char *parameter);
-    static int  input_cmd(in_cmd_type cmd, int value);
+    static void input_cmd(in_cmd_type cmd, float value, char* res_str);
     static void server_cleanup(void *arg);
     static void *client_thread( void *arg );
 

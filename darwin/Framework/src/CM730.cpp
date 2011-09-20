@@ -508,6 +508,17 @@ bool CM730::Connect()
 	return DXLPowerOn();
 }
 
+bool CM730::ChangeBaud(int baud)
+{
+    if(m_Platform->SetBaud(baud) == false)
+    {
+        fprintf(stderr, "\n Fail to change baudrate\n");
+        return false;
+    }
+
+    return DXLPowerOn();
+}
+
 bool CM730::DXLPowerOn()
 {
 	if(WriteByte(CM730::ID_CM, CM730::P_DXL_POWER, 1, 0) == CM730::SUCCESS)

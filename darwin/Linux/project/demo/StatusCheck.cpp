@@ -57,6 +57,7 @@ void StatusCheck::Check(CM730 &cm730)
             m_cur_mode      = READY;
             LinuxActionScript::m_stop = 1;
 
+            Walking::GetInstance()->Stop();
             Action::GetInstance()->m_Joint.SetEnableBody(true, true);
 
             while(Action::GetInstance()->Start(15) == false) usleep(8000);

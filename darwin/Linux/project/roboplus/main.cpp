@@ -120,7 +120,8 @@ int main(int argc, char *argv[])
 			return 0;
 	}
 	MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());	
-    MotionManager::GetInstance()->StopThread();
+    LinuxMotionTimer::Initialize(MotionManager::GetInstance());
+    LinuxMotionTimer::Stop();
 	/////////////////////////////////////////////////////////////////////
 
     int firm_ver = 0;
@@ -130,9 +131,10 @@ int main(int argc, char *argv[])
         exit(0);
     }
 
-    if(27 <= firm_ver)
+    if(27 > firm_ver)
     {
-        fprintf(stderr, "The RoboPlus Motion is not yet supported 4096 resolution..\n\n");
+        fprintf(stderr, "The RoboPlus(ver 1.0.23.0 or higher) Motion is not supported 1024 resolution..\n\n");
+        fprintf(stderr, "Upgrade MX-28's firmware to version 27(0x1B) or higher.\n\n");
         exit(0);
     }
 
@@ -379,7 +381,7 @@ int main(int argc, char *argv[])
 							}
 						}														
 						
-					    MotionManager::GetInstance()->StartThread();
+					    LinuxMotionTimer::Start();
 						MotionManager::GetInstance()->SetEnable(true);
 						
 						int index = (int)atoi(p_str_tok[1].c_str());
@@ -401,16 +403,52 @@ int main(int argc, char *argv[])
 							new_sock << "{[OK]}\n";
 							cout << "[END]" << endl;
 							MotionManager::GetInstance()->SetEnable(false);
-						    MotionManager::GetInstance()->StopThread();
+						    LinuxMotionTimer::Stop();
 						}
 					}
                     else if(p_str_tok[0] == "stop")
                     {
 						Action::GetInstance()->Stop();
                     }
+                    else if(p_str_tok[0] == "stopinfo")
+                    {
+                        Action::GetInstance()->Stop();
+
+                        int ipage, istep;
+                        if(Action::GetInstance()->IsRunning(&ipage, &istep) == 1)
+                        {
+                            new_sock << "{[" << ipage << ":" << istep << "]}\n";
+                            cout << "[" << ipage << ":" << istep << "]" << endl;
+                        }
+                        else
+                        {
+                            new_sock << "{[OK]}\n";
+                            cout << "[END]" << endl;
+                            MotionManager::GetInstance()->SetEnable(false);
+                            LinuxMotionTimer::Stop();
+                        }
+                    }
 					else if(p_str_tok[0] == "break")
                     {
 						Action::GetInstance()->Brake();
+                    }
+                    else if(p_str_tok[0] == "breakinfo")
+                    {
+                        Action::GetInstance()->Brake();
+
+                        int ipage, istep;
+                        if(Action::GetInstance()->IsRunning(&ipage, &istep) == 1)
+                        {
+                            new_sock << "{[" << ipage << ":" << istep << "]}\n";
+                            cout << "[" << ipage << ":" << istep << "]" << endl;
+                        }
+                        else
+                        {
+                            new_sock << "{[OK]}\n";
+                            cout << "[END]" << endl;
+                            MotionManager::GetInstance()->SetEnable(false);
+                            LinuxMotionTimer::Stop();
+                        }
                     }
                     else if(p_str_tok[0] == "RDownload")
                     {
@@ -485,7 +523,7 @@ int main(int argc, char *argv[])
 					while(Action::GetInstance()->IsRunning() == 1)
 						usleep(1);
 					MotionManager::GetInstance()->SetEnable(false);
-				    MotionManager::GetInstance()->StopThread();
+				    LinuxMotionTimer::Stop();
 				}
 			}
         }

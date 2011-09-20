@@ -526,7 +526,7 @@ void Reset(Robot::CM730 *cm730, int id)
 
 void Write(Robot::CM730 *cm730, int id, int addr, int value)
 {
-	if(addr == MX28::P_BAUD_RATE || addr == MX28::P_RETURN_DELAY_TIME || addr == MX28::P_RETURN_LEVEL)
+	if(addr == MX28::P_RETURN_DELAY_TIME || addr == MX28::P_RETURN_LEVEL)
 	{
 		printf( " Can not change this address[%d]\n", addr);
 		return;
@@ -613,6 +613,9 @@ void Write(Robot::CM730 *cm730, int id, int addr, int value)
 		printf( " Access or range error!\n");
 		return;
 	}
+
+	if(id == CM730::ID_CM && addr == MX28::P_BAUD_RATE)
+	    cm730->ChangeBaud(value);
 
 	printf(" Writing successful!\n");
 }

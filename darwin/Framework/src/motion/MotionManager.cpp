@@ -7,9 +7,6 @@
 
 #include <stdio.h>
 #include <math.h>
-#include <sys/time.h>
-#include <signal.h>
-#include <pthread.h>
 #include "FSR.h"
 #include "MX28.h"
 #include "MotionManager.h"
@@ -27,6 +24,8 @@ MotionManager::MotionManager() :
         m_IsLogging(false),
         DEBUG_PRINT(false)
 {
+    for(int i = 0; i < JointData::NUMBER_OF_JOINTS; i++)
+        m_Offset[i] = 0;
 }
 
 MotionManager::~MotionManager()
@@ -110,45 +109,6 @@ bool MotionManager::Reinitialize()
 	return true;
 }
 
-void MotionManager::StartThread()
-{
-    pthread_t motion_thread = 0;
-    m_IsThreadRunning = true;
-    pthread_create(&motion_thread, NULL, ThreadFunc, NULL);
-    pthread_detach(motion_thread);
-}
-
-void MotionManager::StopThread()
-{
-    m_IsThreadRunning = false;
-}
-
-void* MotionManager::ThreadFunc(void* args)
-{
-    sigset_t sigs;
-    sigfillset(&sigs);
-    pthread_sigmask(SIG_BLOCK, &sigs, NULL);
-
-    struct timespec t;
-    clock_gettime(CLOCK_REALTIME, &t);
-
-    while(MotionManager::GetInstance()->m_IsThreadRunning)
-    {
-        t.tv_nsec += 8*1000*1000;   // 8 ms
-        if(t.tv_nsec > 1000*1000*1000)
-        {
-            t.tv_nsec = t.tv_nsec - 1000*1000*1000;
-            t.tv_sec += 1;
-        }
-        clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &t, NULL);
-
-        MotionManager::GetInstance()->Process();
-
-        pthread_testcancel();
-    }
-    return 0;
-}
-
 void MotionManager::StartLogging()
 {
     char szFile[32] = {0,};
@@ -175,6 +135,35 @@ void MotionManager::StopLogging()
 {
     m_IsLogging = false;
     m_LogFileStream.close();
+}
+
+void MotionManager::LoadINISettings(minIni* ini)
+{
+    LoadINISettings(ini, OFFSET_SECTION);
+}
+void MotionManager::LoadINISettings(minIni* ini, const std::string &section)
+{
+    int ivalue = INVALID_VALUE;
+
+    for(int i = 1; i < JointData::NUMBER_OF_JOINTS; i++)
+    {
+        char key[10];
+        sprintf(key, "ID_%.2d", i);
+        if((ivalue = ini->geti(section, key, INVALID_VALUE)) != INVALID_VALUE)  m_Offset[i] = ivalue;
+    }
+}
+void MotionManager::SaveINISettings(minIni* ini)
+{
+    SaveINISettings(ini, OFFSET_SECTION);
+}
+void MotionManager::SaveINISettings(minIni* ini, const std::string &section)
+{
+    for(int i = 1; i < JointData::NUMBER_OF_JOINTS; i++)
+    {
+        char key[10];
+        sprintf(key, "ID_%.2d", i);
+        ini->put(section, key, m_Offset[i]);
+    }
 }
 
 #define GYRO_WINDOW_SIZE    100
@@ -311,8 +300,8 @@ void MotionManager::Process()
                 param[n++] = MotionStatus::m_CurrentJoints.GetDGain(id);
                 param[n++] = 0;
 #endif
-                param[n++] = CM730::GetLowByte(MotionStatus::m_CurrentJoints.GetValue(id));
-                param[n++] = CM730::GetHighByte(MotionStatus::m_CurrentJoints.GetValue(id));
+                param[n++] = CM730::GetLowByte(MotionStatus::m_CurrentJoints.GetValue(id) + m_Offset[id]);
+                param[n++] = CM730::GetHighByte(MotionStatus::m_CurrentJoints.GetValue(id) + m_Offset[id]);
                 joint_num++;
             }
 

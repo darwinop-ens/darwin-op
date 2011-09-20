@@ -34,6 +34,7 @@
 #include <syslog.h>
 
 #include "LinuxCamera.h"
+#include "Walking.h"
 #include "httpd.h"
 
 context* httpd::server;
@@ -479,6 +480,8 @@ Return Value: -
 void httpd::command(int fd, char *parameter) {
   char buffer[BUFFER_SIZE] = {0}, *command=NULL, *svalue=NULL, *section=NULL;
   int i=0, res=0, ivalue=0, len=0;
+  float fvalue = 0.0f;
+  char ret_s[10] = {0};
 
   DBG("parameter is: %s\n", parameter);
 
@@ -509,7 +512,7 @@ void httpd::command(int fd, char *parameter) {
   /* find and convert optional parameter "value" */
   if ( (svalue = strstr(parameter, "value=")) != NULL ) {
     svalue += strlen("value=");
-    len = strspn(svalue, "-1234567890");
+    len = strspn(svalue, "-1234567890.");
     if ( (svalue = strndup(svalue, len)) == NULL ) {
       if (command != NULL) free(command);
       send_error(fd, 500, "could not allocate memory");
@@ -517,6 +520,7 @@ void httpd::command(int fd, char *parameter) {
       return;
     }
     ivalue = MAX(MIN(strtol(svalue, NULL, 10), 999), -999);
+    fvalue = MAX(MIN(strtof(svalue, NULL), 999), -999);
     DBG("converted value form string %s to integer %d\n", svalue, ivalue);
     free(svalue);
   }
@@ -558,7 +562,8 @@ void httpd::command(int fd, char *parameter) {
       }
 */
 
-      res = input_cmd(in_cmd_mapping[i].cmd, ivalue);
+      //res = input_cmd(in_cmd_mapping[i].cmd, ivalue);
+      input_cmd(in_cmd_mapping[i].cmd, fvalue, ret_s);
       break;
     }
   }
@@ -576,15 +581,14 @@ void httpd::command(int fd, char *parameter) {
                   "Content-type: text/plain\r\n" \
                   STD_HEADER \
                   "\r\n" \
-                  "%s: %d", command, res);
+                  "%s: %s", command, ret_s);
 
   write(fd, buffer, strlen(buffer));
 
   if (command != NULL) free(command);
 }
 
-
-int httpd::input_cmd(in_cmd_type cmd, int value)
+void httpd::input_cmd(in_cmd_type cmd, float value, char* res_str)
 {
     int res = -1;
 
@@ -595,121 +599,252 @@ int httpd::input_cmd(in_cmd_type cmd, int value)
     switch(cmd) {
     case IN_CMD_RELOAD:
         Robot::LinuxCamera::GetInstance()->LoadINISettings(ini);
-        if(finder == NULL) return 0;
+        if(finder == NULL) return;
         if(finder->color_section == "")
             finder->LoadINISettings(ini);
         else
             finder->LoadINISettings(ini, finder->color_section);
-        res = 1;
+        strcpy(res_str, "RELOAD");
         break;
     case IN_CMD_SAVE:
         Robot::LinuxCamera::GetInstance()->SaveINISettings(ini);
-        if(finder == NULL) return 0;
+        if(finder == NULL) return;
         if(finder->color_section == "")
             finder->SaveINISettings(ini);
         else
             finder->SaveINISettings(ini, finder->color_section);
-        res = 1;
+        strcpy(res_str, "SAVE");
         break;
     case IN_CMD_GAIN_PLUS:
-        res = Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN);
+        sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN));
         if(res < 255)
-            Robot::LinuxCamera::GetInstance()->v4l2SetControl(V4L2_CID_GAIN, res+value);
-        res = Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN);
+            Robot::LinuxCamera::GetInstance()->v4l2SetControl(V4L2_CID_GAIN, res+(int)value);
+
+        sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN));
         break;
     case IN_CMD_GAIN_MINUS:
-        res = Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN);
+        sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN));
         if(res > 0)
-            Robot::LinuxCamera::GetInstance()->v4l2SetControl(V4L2_CID_GAIN, res-value);
-        res = Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN);
+            Robot::LinuxCamera::GetInstance()->v4l2SetControl(V4L2_CID_GAIN, res-(int)value);
+        sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN));
         break;
     case IN_CMD_EXPOSURE_PLUS:
-        res = Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE);
+        sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE));
         if(res < 10000)
-            Robot::LinuxCamera::GetInstance()->v4l2SetControl(V4L2_CID_EXPOSURE_ABSOLUTE, res+value);
-        res = Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE);
+            Robot::LinuxCamera::GetInstance()->v4l2SetControl(V4L2_CID_EXPOSURE_ABSOLUTE, res+(int)value);
+        sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE));
         break;
     case IN_CMD_EXPOSURE_MINUS:
-        res = Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE);
+        sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE));
         if(res > 0)
-            Robot::LinuxCamera::GetInstance()->v4l2SetControl(V4L2_CID_EXPOSURE_ABSOLUTE, res-value);
-        res = Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE);
+            Robot::LinuxCamera::GetInstance()->v4l2SetControl(V4L2_CID_EXPOSURE_ABSOLUTE, res-(int)value);
+        sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE));
         break;
     case IN_CMD_HUE_SET:
-        if(finder == NULL) return res;
-        finder->m_hue = value;
-        res = value;
+        if(finder == NULL) return;
+        finder->m_hue = (int)value;
+        sprintf(res_str, "%d", (int)value);
         break;
     case IN_CMD_HUE_PLUS:
-        if(finder == NULL) return res;
-        finder->m_hue += value;
+        if(finder == NULL) return;
+        finder->m_hue += (int)value;
         if(finder->m_hue > 360) finder->m_hue = 360;
-        res = finder->m_hue;
+        sprintf(res_str, "%d", finder->m_hue);
         break;
     case IN_CMD_HUE_MINUS:
-        if(finder == NULL) return res;
-        finder->m_hue -= value;
+        if(finder == NULL) return;
+        finder->m_hue -= (int)value;
         if(finder->m_hue < 0) finder->m_hue = 0;
-        res = finder->m_hue;
+        sprintf(res_str, "%d", finder->m_hue);
         break;
     case IN_CMD_TOLERANCE_SET:
-        if(finder == NULL) return res;
-        finder->m_hue_tolerance = value;
-        res = value;
+        if(finder == NULL) return;
+        finder->m_hue_tolerance = (int)value;
+        sprintf(res_str, "%d", (int)value);
         break;
     case IN_CMD_TOLERANCE_PLUS:
-        if(finder == NULL) return res;
-        finder->m_hue_tolerance += value;
+        if(finder == NULL) return;
+        finder->m_hue_tolerance += (int)value;
         if(finder->m_hue_tolerance > 179) finder->m_hue_tolerance = 180;
-        res = finder->m_hue_tolerance;
+        sprintf(res_str, "%d", finder->m_hue_tolerance);
         break;
     case IN_CMD_TOLERANCE_MINUS:
-        if(finder == NULL) return res;
-        finder->m_hue_tolerance -= value;
+        if(finder == NULL) return;
+        finder->m_hue_tolerance -= (int)value;
         if(finder->m_hue_tolerance < 0) finder->m_hue_tolerance = 0;
-        res = finder->m_hue_tolerance;
+        sprintf(res_str, "%d", finder->m_hue_tolerance);
         break;
     case IN_CMD_MIN_SATURATION_SET:
-        if(finder == NULL) return res;
-        finder->m_min_saturation = value;
-        res = value;
+        if(finder == NULL) return;
+        finder->m_min_saturation = (int)value;
+        sprintf(res_str, "%d", (int)value);
         break;
     case IN_CMD_MIN_SATURATION_PLUS:
-        if(finder == NULL) return res;
-        finder->m_min_saturation += value;
+        if(finder == NULL) return;
+        finder->m_min_saturation += (int)value;
         if(finder->m_min_saturation > 100) finder->m_min_saturation = 100;
-        res = finder->m_min_saturation;
+        sprintf(res_str, "%d", finder->m_min_saturation);
         break;
     case IN_CMD_MIN_SATURATION_MINUS:
-        if(finder == NULL) return res;
-        finder->m_min_saturation -= value;
+        if(finder == NULL) return;
+        finder->m_min_saturation -= (int)value;
         if(finder->m_min_saturation < 0) finder->m_min_saturation = 0;
-        res = finder->m_min_saturation;
+        sprintf(res_str, "%d", finder->m_min_saturation);
         break;
     case IN_CMD_MIN_VALUE_SET:
-        if(finder == NULL) return res;
-        finder->m_min_value = value;
-        res = value;
+        if(finder == NULL) return;
+        finder->m_min_value = (int)value;
+        sprintf(res_str, "%d", (int)value);
         break;
     case IN_CMD_MIN_VALUE_PLUS:
-        if(finder == NULL) return res;
-        finder->m_min_value += value;
+        if(finder == NULL) return;
+        finder->m_min_value += (int)value;
         if(finder->m_min_value > 100) finder->m_min_value = 100;
-        res = finder->m_min_value;
+        sprintf(res_str, "%d", finder->m_min_value);
         break;
     case IN_CMD_MIN_VALUE_MINUS:
-        if(finder == NULL) return res;
-        finder->m_min_value -= value;
+        if(finder == NULL) return;
+        finder->m_min_value -= (int)value;
         if(finder->m_min_value < 0) finder->m_min_value = 0;
-        res = finder->m_min_value;
+        sprintf(res_str, "%d", finder->m_min_value);
         break;
+
+    case IN_CMD_WALK_MODE:
+        if(value == 1)
+        {
+            Walking::GetInstance()->Start();
+            strcpy(res_str, "ON");
+        }
+        else
+        {
+            Walking::GetInstance()->Stop();
+            Walking::GetInstance()->X_MOVE_AMPLITUDE = 0;
+            Walking::GetInstance()->Y_MOVE_AMPLITUDE = 0;
+            Walking::GetInstance()->A_MOVE_AMPLITUDE = 0;
+            strcpy(res_str, "OFF");
+        }
+        break;
+    case IN_CMD_WALK_SAVE:
+        Walking::GetInstance()->SaveINISettings(ini);
+        fprintf(stderr, "WALK_SAVE\n");
+        strcpy(res_str, "SAVED");
+        break;
+    case IN_CMD_WALK_X_OFFSET:
+        Walking::GetInstance()->X_OFFSET += value;
+        sprintf(res_str, "%d", (int)Walking::GetInstance()->X_OFFSET);
+        break;
+    case IN_CMD_WALK_Y_OFFSET:
+        Walking::GetInstance()->Y_OFFSET += value;
+        sprintf(res_str, "%d", (int)Walking::GetInstance()->Y_OFFSET);
+        break;
+    case IN_CMD_WALK_Z_OFFSET:
+        Walking::GetInstance()->Z_OFFSET += value;
+        sprintf(res_str, "%d", (int)Walking::GetInstance()->Z_OFFSET);
+        break;
+    case IN_CMD_WALK_ROLL_OFFSET:
+        Walking::GetInstance()->R_OFFSET += value;
+        sprintf(res_str, "%.1f", Walking::GetInstance()->R_OFFSET);
+        break;
+    case IN_CMD_WALK_PITCH_OFFSET:
+        Walking::GetInstance()->P_OFFSET += value;
+        sprintf(res_str, "%.1f", Walking::GetInstance()->P_OFFSET);
+        break;
+    case IN_CMD_WALK_YAW_OFFSET:
+        Walking::GetInstance()->A_OFFSET += value;
+        sprintf(res_str, "%.1f", Walking::GetInstance()->A_OFFSET);
+        break;
+    case IN_CMD_WALK_HIP_OFFSET:
+        Walking::GetInstance()->HIP_PITCH_OFFSET += value;
+        sprintf(res_str, "%.1f", Walking::GetInstance()->HIP_PITCH_OFFSET);
+        break;
+    case IN_CMD_WALK_AUTO_BALANCE:
+        Walking::GetInstance()->BALANCE_ENABLE = value;
+        if(Walking::GetInstance()->BALANCE_ENABLE) strcpy(res_str, "ON");
+        else strcpy(res_str, "OFF");
+        break;
+    case IN_CMD_WALK_PERIOD_TIME:
+        Walking::GetInstance()->PERIOD_TIME += value;
+        sprintf(res_str, "%d", (int)Walking::GetInstance()->PERIOD_TIME);
+        break;
+    case IN_CMD_WALK_DSP_RATIO:
+        Walking::GetInstance()->DSP_RATIO += value;
+        sprintf(res_str, "%.2f", Walking::GetInstance()->DSP_RATIO);
+        break;
+    case IN_CMD_WALK_STEP_FB_RATIO:
+        Walking::GetInstance()->STEP_FB_RATIO += value;
+        sprintf(res_str, "%.2f", Walking::GetInstance()->STEP_FB_RATIO);
+        break;
+    case IN_CMD_WALK_STEP_FB:
+        Walking::GetInstance()->X_MOVE_AMPLITUDE += value;
+        sprintf(res_str, "%d", (int)Walking::GetInstance()->X_MOVE_AMPLITUDE);
+        break;
+    case IN_CMD_WALK_STEP_RL:
+        Walking::GetInstance()->Y_MOVE_AMPLITUDE += value;
+        sprintf(res_str, "%d", (int)Walking::GetInstance()->Y_MOVE_AMPLITUDE);
+        break;
+    case IN_CMD_WALK_STEP_DIR:
+        Walking::GetInstance()->A_MOVE_AMPLITUDE += value;
+        sprintf(res_str, "%d", (int)Walking::GetInstance()->A_MOVE_AMPLITUDE);
+        break;
+    case IN_CMD_WALK_TURN_AIM:
+        Walking::GetInstance()->A_MOVE_AIM_ON = value;
+        if(Walking::GetInstance()->A_MOVE_AIM_ON) strcpy(res_str, "ON");
+        else strcpy(res_str, "OFF");
+        break;
+    case IN_CMD_WALK_FOOT_HEIGHT:
+        Walking::GetInstance()->Z_MOVE_AMPLITUDE += value;
+        sprintf(res_str, "%d", (int)Walking::GetInstance()->Z_MOVE_AMPLITUDE);
+        break;
+    case IN_CMD_WALK_SWING_RL:
+        Walking::GetInstance()->Y_SWAP_AMPLITUDE += value;
+        sprintf(res_str, "%.1f", Walking::GetInstance()->Y_SWAP_AMPLITUDE);
+        break;
+    case IN_CMD_WALK_SWING_TD:
+        Walking::GetInstance()->Z_SWAP_AMPLITUDE += value;
+        sprintf(res_str, "%d", (int)Walking::GetInstance()->Z_SWAP_AMPLITUDE);
+        break;
+    case IN_CMD_WALK_PELVIS_OFFSET:
+        Walking::GetInstance()->PELVIS_OFFSET += value;
+        sprintf(res_str, "%.1f", Walking::GetInstance()->PELVIS_OFFSET);
+        break;
+    case IN_CMD_WALK_ARM_SWING_GAIN:
+        Walking::GetInstance()->ARM_SWING_GAIN += value;
+        sprintf(res_str, "%.1f", Walking::GetInstance()->ARM_SWING_GAIN);
+        break;
+    case IN_CMD_WALK_B_KNEE_GAIN:
+        Walking::GetInstance()->BALANCE_KNEE_GAIN += value;
+        sprintf(res_str, "%.2f", Walking::GetInstance()->BALANCE_KNEE_GAIN);
+        break;
+    case IN_CMD_WALK_B_ANKLE_PITCH_GAIN:
+        Walking::GetInstance()->BALANCE_ANKLE_PITCH_GAIN += value;
+        sprintf(res_str, "%.2f", Walking::GetInstance()->BALANCE_ANKLE_PITCH_GAIN);
+        break;
+    case IN_CMD_WALK_B_HIP_ROLL_GAIN:
+        Walking::GetInstance()->BALANCE_HIP_ROLL_GAIN += value;
+        sprintf(res_str, "%.2f", Walking::GetInstance()->BALANCE_HIP_ROLL_GAIN);
+        break;
+    case IN_CMD_WALK_B_ANKLE_ROLL_GAIN:
+        Walking::GetInstance()->BALANCE_ANKLE_ROLL_GAIN += value;
+        sprintf(res_str, "%.2f", Walking::GetInstance()->BALANCE_ANKLE_ROLL_GAIN);
+        break;
+    case IN_CMD_WALK_P_GAIN:
+        Walking::GetInstance()->P_GAIN += (int)value;
+        sprintf(res_str, "%d", Walking::GetInstance()->P_GAIN);
+        break;
+    case IN_CMD_WALK_I_GAIN:
+        Walking::GetInstance()->I_GAIN += (int)value;
+        sprintf(res_str, "%d", Walking::GetInstance()->I_GAIN);
+        break;
+    case IN_CMD_WALK_D_GAIN:
+        Walking::GetInstance()->D_GAIN += (int)value;
+        sprintf(res_str, "%d", Walking::GetInstance()->D_GAIN);
+        break;
+
     default:
         res = -1;
     }
 
     //pthread_mutex_unlock(&controls_mutex);
-
-    return res;
 }
 
 
@@ -771,7 +906,7 @@ void* httpd::client_thread( void *arg ) {
     pb += strlen("GET /?action=command");
 
     /* only accept certain characters */
-    len = MIN(MAX(strspn(pb, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-=&1234567890"), 0), 100);
+    len = MIN(MAX(strspn(pb, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-=&1234567890."), 0), 100);
     req.parameter = (char*)malloc(len+1);
     if ( req.parameter == NULL ) {
       exit(EXIT_FAILURE);

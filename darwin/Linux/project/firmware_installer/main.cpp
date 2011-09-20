@@ -90,7 +90,7 @@ void help(char *progname)
     fprintf(stderr, "Usage: %s\n" \
                     " [-h | --help]........: display this help\n" \
                     " [-d | --device]......: port to open                    (/dev/ttyUSB0)\n" \
-                    " [-c | --controller]..: controller firmware file      (cm730_0x12.hex)\n" \
+                    " [-c | --controller]..: controller firmware file      (cm730_0x13.hex)\n" \
                     " [-a | --actuator]....: actuator firmware file    (mx28_0x1D_4096.hex)\n", progname);
     fprintf(stderr, "-----------------------------------------------------------------------\n");
     fprintf(stderr, "Example #1:\n" \
@@ -363,7 +363,7 @@ int main(int argc, char *argv[])
     fprintf(stderr,   "*                CM-730 & Actuator Firmware Installer                 *\n");
     fprintf(stderr,   "***********************************************************************\n\n");
 
-    char *controller_fw = (char*)"cm730_0x12.hex";
+    char *controller_fw = (char*)"cm730_0x13.hex";
     char *actuator_fw = (char*)"mx28_0x1D_4096.hex";
     char *dev = (char*)"/dev/ttyUSB0";
 

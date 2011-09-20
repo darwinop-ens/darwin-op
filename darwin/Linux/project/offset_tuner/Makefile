@@ -1,13 +1,13 @@
 ###############################################################
 #
-# Purpose: Makefile for "walk_tuner"
+# Purpose: Makefile for "offset_tuner"
 # Author.: robotis
 # Version: 0.1
 # License: GPL
 #
 ###############################################################
 
-TARGET = walk_tuner
+TARGET = offset_tuner
 
 CXX = g++
 INCLUDE_DIRS = -I../../include -I../../../Framework/include

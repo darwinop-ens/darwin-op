@@ -14,6 +14,8 @@
 #define MOTION_FILE_PATH    "../../../Data/motion_4096.bin"
 #endif
 
+#define INI_FILE_PATH       "../../../Data/config.ini"
+
 using namespace Robot;
 
 LinuxCM730 linux_cm730("/dev/ttyUSB0");
@@ -53,6 +55,8 @@ int main(int argc, char *argv[])
     else
         strcpy(filename, argv[1]);
 
+    minIni* ini = new minIni(INI_FILE_PATH);
+
     /////////////// Load/Create Action File //////////////////
     if(Action::GetInstance()->LoadFile(filename) == false)
     {
@@ -83,6 +87,8 @@ int main(int argc, char *argv[])
     LinuxMotionTimer::Initialize(MotionManager::GetInstance());
     LinuxMotionTimer::Stop();
     /////////////////////////////////////////////////////////////////////
+
+    MotionManager::GetInstance()->LoadINISettings(ini);
 
     DrawIntro(&cm730);
 
@@ -182,28 +188,12 @@ int main(int argc, char *argv[])
                             break;
                     }
                     else if(strcmp(cmd, "re") == 0)
+                    {
+                        ReadStep(&cm730);
                         DrawPage();
+                    }
                     else if(strcmp(cmd, "help") == 0)
                         HelpCmd();
-                    else if(strcmp(cmd, "n") == 0)
-                        NextCmd();
-                    else if(strcmp(cmd, "b") == 0)
-                        PrevCmd();						
-                    else if(strcmp(cmd, "time") == 0)
-                        TimeCmd();
-                    else if(strcmp(cmd, "speed") == 0)
-                        SpeedCmd();
-                    else if(strcmp(cmd, "page") == 0)
-                    {
-                        if(num_param > 0)
-                            PageCmd(iparam[0]);
-                        else
-                            PrintCmd("Need parameter");
-                    }
-                    else if(strcmp(cmd, "play") == 0)
-                    {
-                        PlayCmd(&cm730);
-                    }
                     else if(strcmp(cmd, "set") == 0)
                     {
                         if(num_param > 0)
@@ -211,60 +201,33 @@ int main(int argc, char *argv[])
                         else
                             PrintCmd("Need parameter");
                     }
-                    else if(strcmp(cmd, "list") == 0)
-                        ListCmd();
                     else if(strcmp(cmd, "on") == 0)
                         OnOffCmd(&cm730, true, num_param, iparam);
                     else if(strcmp(cmd, "off") == 0)
                         OnOffCmd(&cm730, false, num_param, iparam);
-                    else if(strcmp(cmd, "w") == 0)
-                    {
-                        if(num_param > 0)
-                            WriteStepCmd(iparam[0]);
-                        else
-                            PrintCmd("Need parameter");
-                    }
-                    else if(strcmp(cmd, "d") == 0)
-                    {
-                        if(num_param > 0)
-                            DeleteStepCmd(iparam[0]);
-                        else
-                            PrintCmd("Need parameter");
-                    }
-                    else if(strcmp(cmd, "i") == 0)
-                    {
-                        if(num_param == 0)
-                            InsertStepCmd(0);
-                        else
-                            InsertStepCmd(iparam[0]);
-                    }
-                    else if(strcmp(cmd, "m") == 0)
-                    {
-                        if(num_param > 1)
-                            MoveStepCmd(iparam[0], iparam[1]);
-                        else
-                            PrintCmd("Need parameter");
-                    }
-                    else if(strcmp(cmd, "copy") == 0)
-                    {
-                        if(num_param > 0)
-                            CopyCmd(iparam[0]);
-                        else
-                            PrintCmd("Need parameter");
-                    }
-                    else if(strcmp(cmd, "new") == 0)
-                        NewCmd();
-                    else if(strcmp(cmd, "g") == 0)
-                    {
-                        if(num_param > 0)
-                            GoCmd(&cm730, iparam[0]);
-                        else
-                            PrintCmd("Need parameter");
-                    }
                     else if(strcmp(cmd, "save") == 0)
-                        SaveCmd();
-                    else if(strcmp(cmd, "name") == 0)
-                        NameCmd();
+                        SaveCmd(ini);
+                    else if(strcmp(cmd, "pgain") == 0)
+                    {
+                        if(num_param > 0)
+                            GainCmd(&cm730, iparam[0], P_GAIN_COL);
+                        else
+                            PrintCmd("Need parameter");
+                    }
+                    else if(strcmp(cmd, "igain") == 0)
+                    {
+                        if(num_param > 0)
+                            GainCmd(&cm730, iparam[0], I_GAIN_COL);
+                        else
+                            PrintCmd("Need parameter");
+                    }
+                    else if(strcmp(cmd, "dgain") == 0)
+                    {
+                        if(num_param > 0)
+                            GainCmd(&cm730, iparam[0], D_GAIN_COL);
+                        else
+                            PrintCmd("Need parameter");
+                    }
                     else
                         PrintCmd("Bad command! please input 'help'");
                 }

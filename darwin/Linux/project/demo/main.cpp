@@ -65,10 +65,11 @@ int main(void)
 
     mjpg_streamer* streamer = new mjpg_streamer(Camera::WIDTH, Camera::HEIGHT);
 
-    BallTracker tracker = BallTracker();
-    tracker.LoadINISettings(ini);
-    httpd::ball_finder = &tracker.finder;
+    ColorFinder* ball_finder = new ColorFinder();
+    ball_finder->LoadINISettings(ini);
+    httpd::ball_finder = ball_finder;
 
+    BallTracker tracker = BallTracker();
     BallFollower follower = BallFollower();
 
     ColorFinder* red_finder = new ColorFinder(0, 15, 45, 0, 0.3, 50.0);
@@ -102,9 +103,10 @@ int main(void)
     MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());
     MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
 
-    //MotionManager::GetInstance()->StartThread();
     LinuxMotionTimer::Initialize(MotionManager::GetInstance());
     /////////////////////////////////////////////////////////////////////
+    
+    MotionManager::GetInstance()->LoadINISettings(ini);
 
     int firm_ver = 0;
     if(cm730.ReadByte(JointData::ID_HEAD_PAN, MX28::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
@@ -156,7 +158,7 @@ int main(void)
 
         if(StatusCheck::m_cur_mode == READY || StatusCheck::m_cur_mode == VISION)
         {
-            ball_pos = tracker.finder.GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame);
+            ball_pos = ball_finder->GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame);
             red_pos = red_finder->GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame);
             yellow_pos = yellow_finder->GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame);
             blue_pos = blue_finder->GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame);
@@ -165,7 +167,7 @@ int main(void)
             for(int i = 0; i < rgb_output->m_NumberOfPixels; i++)
             {
                 r = 0; g = 0; b = 0;
-                if(tracker.finder.m_result->m_ImageData[i] == 1)
+                if(ball_finder->m_result->m_ImageData[i] == 1)
                 {
                     r = 255;
                     g = 128;
@@ -173,7 +175,7 @@ int main(void)
                 }
                 if(red_finder->m_result->m_ImageData[i] == 1)
                 {
-                    if(tracker.finder.m_result->m_ImageData[i] == 1)
+                    if(ball_finder->m_result->m_ImageData[i] == 1)
                     {
                         r = 0;
                         g = 255;
@@ -188,7 +190,7 @@ int main(void)
                 }
                 if(yellow_finder->m_result->m_ImageData[i] == 1)
                 {
-                    if(tracker.finder.m_result->m_ImageData[i] == 1)
+                    if(ball_finder->m_result->m_ImageData[i] == 1)
                     {
                         r = 0;
                         g = 255;
@@ -203,7 +205,7 @@ int main(void)
                 }
                 if(blue_finder->m_result->m_ImageData[i] == 1)
                 {
-                    if(tracker.finder.m_result->m_ImageData[i] == 1)
+                    if(ball_finder->m_result->m_ImageData[i] == 1)
                     {
                         r = 0;
                         g = 255;
@@ -227,11 +229,11 @@ int main(void)
         }
         else if(StatusCheck::m_cur_mode == SOCCER)
         {
-            tracker.Process(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame);
+            tracker.Process(ball_finder->GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame));
 
             for(int i = 0; i < rgb_output->m_NumberOfPixels; i++)
             {
-                if(tracker.finder.m_result->m_ImageData[i] == 1)
+                if(ball_finder->m_result->m_ImageData[i] == 1)
                 {
                     rgb_output->m_ImageData[i*rgb_output->m_PixelSize + 0] = 255;
                     rgb_output->m_ImageData[i*rgb_output->m_PixelSize + 1] = 128;

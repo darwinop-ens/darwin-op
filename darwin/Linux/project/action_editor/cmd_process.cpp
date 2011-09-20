@@ -998,7 +998,7 @@ void PlayCmd(CM730 *cm730)
 
 	PrintCmd("Playing... ('s' to stop, 'b' to brake)");
 
-	MotionManager::GetInstance()->StartThread();
+	LinuxMotionTimer::Start();
 	Action::GetInstance()->m_Joint.SetEnableBody(true, true);
 	MotionManager::GetInstance()->SetEnable(true);
 	if(Action::GetInstance()->Start(indexPage, &Page) == false)
@@ -1037,7 +1037,7 @@ void PlayCmd(CM730 *cm730)
 	reset_stdin();
 
 	MotionManager::GetInstance()->SetEnable(false);
-	MotionManager::GetInstance()->StopThread();
+	LinuxMotionTimer::Stop();
 
 	GoToCursor(CMD_COL, CMD_ROW);
 	PrintCmd("Done.");
