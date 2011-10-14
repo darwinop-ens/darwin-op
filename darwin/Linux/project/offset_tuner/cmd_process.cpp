@@ -593,6 +593,7 @@ void SetValue(CM730 *cm730, int value)
                 }
             }
         }
+        bEdited = true;
 	}
     else if( col == MODVAL_COL )
     {
