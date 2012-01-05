@@ -526,7 +526,7 @@ bool CM730::DXLPowerOn()
 		if(DEBUG_PRINT == true)
 			fprintf(stderr, " Succeed to change Dynamixel power!\n");
 		
-		WriteWord(CM730::ID_CM, CM730::P_LED_HEAD_L, MakeColor(0, 128, 255), 0);
+		WriteWord(CM730::ID_CM, CM730::P_LED_HEAD_L, MakeColor(255, 128, 0), 0);
 		m_Platform->Sleep(300); // about 300msec
 	}
 	else
@@ -765,5 +765,5 @@ int CM730::MakeColor(int red, int green, int blue)
 	int g = green & 0xFF;
 	int b = blue & 0xFF;
 
-	return (int)(((r>>3)<<10)|((g>>3)<<5)|(b>>3));
+	return (int)(((b>>3)<<10)|((g>>3)<<5)|(r>>3));
 }
