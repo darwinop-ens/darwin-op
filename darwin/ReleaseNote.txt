@@ -2,6 +2,29 @@ You can get the latest version at below link.
 https://sourceforge.net/projects/darwinop/
 
 =====================================
+          DARwIn-OP v1.4.0
+=====================================
+>>> Date: 16 Jan 2012
+
+>>> New functionality/features
+
+    * None.
+
+
+>>> Changes
+    
+    * MX-28 firmware updated.
+    * Stand-up motion changed.
+    
+
+>>> Bug fixes
+    
+    * Cannot change the camera gain/exposure value from a web page bug fixed.
+    * offset tuner 'set' command bug fixed.
+
+
+
+=====================================
           DARwIn-OP v1.3.0
 =====================================
 >>> Date: 20 Sep 2011

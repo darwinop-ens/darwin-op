@@ -163,7 +163,6 @@ namespace Robot
 
 		int TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int priority);
 		unsigned char CalculateChecksum(unsigned char *packet);
-		int UpdateTable(int *error);	
 
 	public:
 		bool DEBUG_PRINT;
@@ -178,9 +177,6 @@ namespace Robot
 		bool DXLPowerOn();
 
 		// For board
-		int ReadByte(int address, int *pValue, int *error);
-		int ReadWord(int address, int *pValue, int *error);
-		int ReadTable(int start_addr, int end_addr, unsigned char *table, int *error);
 		int WriteByte(int address, int value, int *error);
 		int WriteWord(int address, int value, int *error);
 

@@ -616,26 +616,29 @@ void httpd::input_cmd(in_cmd_type cmd, float value, char* res_str)
         strcpy(res_str, "SAVE");
         break;
     case IN_CMD_GAIN_PLUS:
-        sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN));
+        res = Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN);
+        sprintf(res_str, "%d", res);
         if(res < 255)
             Robot::LinuxCamera::GetInstance()->v4l2SetControl(V4L2_CID_GAIN, res+(int)value);
-
         sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN));
         break;
     case IN_CMD_GAIN_MINUS:
-        sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN));
+        res = Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN);
+        sprintf(res_str, "%d", res);
         if(res > 0)
             Robot::LinuxCamera::GetInstance()->v4l2SetControl(V4L2_CID_GAIN, res-(int)value);
         sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_GAIN));
         break;
     case IN_CMD_EXPOSURE_PLUS:
-        sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE));
+        res = Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE);
+        sprintf(res_str, "%d", res);
         if(res < 10000)
             Robot::LinuxCamera::GetInstance()->v4l2SetControl(V4L2_CID_EXPOSURE_ABSOLUTE, res+(int)value);
         sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE));
         break;
     case IN_CMD_EXPOSURE_MINUS:
-        sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE));
+        res = Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE);
+        sprintf(res_str, "%d", res);
         if(res > 0)
             Robot::LinuxCamera::GetInstance()->v4l2SetControl(V4L2_CID_EXPOSURE_ABSOLUTE, res-(int)value);
         sprintf(res_str, "%d", Robot::LinuxCamera::GetInstance()->v4l2GetControl(V4L2_CID_EXPOSURE_ABSOLUTE));

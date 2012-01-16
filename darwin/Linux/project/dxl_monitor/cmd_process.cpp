@@ -234,12 +234,12 @@ void Dump(CM730 *cm730, int id)
 		addr = MX28::P_CCW_COMPLIANCE_SLOPE; value = table[addr];
 		printf( " CCW_COMPLIANCE_SLOPE   (R/W)[%.3d]:%5d\n", addr, value);
 #else
-        addr = MX28::P_P_GAIN; value = table[addr];
-        printf( " P_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
-        addr = MX28::P_I_GAIN; value = table[addr];
-        printf( " I_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
         addr = MX28::P_D_GAIN; value = table[addr];
         printf( " D_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
+        addr = MX28::P_I_GAIN; value = table[addr];
+        printf( " I_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
+        addr = MX28::P_P_GAIN; value = table[addr];
+        printf( " P_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
         addr = MX28::P_RESERVED; value = table[addr];
         printf( " RESERVED               (R/W)[%.3d]:%5d\n", addr, value);
 #endif

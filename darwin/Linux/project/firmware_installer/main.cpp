@@ -91,7 +91,7 @@ void help(char *progname)
                     " [-h | --help]........: display this help\n" \
                     " [-d | --device]......: port to open                    (/dev/ttyUSB0)\n" \
                     " [-c | --controller]..: controller firmware file      (cm730_0x13.hex)\n" \
-                    " [-a | --actuator]....: actuator firmware file    (mx28_0x1D_4096.hex)\n", progname);
+                    " [-a | --actuator]....: actuator firmware file    (mx28_0x1E_4096.hex)\n", progname);
     fprintf(stderr, "-----------------------------------------------------------------------\n");
     fprintf(stderr, "Example #1:\n" \
                     " To open a default port and install with firmware file \"cm730.hex\":\n" \
@@ -127,7 +127,7 @@ void Reset(CM730 *cm730, int id)
             printf("Fail\n");
             return;
         }
-        usleep(10000);
+        usleep(50000);
     }
 
     FailCount = 0;
@@ -142,7 +142,7 @@ void Reset(CM730 *cm730, int id)
             printf("Fail\n");
             return;
         }
-        usleep(10000);
+        usleep(50000);
     }
 
     if(id != CM730::ID_CM)
@@ -250,7 +250,7 @@ void Reset(CM730 *cm730, int id)
                 printf("Fail\n");
                 return;
             }
-            usleep(10000);
+            usleep(50000);
         }
         FailCount = 0;
         while(1)
@@ -264,7 +264,7 @@ void Reset(CM730 *cm730, int id)
                 printf("Fail\n");
                 return;
             }
-            usleep(10000);
+            usleep(50000);
         }
         FailCount = 0;
         while(1)
@@ -278,7 +278,7 @@ void Reset(CM730 *cm730, int id)
                 printf("Fail\n");
                 return;
             }
-            usleep(10000);
+            usleep(50000);
         }
         FailCount = 0;
         while(1)
@@ -292,7 +292,7 @@ void Reset(CM730 *cm730, int id)
                 printf("Fail\n");
                 return;
             }
-            usleep(10000);
+            usleep(50000);
         }
         FailCount = 0;
         while(1)
@@ -306,7 +306,7 @@ void Reset(CM730 *cm730, int id)
                 printf("Fail\n");
                 return;
             }
-            usleep(10000);
+            usleep(50000);
         }
         FailCount = 0;
         while(1)
@@ -320,7 +320,7 @@ void Reset(CM730 *cm730, int id)
                 printf("Fail\n");
                 return;
             }
-            usleep(10000);
+            usleep(50000);
         }
         FailCount = 0;
         while(1)
@@ -334,7 +334,7 @@ void Reset(CM730 *cm730, int id)
                 printf("Fail\n");
                 return;
             }
-            usleep(10000);
+            usleep(50000);
         }
         FailCount = 0;
         while(1)
@@ -348,7 +348,7 @@ void Reset(CM730 *cm730, int id)
                 printf("Fail\n");
                 return;
             }
-            usleep(10000);
+            usleep(50000);
         }
     }
 
@@ -364,7 +364,7 @@ int main(int argc, char *argv[])
     fprintf(stderr,   "***********************************************************************\n\n");
 
     char *controller_fw = (char*)"cm730_0x13.hex";
-    char *actuator_fw = (char*)"mx28_0x1D_4096.hex";
+    char *actuator_fw = (char*)"mx28_0x1E_4096.hex";
     char *dev = (char*)"/dev/ttyUSB0";
 
     /* parameter parsing */

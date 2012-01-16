@@ -386,38 +386,6 @@ unsigned char CM730::CalculateChecksum(unsigned char *packet)
 	return (~checksum);
 }
 
-int CM730::UpdateTable(int *error)
-{
-	if(m_Platform->IsUpdateTimeout() == false)
-		return SUCCESS;
-
-	unsigned char txpacket[MAXNUM_TXPARAM + 10] = {0, };
-	unsigned char rxpacket[MAXNUM_RXPARAM + 10] = {0, };
-	int result;
-	int address = P_DXL_POWER;
-	int length = MAXNUM_ADDRESS - P_DXL_POWER;
-
-    txpacket[ID]           = (unsigned char)ID_CM;
-    txpacket[INSTRUCTION]  = INST_READ;
-	txpacket[PARAMETER]    = (unsigned char)address;
-    txpacket[PARAMETER+1]  = (unsigned char)length;
-    txpacket[LENGTH]       = 4;
-
-	result = TxRxPacket(txpacket, rxpacket, 1);
-	if(result == SUCCESS)
-	{
-		for(int i=0; i<length; i++)
-			m_ControlTable[address + i] = rxpacket[PARAMETER + i];
-
-		if(error != 0)
-			*error = (int)rxpacket[ERRBIT];
-
-		m_Platform->SetUpdateTimeout(RefreshTime);
-	}
-
-	return result;
-}
-
 void CM730::MakeBulkReadPacket()
 {
     int number = 0;
@@ -547,43 +515,6 @@ void CM730::Disconnect()
 	m_Platform->WritePort(txpacket, 9);
 
 	m_Platform->ClosePort();
-}
-
-int CM730::ReadByte(int address, int *pValue, int *error)
-{
-	int result = UpdateTable(error);
-
-	if(result == SUCCESS)
-	{
-		*pValue = m_ControlTable[address];
-	}
-
-	return result;
-}
-
-int CM730::ReadWord(int address, int *pValue, int *error)
-{
-	int result = UpdateTable(error);
-
-	if(result == SUCCESS)
-	{
-		*pValue = MakeWord(m_ControlTable[address], m_ControlTable[address+1]);
-	}
-
-	return result;
-}
-
-int CM730::ReadTable(int start_addr, int end_addr, unsigned char *table, int *error)
-{
-	int result = UpdateTable(error);
-
-	if(result == SUCCESS)
-	{
-		for(int i=start_addr; i<=end_addr; i++)
-			table[i] = m_ControlTable[i];
-	}
-
-	return result;
 }
 
 int CM730::WriteByte(int address, int value, int *error)
