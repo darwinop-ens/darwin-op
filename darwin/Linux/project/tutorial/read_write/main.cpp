@@ -34,31 +34,31 @@ int main()
 		printf("\r");
 
 		printf("GFB:");
-		if(cm730.ReadWord(CM730::P_GYRO_Y_L, &value, 0) == CM730::SUCCESS)
+		if(cm730.ReadWord(CM730::ID_CM, CM730::P_GYRO_Y_L, &value, 0) == CM730::SUCCESS)
 			printf("%3d", value);
 		else
 			printf("---");
 
 		printf(" GRL:");
-		if(cm730.ReadWord(CM730::P_GYRO_X_L, &value, 0) == CM730::SUCCESS)
+		if(cm730.ReadWord(CM730::ID_CM, CM730::P_GYRO_X_L, &value, 0) == CM730::SUCCESS)
 			printf("%3d", value);
 		else
 			printf("---");
 
 		printf(" AFB:");
-		if(cm730.ReadWord(CM730::P_ACCEL_Y_L, &value, 0) == CM730::SUCCESS)
+		if(cm730.ReadWord(CM730::ID_CM, CM730::P_ACCEL_Y_L, &value, 0) == CM730::SUCCESS)
 			printf("%3d", value);
 		else
 			printf("----");
 
 		printf(" ARL:");
-		if(cm730.ReadWord(CM730::P_ACCEL_X_L, &value, 0) == CM730::SUCCESS)
+		if(cm730.ReadWord(CM730::ID_CM, CM730::P_ACCEL_X_L, &value, 0) == CM730::SUCCESS)
 			printf("%3d", value);
 		else
 			printf("----");
 
 		printf(" BTN:");
-		if(cm730.ReadWord(CM730::P_BUTTON, &value, 0) == CM730::SUCCESS)
+		if(cm730.ReadWord(CM730::ID_CM, CM730::P_BUTTON, &value, 0) == CM730::SUCCESS)
 			printf("%1d", value);
 		else
 			printf("----");
@@ -90,7 +90,7 @@ int main()
 		else
 			printf("----");
 
-		if(cm730.ReadWord(CM730::P_LED_HEAD_L, &value, 0) == CM730::SUCCESS)
+		if(cm730.ReadWord(CM730::ID_CM, CM730::P_LED_HEAD_L, &value, 0) == CM730::SUCCESS)
 		{
 			if(value == 0x7FFF)
 				value = 0;
@@ -100,7 +100,7 @@ int main()
 			cm730.WriteWord(CM730::P_LED_HEAD_L, value, 0);
 		}
 
-		if(cm730.ReadWord(CM730::P_LED_EYE_L, &value, 0) == CM730::SUCCESS)
+		if(cm730.ReadWord(CM730::ID_CM, CM730::P_LED_EYE_L, &value, 0) == CM730::SUCCESS)
 		{
 			if(value == 0)
 				value = 0x7FFF;
