@@ -5,6 +5,7 @@
  *
  */
 #include <stdio.h>
+#include <errno.h>
 #include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
@@ -157,19 +158,27 @@ int LinuxCM730::ReadPort(unsigned char* packet, int numPacket)
 	return read(m_Socket_fd, packet, numPacket);
 }
 
+void sem_wait_nointr(sem_t *sem)
+{
+    int sem_result, sem_count = 0;
+	do {
+	    sem_result = sem_wait(sem);
+    } while((sem_result == -1) && (errno == EINTR));
+}
+
 void LinuxCM730::LowPriorityWait()
 {
-	sem_wait(&m_LowSemID);
+    sem_wait_nointr(&m_LowSemID);
 }
 
 void LinuxCM730::MidPriorityWait()
 {
-	sem_wait(&m_MidSemID);
+    sem_wait_nointr(&m_MidSemID);
 }
 
 void LinuxCM730::HighPriorityWait()
 {
-	sem_wait(&m_HighSemID);
+    sem_wait_nointr(&m_HighSemID);
 }
 
 void LinuxCM730::LowPriorityRelease()
@@ -245,12 +254,13 @@ double LinuxCM730::GetUpdateTime()
     return time;
 }
 
-void LinuxCM730::Sleep(int Miliseconds)
+void LinuxCM730::Sleep(double msec)
 {
-	double time = GetCurrentTime();
+    double start_time = GetCurrentTime();
+    double curr_time = start_time;
 
-	do
-	{
-		usleep(Miliseconds * 1000);
-	}while(GetCurrentTime() - time < (double)Miliseconds);
+    do {
+        usleep((start_time + msec) - curr_time);
+        curr_time = GetCurrentTime();
+    } while(curr_time - start_time < msec);
 }

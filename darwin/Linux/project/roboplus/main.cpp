@@ -120,8 +120,8 @@ int main(int argc, char *argv[])
 			return 0;
 	}
 	MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());	
-    LinuxMotionTimer::Initialize(MotionManager::GetInstance());
-    LinuxMotionTimer::Stop();
+    LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
+    motion_timer->Stop();
 	/////////////////////////////////////////////////////////////////////
 
     int firm_ver = 0;
@@ -381,7 +381,7 @@ int main(int argc, char *argv[])
 							}
 						}														
 						
-					    LinuxMotionTimer::Start();
+					    motion_timer->Start();
 						MotionManager::GetInstance()->SetEnable(true);
 						
 						int index = (int)atoi(p_str_tok[1].c_str());
@@ -403,7 +403,7 @@ int main(int argc, char *argv[])
 							new_sock << "{[OK]}\n";
 							cout << "[END]" << endl;
 							MotionManager::GetInstance()->SetEnable(false);
-						    LinuxMotionTimer::Stop();
+							motion_timer->Stop();
 						}
 					}
                     else if(p_str_tok[0] == "stop")
@@ -425,7 +425,7 @@ int main(int argc, char *argv[])
                             new_sock << "{[OK]}\n";
                             cout << "[END]" << endl;
                             MotionManager::GetInstance()->SetEnable(false);
-                            LinuxMotionTimer::Stop();
+                            motion_timer->Stop();
                         }
                     }
 					else if(p_str_tok[0] == "break")
@@ -447,7 +447,7 @@ int main(int argc, char *argv[])
                             new_sock << "{[OK]}\n";
                             cout << "[END]" << endl;
                             MotionManager::GetInstance()->SetEnable(false);
-                            LinuxMotionTimer::Stop();
+                            motion_timer->Stop();
                         }
                     }
                     else if(p_str_tok[0] == "RDownload")
@@ -523,7 +523,7 @@ int main(int argc, char *argv[])
 					while(Action::GetInstance()->IsRunning() == 1)
 						usleep(1);
 					MotionManager::GetInstance()->SetEnable(false);
-				    LinuxMotionTimer::Stop();
+					motion_timer->Stop();
 				}
 			}
         }

@@ -10,6 +10,7 @@
 #include <limits.h>
 #include <string.h>
 #include <libgen.h>
+#include <signal.h>
 
 #include "mjpg_streamer.h"
 #include "LinuxDARwIn.h"
@@ -103,7 +104,8 @@ int main(void)
     MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());
     MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
 
-    LinuxMotionTimer::Initialize(MotionManager::GetInstance());
+    LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
+    motion_timer->Start();
     /////////////////////////////////////////////////////////////////////
     
     MotionManager::GetInstance()->LoadINISettings(ini);

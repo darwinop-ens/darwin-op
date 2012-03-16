@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
         return 0;
     }
     MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());	
-    LinuxMotionTimer::Initialize(MotionManager::GetInstance());
-    LinuxMotionTimer::Stop();
+    LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
+    motion_timer->Stop();
     /////////////////////////////////////////////////////////////////////
 
     DrawIntro(&cm730);
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
                     }
                     else if(strcmp(cmd, "play") == 0)
                     {
-                        PlayCmd(&cm730);
+                        PlayCmd(&cm730, motion_timer);
                     }
                     else if(strcmp(cmd, "set") == 0)
                     {

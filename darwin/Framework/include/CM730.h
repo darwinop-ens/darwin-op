@@ -58,7 +58,7 @@ namespace Robot
 		virtual bool IsUpdateTimeout() = 0;
 		virtual double GetUpdateTime() = 0;
 
-		virtual void Sleep(int Miliseconds) = 0;
+		virtual void Sleep(double msec) = 0;
 		//////////////////////////////////////////////////////////////////////////////
 	};
 

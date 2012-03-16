@@ -56,7 +56,8 @@ int main(int argc, char *argv[])
     }
     Walking::GetInstance()->LoadINISettings(ini);
     MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
-    LinuxMotionTimer::Initialize(MotionManager::GetInstance());
+    LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
+    motion_timer->Start();
     /////////////////////////////////////////////////////////////////////
 
     DrawIntro(&cm730);

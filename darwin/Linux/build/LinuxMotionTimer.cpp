@@ -5,48 +5,93 @@
  *
  */
 
-#include <unistd.h>
-#include <sys/time.h>
 #include "MotionModule.h"
 #include "LinuxMotionTimer.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 using namespace Robot;
 
-MotionManager* LinuxMotionTimer::m_Manager(0);
-bool LinuxMotionTimer::m_TimerRunning(false);
-timer_t LinuxMotionTimer::m_TimerID(0);
-
-
-void LinuxMotionTimer::TimerProc(int arg)
+LinuxMotionTimer::LinuxMotionTimer(MotionManager* manager)
+    : m_Manager(manager)
 {
-	if(m_Manager != 0 && m_TimerRunning == true)
-		m_Manager->Process();
+    this->m_FinishTimer = false;
+    this->m_TimerRunning = false;
 }
 
-void LinuxMotionTimer::Initialize(MotionManager* manager)
+void *LinuxMotionTimer::TimerProc(void *param)
 {
-	if(m_TimerID > 0)
-	{		
-		timer_delete(m_TimerID);
-		m_TimerID = 0;
-	}
+    LinuxMotionTimer *timer = (LinuxMotionTimer *)param;
+    static struct timespec next_time;
+    clock_gettime(CLOCK_MONOTONIC,&next_time);
 
-	m_Manager = manager;
+    while(!timer->m_FinishTimer)
+    {
+        next_time.tv_sec += (next_time.tv_nsec + MotionModule::TIME_UNIT * 1000000) / 1000000000;
+        next_time.tv_nsec = (next_time.tv_nsec + MotionModule::TIME_UNIT * 1000000) % 1000000000;
 
-	struct itimerspec value;
-    struct sigevent av_sig_spec;
-	long nsec_interval = MotionModule::TIME_UNIT*1000000;
+        if(timer->m_Manager != NULL)
+            timer->m_Manager->Process();
 
-    av_sig_spec.sigev_notify = SIGEV_SIGNAL;
-    av_sig_spec.sigev_signo = SIGRTMIN;
+        clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_time, NULL);
+    }
 
-    value.it_value.tv_sec = 0;
-    value.it_value.tv_nsec = nsec_interval;
-    value.it_interval.tv_sec = 0;
-    value.it_interval.tv_nsec = nsec_interval;
+    pthread_exit(NULL);
+}
 
-    timer_create(CLOCK_REALTIME, &av_sig_spec, &m_TimerID);
-    timer_settime(m_TimerID, 0, &value, NULL);
-    signal(SIGRTMIN, TimerProc);
-	m_TimerRunning = true;
+void LinuxMotionTimer::Start(void)
+{
+    int error;
+    struct sched_param param;
+    pthread_attr_t attr;
+
+    pthread_attr_init(&attr);
+
+    error = pthread_attr_setschedpolicy(&attr, SCHED_RR);
+    if(error != 0)
+        printf("error = %d\n",error);
+    error = pthread_attr_setinheritsched(&attr,PTHREAD_EXPLICIT_SCHED);
+    if(error != 0)
+        printf("error = %d\n",error);
+
+    memset(&param, 0, sizeof(param));
+    param.sched_priority = 31;// RT
+    error = pthread_attr_setschedparam(&attr, &param);
+    if(error != 0)
+        printf("error = %d\n",error);
+
+    // create and start the thread
+    if((error = pthread_create(&this->m_Thread, &attr, this->TimerProc, this))!= 0)
+        exit(-1);
+
+    this->m_TimerRunning=true;
+
+}
+
+void LinuxMotionTimer::Stop(void)
+{
+    int error=0;
+
+    // seti the flag to end the thread
+    if(this->m_TimerRunning)
+    {
+        this->m_FinishTimer = true;
+        // wait for the thread to end
+        if((error = pthread_join(this->m_Thread, NULL))!= 0)
+            exit(-1);
+        this->m_FinishTimer = false;
+        this->m_TimerRunning = false;
+    }
+}
+
+bool LinuxMotionTimer::IsRunning(void)
+{
+    return this->m_TimerRunning;
+}
+
+LinuxMotionTimer::~LinuxMotionTimer()
+{
+    this->Stop();
+    this->m_Manager = NULL;
 }

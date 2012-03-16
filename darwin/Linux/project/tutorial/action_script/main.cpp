@@ -55,7 +55,8 @@ int main(void)
             return 0;
     }
     MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
-    LinuxMotionTimer::Initialize(MotionManager::GetInstance());
+    LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
+    motion_timer->Start();
     /////////////////////////////////////////////////////////////////////
 
     MotionManager::GetInstance()->SetEnable(true);

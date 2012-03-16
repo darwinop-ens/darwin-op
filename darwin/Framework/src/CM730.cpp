@@ -415,21 +415,19 @@ void CM730::MakeBulkReadPacket()
 
     if(Ping(FSR::ID_L_FSR, 0) == SUCCESS)
     {
-        m_BulkReadTxPacket[PARAMETER+3*number+1] = 2;               // length
+        m_BulkReadTxPacket[PARAMETER+3*number+1] = 10;               // length
         m_BulkReadTxPacket[PARAMETER+3*number+2] = FSR::ID_L_FSR;   // id
-        m_BulkReadTxPacket[PARAMETER+3*number+3] = FSR::P_FSR_X;    // start address
+        m_BulkReadTxPacket[PARAMETER+3*number+3] = FSR::P_FSR1_L;    // start address
         number++;
     }
 
     if(Ping(FSR::ID_R_FSR, 0) == SUCCESS)
     {
-        m_BulkReadTxPacket[PARAMETER+3*number+1] = 2;               // length
+        m_BulkReadTxPacket[PARAMETER+3*number+1] = 10;               // length
         m_BulkReadTxPacket[PARAMETER+3*number+2] = FSR::ID_R_FSR;   // id
-        m_BulkReadTxPacket[PARAMETER+3*number+3] = FSR::P_FSR_X;    // start address
+        m_BulkReadTxPacket[PARAMETER+3*number+3] = FSR::P_FSR1_L;    // start address
         number++;
     }
-
-    fprintf(stderr, "NUMBER : %d \n", number);
 
     m_BulkReadTxPacket[LENGTH]          = (number * 3) + 3;
 }
