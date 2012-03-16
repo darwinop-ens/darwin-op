@@ -89,9 +89,9 @@ void help(char *progname)
     fprintf(stderr, "-----------------------------------------------------------------------\n");
     fprintf(stderr, "Usage: %s\n" \
                     " [-h | --help]........: display this help\n" \
-                    " [-d | --device]......: port to open                    (/dev/ttyUSB0)\n" \
-                    " [-c | --controller]..: controller firmware file      (cm730_0x13.hex)\n" \
-                    " [-a | --actuator]....: actuator firmware file    (mx28_0x1E_4096.hex)\n", progname);
+                    " [-d | --device]......: port to open                     (/dev/ttyUSB0)\n" \
+                    " [-c | --controller]..: controller firmware file       (cm730_0x13.hex)\n" \
+                    " [-a | --actuator]....: actuator firmware file (mx28_0x1E+FSR_0x11.hex)\n", progname);
     fprintf(stderr, "-----------------------------------------------------------------------\n");
     fprintf(stderr, "Example #1:\n" \
                     " To open a default port and install with firmware file \"cm730.hex\":\n" \
@@ -360,11 +360,11 @@ int main(int argc, char *argv[])
     int r = 0;
 
     fprintf(stderr, "\n***********************************************************************\n");
-    fprintf(stderr,   "*                CM-730 & Actuator Firmware Installer                 *\n");
+    fprintf(stderr,   "*             CM-730 & Actuator & FSR Firmware Installer              *\n");
     fprintf(stderr,   "***********************************************************************\n\n");
 
     char *controller_fw = (char*)"cm730_0x13.hex";
-    char *actuator_fw = (char*)"mx28_0x1E_4096.hex";
+    char *actuator_fw = (char*)"mx28_0x1E+FSR_0x11.hex";
     char *dev = (char*)"/dev/ttyUSB0";
 
     /* parameter parsing */
