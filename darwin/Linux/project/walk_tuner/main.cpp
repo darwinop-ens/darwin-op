@@ -60,6 +60,8 @@ int main(int argc, char *argv[])
     motion_timer->Start();
     /////////////////////////////////////////////////////////////////////
 
+    MotionManager::GetInstance()->LoadINISettings(ini);
+
     DrawIntro(&cm730);
     MotionManager::GetInstance()->SetEnable(true);
 
