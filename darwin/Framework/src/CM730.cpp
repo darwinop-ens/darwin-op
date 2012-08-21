@@ -59,6 +59,7 @@ CM730::CM730(PlatformCM730 *platform)
 {
 	m_Platform = platform;
 	DEBUG_PRINT = false;
+    m_BulkReadTxPacket[LENGTH] = 0;
 	for(int i = 0; i < ID_BROADCAST; i++)
 	    m_BulkReadData[i] = BulkReadData();
 }
