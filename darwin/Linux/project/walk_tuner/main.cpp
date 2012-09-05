@@ -54,13 +54,13 @@ int main(int argc, char *argv[])
         printf("Fail to initialize Motion Manager!\n");
         return 0;
     }
+    MotionManager::GetInstance()->LoadINISettings(ini);
     Walking::GetInstance()->LoadINISettings(ini);
+
     MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
     LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
     motion_timer->Start();
     /////////////////////////////////////////////////////////////////////
-
-    MotionManager::GetInstance()->LoadINISettings(ini);
 
     DrawIntro(&cm730);
     MotionManager::GetInstance()->SetEnable(true);

@@ -19,6 +19,8 @@ using namespace std;
 #define MOTION_FILE_PATH    "../../../Data/motion_4096.bin"
 #endif
 
+#define INI_FILE_PATH       "../../../Data/config.ini"
+
 #define VERSION					"1.000"
 #define TCPIP_PORT				6501
 #define ROBOPLUS_JOINT_MAXNUM	26
@@ -86,6 +88,8 @@ int main(int argc, char *argv[])
     fprintf(stderr,   "*                      RoboPlus Server Program                        *\n");
     fprintf(stderr,   "***********************************************************************\n\n");
 
+    minIni* ini = new minIni(INI_FILE_PATH);
+
 	change_current_dir();
 	if(argc < 2)
 		strcpy(filename, MOTION_FILE_PATH); // Set default motion file path
@@ -119,6 +123,7 @@ int main(int argc, char *argv[])
 		printf("Fail to initialize Motion Manager!\n");
 			return 0;
 	}
+    MotionManager::GetInstance()->LoadINISettings(ini);
 	MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());	
     LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
     motion_timer->Stop();
@@ -199,7 +204,7 @@ int main(int argc, char *argv[])
                     {
 						if(p_str_tok[0] == "on" || p_str_tok[0] == "off")
 						{
-							int torque;
+							int torque = 0;
 							if(p_str_tok[0] == "on")
 							{
 								torque = 1;

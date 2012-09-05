@@ -53,6 +53,7 @@ int main(void)
 		printf("Fail to initialize Motion Manager!\n");
 			return 0;
 	}
+    MotionManager::GetInstance()->LoadINISettings(ini);
 	MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());	
     LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
     motion_timer->Start();
