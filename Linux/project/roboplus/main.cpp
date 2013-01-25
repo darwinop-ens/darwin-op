@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
     try
     {
         // Create the socket
-		LinuxServer new_sock;
+		LinuxSocket new_sock;
         LinuxServer server ( TCPIP_PORT );
 
         while ( true )

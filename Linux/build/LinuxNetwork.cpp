@@ -18,6 +18,7 @@ using namespace std;
 LinuxSocket::LinuxSocket() : m_sock ( -1 )
 {
     memset ( &m_addr, 0, sizeof ( m_addr ) );
+    m_non_blocking = false;
 }
 
 LinuxSocket::~LinuxSocket()
@@ -92,27 +93,29 @@ bool LinuxSocket::accept ( LinuxSocket& new_socket ) const
 
 bool LinuxSocket::send ( const std::string s ) const
 {
+    errno = 0;
     int status = ::send ( m_sock, s.c_str(), s.size(), MSG_NOSIGNAL );
-    if ( status == -1 )
+    if ( ( status >= 0 ) || ( m_non_blocking  && ( errno == EAGAIN ) ) )
     {
-        return false;
+        return true;
     }
     else
     {
-        return true;
+        return false;
     }
 }
 
 bool LinuxSocket::send ( void* data, int length ) const
 {
+    errno = 0;
     int status = ::send ( m_sock, data, length, MSG_NOSIGNAL );
-    if ( status == -1 )
+    if ( ( status >= 0 ) || ( m_non_blocking  && ( errno == EAGAIN ) ) )
     {
-        return false;
+        return true;
     }
     else
     {
-        return true;
+        return false;
     }
 }
 
@@ -124,15 +127,16 @@ int LinuxSocket::recv ( std::string& s ) const
 
     memset ( buf, 0, MAXRECV + 1 );
 
+    errno = 0;
     int status = ::recv ( m_sock, buf, MAXRECV, 0 );
 
-    if ( status == -1 )
+    if ( ( status == 0 ) || ( m_non_blocking  && ( errno == EAGAIN ) ) )
+    {
+        return 1; // true result
+    }
+    else if ( status == -1 )
     {
         cout << "status == -1   errno == " << errno << "  in Socket::recv\n";
-        return 0;
-    }
-    else if ( status == 0 )
-    {
         return 0;
     }
     else
@@ -144,15 +148,16 @@ int LinuxSocket::recv ( std::string& s ) const
 
 int LinuxSocket::recv ( void* data, int length ) const
 {
-	int status = ::recv ( m_sock, data, length, 0 );
+    errno = 0;
+    int status = ::recv ( m_sock, data, length, 0 );
 
-    if ( status == -1 )
+    if ( ( status == 0 ) || ( m_non_blocking  && ( errno == EAGAIN ) ) )
     {
-        cout << "status == -1   errno == " << errno << "  in Socket::recv\n";
         return 0;
     }
-    else if ( status == 0 )
+    else if ( status == -1 )
     {
+        cout << "status == -1   errno == " << errno << "  in Socket::recv\n";
         return 0;
     }
     
@@ -196,6 +201,8 @@ void LinuxSocket::set_non_blocking ( const bool b )
 
     fcntl ( m_sock,
             F_SETFL,opts );
+
+    m_non_blocking = b;
 }
 
 
@@ -222,9 +229,9 @@ LinuxServer::~LinuxServer()
 {
 }
 
-const LinuxServer& LinuxServer::operator << ( const std::string& s ) const
+const LinuxSocket& LinuxSocket::operator << ( const std::string& s ) const
 {	
-    if ( ! LinuxSocket::send ( s ) )
+    if ( ! send ( s ) )
     {
         throw LinuxSocketException ( "Could not write to socket." );
     }
@@ -232,12 +239,12 @@ const LinuxServer& LinuxServer::operator << ( const std::string& s ) const
     return *this;
 }
 
-const LinuxServer& LinuxServer::operator << ( const int& i ) const
+const LinuxSocket& LinuxSocket::operator << ( const int& i ) const
 {
     std::stringstream ss;
     ss << i;
 
-    if ( ! LinuxSocket::send ( ss.str() ) )
+    if ( ! send ( ss.str() ) )
     {
         throw LinuxSocketException ( "Could not write to socket." );
     }
@@ -245,9 +252,9 @@ const LinuxServer& LinuxServer::operator << ( const int& i ) const
     return *this;
 }
 
-const LinuxServer& LinuxServer::operator >> ( std::string& s ) const
+const LinuxSocket& LinuxSocket::operator >> ( std::string& s ) const
 {
-    if ( ! LinuxSocket::recv ( s ) )
+    if ( ! recv ( s ) )
     {
         throw LinuxSocketException ( "Could not read from socket." );
     }
@@ -255,20 +262,3 @@ const LinuxServer& LinuxServer::operator >> ( std::string& s ) const
     return *this;
 }
 
-void LinuxServer::accept ( LinuxServer& sock )
-{
-    if ( ! LinuxSocket::accept ( sock ) )
-    {
-        throw LinuxSocketException ( "Could not accept socket." );
-    }
-}
-
-bool LinuxServer::send ( unsigned char* data, int length )
-{
-	return LinuxSocket::send(data, length);
-}
-
-int LinuxServer::recv ( unsigned char* data, int length )
-{
-	return LinuxSocket::recv(data, length);
-}

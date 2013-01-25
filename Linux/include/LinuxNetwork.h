@@ -24,6 +24,7 @@ namespace Robot
 	private:
 		int m_sock;
 		sockaddr_in m_addr;
+		bool m_non_blocking;
 
 	public:
 		static const int MAXHOSTNAME = 200;
@@ -50,7 +51,11 @@ namespace Robot
 
 		void set_non_blocking ( const bool );
 
-		bool is_valid() const { return m_sock != -1; }	
+		bool is_valid() const { return m_sock != -1; }
+
+		const LinuxSocket& operator << ( const std::string& ) const;
+		const LinuxSocket& operator << ( const int& ) const;
+		const LinuxSocket& operator >> ( std::string& ) const;	
 	};
 
 	class LinuxSocketException  
@@ -65,20 +70,12 @@ namespace Robot
 		std::string description() { return m_s; }	
 	};
 
-	class LinuxServer : private LinuxSocket
+	class LinuxServer : public LinuxSocket
 	{
 	public:
 		LinuxServer ( int port );
 		LinuxServer (){};
 		virtual ~LinuxServer();
-
-		const LinuxServer& operator << ( const std::string& ) const;
-		const LinuxServer& operator << ( const int& ) const;
-		const LinuxServer& operator >> ( std::string& ) const;
-
-		void accept ( LinuxServer& );
-		bool send ( unsigned char *data, int length );
-		int recv ( unsigned char *data, int length );
 	};
 }
 
