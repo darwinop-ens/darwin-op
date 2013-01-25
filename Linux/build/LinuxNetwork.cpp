@@ -84,9 +84,15 @@ bool LinuxSocket::listen() const
 bool LinuxSocket::accept ( LinuxSocket& new_socket ) const
 {
     int addr_length = sizeof ( m_addr );
+
+    errno = 0;
     new_socket.m_sock = ::accept ( m_sock, ( sockaddr * ) &m_addr, ( socklen_t * ) &addr_length );
 
-    if ( new_socket.m_sock <= 0 )
+    if ( m_non_blocking && ( ( errno == EAGAIN ) || ( errno == EWOULDBLOCK ) ) )
+    {
+        return false; // don't block
+    }
+    else if ( new_socket.m_sock <= 0 )
         return false;
     else
         return true;
