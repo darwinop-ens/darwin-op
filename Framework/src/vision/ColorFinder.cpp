@@ -40,6 +40,12 @@ ColorFinder::~ColorFinder()
     // TODO Auto-generated destructor stub
 }
 
+
+/*
+input: an image img
+output: no output
+effects: modify m_result. m_result is an image of the same size that img. _result->m_ImageData[i] is then 1 if the pixel n. i is correct and  else.
+*/
 void ColorFinder::Filtering(Image *img)
 {
     unsigned int h, s, v;
@@ -125,6 +131,11 @@ void ColorFinder::SaveINISettings(minIni* ini, const std::string &section)
     color_section = section;
 }
 
+/*
+input: an image hsv_img
+output: the average point where the color is found, or (-1, -1) if the color is not found 
+effects: modify m_result via Filtering
+*/
 Point2D& ColorFinder::GetPosition(Image* hsv_img)
 {
     int sum_x = 0, sum_y = 0, count = 0;

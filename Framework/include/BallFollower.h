@@ -31,9 +31,9 @@ namespace Robot
 		double m_KickLeftAngle;
 
 		double m_FollowMaxFBStep;
-        double m_FollowMinFBStep;
+        	double m_FollowMinFBStep;
 		double m_FollowMaxRLTurn;
-        double m_FitFBStep;
+        	double m_FitFBStep;
 		double m_FitMaxRLTurn;
 		double m_UnitFBStep;
 		double m_UnitRLTurn;

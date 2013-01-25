@@ -63,8 +63,8 @@ namespace Robot
 		int m_CWSlope[NUMBER_OF_JOINTS];
 		int m_CCWSlope[NUMBER_OF_JOINTS];
 		int m_PGain[NUMBER_OF_JOINTS];
-        int m_IGain[NUMBER_OF_JOINTS];
-        int m_DGain[NUMBER_OF_JOINTS];
+        	int m_IGain[NUMBER_OF_JOINTS];
+        	int m_DGain[NUMBER_OF_JOINTS];
 
 	public:
 		JointData();
@@ -107,12 +107,12 @@ namespace Robot
 		void SetCCWSlope(int id, int ccwSlope);
 		int  GetCCWSlope(int id);
 
-        void SetPGain(int id, int pgain) { m_PGain[id] = pgain; }
-        int  GetPGain(int id)            { return m_PGain[id]; }
-        void SetIGain(int id, int igain) { m_IGain[id] = igain; }
-        int  GetIGain(int id)            { return m_IGain[id]; }
-        void SetDGain(int id, int dgain) { m_DGain[id] = dgain; }
-        int  GetDGain(int id)            { return m_DGain[id]; }
+        	void SetPGain(int id, int pgain) { m_PGain[id] = pgain; }
+        	int  GetPGain(int id)            { return m_PGain[id]; }
+        	void SetIGain(int id, int igain) { m_IGain[id] = igain; }
+        	int  GetIGain(int id)            { return m_IGain[id]; }
+        	void SetDGain(int id, int dgain) { m_DGain[id] = dgain; }
+        	int  GetDGain(int id)            { return m_DGain[id]; }
 	};
 }
 

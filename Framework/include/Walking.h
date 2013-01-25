@@ -93,7 +93,7 @@ namespace Robot
 		double m_Body_Swing_Y;
 		double m_Body_Swing_Z;
 
-        Walking();
+        	Walking();
 
 		double wsin(double time, double period, double period_shift, double mag, double mag_shift);
 		bool computeIK(double *out, double x, double y, double z, double a, double b, double c);
@@ -150,10 +150,10 @@ namespace Robot
 		void Process();
 		bool IsRunning();
 
-        void LoadINISettings(minIni* ini);
-        void LoadINISettings(minIni* ini, const std::string &section);
-        void SaveINISettings(minIni* ini);
-        void SaveINISettings(minIni* ini, const std::string &section);
+		void LoadINISettings(minIni* ini);
+		void LoadINISettings(minIni* ini, const std::string &section);
+		void SaveINISettings(minIni* ini);
+		void SaveINISettings(minIni* ini, const std::string &section);
 	};
 }
 

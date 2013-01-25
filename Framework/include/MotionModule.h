@@ -12,6 +12,10 @@
 
 namespace Robot
 {
+	
+	/*
+	Represents an abstract motion (maybe instanciated by a walking, etc.)
+	*/
 	class MotionModule
 	{
 	private:
