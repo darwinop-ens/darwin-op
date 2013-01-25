@@ -16,7 +16,7 @@ CXXFLAGS += -O2 -DLINUX -Wall $(INCLUDE_DIRS)
 #CXXFLAGS += -O2 -DDEBUG -DLINUX -Wall $(INCLUDE_DIRS)
 LFLAGS += -lpthread -ljpeg -lrt
 
-OBJECTS = VisionMode.o StatusCheck.o main.o
+OBJECTS = VisionMode.o StatusCheck.o roboplus.o main.o
 
 all: $(TARGET)
 

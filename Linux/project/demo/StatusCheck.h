@@ -18,6 +18,7 @@ namespace Robot
         SOCCER,
         MOTION,
         VISION,
+	ROBOPLUS,
         MAX_MODE
     };
 

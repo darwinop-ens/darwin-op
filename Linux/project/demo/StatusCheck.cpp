@@ -15,6 +15,7 @@
 #include "MotionStatus.h"
 #include "MotionManager.h"
 #include "LinuxActionScript.h"
+#include "roboplus.h"
 
 using namespace Robot;
 
@@ -53,6 +54,10 @@ void StatusCheck::Check(CM730 &cm730)
 
         if(m_is_started == 1)
         {
+	    /*if(m_cur_mode == ROBOPLUS)
+	    {
+		roboplus_close();
+	    }*/
             m_is_started    = 0;
             m_cur_mode      = READY;
             LinuxActionScript::m_stop = 1;
@@ -92,6 +97,11 @@ void StatusCheck::Check(CM730 &cm730)
             cm730.WriteByte(CM730::P_LED_PANNEL, 0x04, NULL);
             LinuxActionScript::PlayMP3("../../../Data/mp3/Vision processing mode.mp3");
         }
+	else if(m_cur_mode == ROBOPLUS)
+	{
+            cm730.WriteByte(CM730::P_LED_PANNEL, 0x03, NULL);
+            LinuxActionScript::PlayMP3("../../../Data/mp3/Roboplus.mp3");
+	}	
     }
 
     if(m_old_btn & BTN_START)
@@ -153,6 +163,20 @@ void StatusCheck::Check(CM730 &cm730)
 
                 // Joint Enable...
                 Action::GetInstance()->m_Joint.SetEnableBody(true, true);
+
+                Action::GetInstance()->Start(1);
+                while(Action::GetInstance()->IsRunning() == true) usleep(8000);
+            }
+            else if(m_cur_mode == ROBOPLUS)
+            {
+                MotionManager::GetInstance()->Reinitialize();
+                MotionManager::GetInstance()->SetEnable(true);
+                m_is_started = 1;
+                LinuxActionScript::PlayMP3("../../../Data/mp3/Roboplus.mp3");
+
+                // Joint Enable...
+                Action::GetInstance()->m_Joint.SetEnableHeadOnly(true, true);
+                Action::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true, true);
 
                 Action::GetInstance()->Start(1);
                 while(Action::GetInstance()->IsRunning() == true) usleep(8000);

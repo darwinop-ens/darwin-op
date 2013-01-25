@@ -14,9 +14,11 @@
 
 #include "mjpg_streamer.h"
 #include "LinuxDARwIn.h"
+#include "LinuxNetwork.h"
 
 #include "StatusCheck.h"
 #include "VisionMode.h"
+#include "roboplus.h"
 
 #ifdef MX28_1024
 #define MOTION_FILE_PATH    "../../../Data/motion_1024.bin"
@@ -149,14 +151,23 @@ int main(void)
     Action::GetInstance()->Start(15);
     while(Action::GetInstance()->IsRunning()) usleep(8*1000);
 
+    Robot::LinuxServer roboplus_server(6501);
+    Robot::LinuxSocket roboplus_socket;
+    bool roboplus_connected = false;
+
+    //roboplus_init(roboplus_server, roboplus_connected);
+
     while(1)
     {
         StatusCheck::Check(cm730);
 
         Point2D ball_pos, red_pos, yellow_pos, blue_pos;
 
-        LinuxCamera::GetInstance()->CaptureFrame();
-        memcpy(rgb_output->m_ImageData, LinuxCamera::GetInstance()->fbuffer->m_RGBFrame->m_ImageData, LinuxCamera::GetInstance()->fbuffer->m_RGBFrame->m_ImageSize);
+        if(StatusCheck::m_cur_mode != ROBOPLUS)
+        {
+            LinuxCamera::GetInstance()->CaptureFrame();
+            memcpy(rgb_output->m_ImageData, LinuxCamera::GetInstance()->fbuffer->m_RGBFrame->m_ImageData, LinuxCamera::GetInstance()->fbuffer->m_RGBFrame->m_ImageSize);
+        }
 
         if(StatusCheck::m_cur_mode == READY || StatusCheck::m_cur_mode == VISION)
         {
@@ -244,7 +255,10 @@ int main(void)
             }
         }
 
-        streamer->send_image(rgb_output);
+        if(StatusCheck::m_cur_mode != ROBOPLUS)
+        {
+            streamer->send_image(rgb_output);
+        }
 
         if(StatusCheck::m_is_started == 0)
             continue;
@@ -282,6 +296,9 @@ int main(void)
         case MOTION:
             if(LinuxActionScript::m_is_running == 0)
                 LinuxActionScript::ScriptStart(SCRIPT_FILE_PATH);
+            break;
+        case ROBOPLUS:
+            roboplus_exec(cm730,roboplus_server,roboplus_socket,roboplus_connected,*motion_timer);
             break;
         case VISION:
             int detected_color = 0;
