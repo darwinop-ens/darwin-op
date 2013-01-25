@@ -32,7 +32,7 @@ darwin.a:
 
 $(TARGET): $(OBJS) ../../../lib/darwin.a
 	$(CXX) -o $(TARGET) $(OBJS) ../../../lib/darwin.a $(LIBS)
-    chmod 755 $(TARGET)
+	chmod 755 $(TARGET)
 
 # useful to make a backup "make tgz"
 tgz: clean
