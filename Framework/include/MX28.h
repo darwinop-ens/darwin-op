@@ -17,14 +17,14 @@ namespace Robot
 	public:
 		static const int MIN_VALUE = 0;
 #ifdef MX28_1024
-        static const int CENTER_VALUE = 512;
-        static const int MAX_VALUE = 1023;
-        static const double MIN_ANGLE = -150.0; // degree
-        static const double MAX_ANGLE = 150.0; // degree
-        static const double RATIO_VALUE2ANGLE = 0.293; // 300 / 1024
-        static const double RATIO_ANGLE2VALUE = 3.413; // 1024 / 300
+        	static const int CENTER_VALUE = 512;
+        	static const int MAX_VALUE = 1023;
+        	static const double MIN_ANGLE = -150.0; // degree
+        	static const double MAX_ANGLE = 150.0; // degree
+        	static const double RATIO_VALUE2ANGLE = 0.293; // 300 / 1024
+        	static const double RATIO_ANGLE2VALUE = 3.413; // 1024 / 300
 
-        static const int PARAM_BYTES = 5;
+        	static const int PARAM_BYTES = 5;
 #else
 		static const int CENTER_VALUE = 2048;
 		static const int MAX_VALUE = 4095;
@@ -36,7 +36,7 @@ namespace Robot
 		static const int PARAM_BYTES = 7;
 #endif
 
-        static int GetMirrorValue(int value)		{ return MAX_VALUE + 1 - value; }
+        	static int GetMirrorValue(int value)		{ return MAX_VALUE + 1 - value; }
 		static double GetMirrorAngle(double angle)	{ return -angle; }
 
 		static int Angle2Value(double angle) { return (int)(angle*RATIO_ANGLE2VALUE)+CENTER_VALUE; }
@@ -145,23 +145,23 @@ namespace Robot
 			P_PUNCH_L					= 48,
 			P_PUNCH_H					= 49,
 			P_RESERVED4                 = 50,
-            P_RESERVED5                 = 51,
-            P_POT_L                     = 52,
-            P_POT_H                     = 53,
-            P_PWM_OUT_L                 = 54,
-            P_PWM_OUT_H                 = 55,
-            P_P_ERROR_L                 = 56,
-            P_P_ERROR_H                 = 57,
-            P_I_ERROR_L                 = 58,
-            P_I_ERROR_H                 = 59,
-            P_D_ERROR_L                 = 60,
-            P_D_ERROR_H                 = 61,
-            P_P_ERROR_OUT_L             = 62,
-            P_P_ERROR_OUT_H             = 63,
-            P_I_ERROR_OUT_L             = 64,
-            P_I_ERROR_OUT_H             = 65,
-            P_D_ERROR_OUT_L             = 66,
-            P_D_ERROR_OUT_H             = 67,
+			    P_RESERVED5                 = 51,
+			    P_POT_L                     = 52,
+			    P_POT_H                     = 53,
+			    P_PWM_OUT_L                 = 54,
+			    P_PWM_OUT_H                 = 55,
+			    P_P_ERROR_L                 = 56,
+			    P_P_ERROR_H                 = 57,
+			    P_I_ERROR_L                 = 58,
+			    P_I_ERROR_H                 = 59,
+			    P_D_ERROR_L                 = 60,
+			    P_D_ERROR_H                 = 61,
+			    P_P_ERROR_OUT_L             = 62,
+			    P_P_ERROR_OUT_H             = 63,
+			    P_I_ERROR_OUT_L             = 64,
+			    P_I_ERROR_OUT_H             = 65,
+			    P_D_ERROR_OUT_L             = 66,
+			    P_D_ERROR_OUT_H             = 67,
 			MAXNUM_ADDRESS
 		};
 #endif
