@@ -1,0 +1,12 @@
+*.o
+*.a
+*~
+*.bak
+Linux/project/action_editor/action_editor
+Linux/project/demo/demo
+Linux/project/dxl_monitor/dxl_monitor
+Linux/project/firmware_installer/firmware_installer
+Linux/project/offset_tuner/offset_tuner
+Linux/project/roboplus/roboplus
+Linux/project/walk_tuner/walk_tuner
+
