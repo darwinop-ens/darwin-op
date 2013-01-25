@@ -74,7 +74,8 @@ namespace Robot
 	{
 	public:
 		LinuxServer ( int port );
-		LinuxServer (){};
+		LinuxServer () {};
+		void listen ( int port );
 		virtual ~LinuxServer();
 	};
 }

@@ -44,7 +44,8 @@ bool LinuxSocket::create()
     return true;
 }
 
-bool LinuxSocket::bind ( const int port )  {
+bool LinuxSocket::bind ( const int port )
+{
     if ( ! is_valid() )
     {
         return false;
@@ -95,7 +96,7 @@ bool LinuxSocket::send ( const std::string s ) const
 {
     errno = 0;
     int status = ::send ( m_sock, s.c_str(), s.size(), MSG_NOSIGNAL );
-    if ( ( status >= 0 ) || ( m_non_blocking  && ( errno == EAGAIN ) ) )
+    if ( ( status >= 0 ) || ( m_non_blocking  && ( ( errno == EAGAIN ) || ( errno == EWOULDBLOCK ) ) ) )
     {
         return true;
     }
@@ -109,7 +110,7 @@ bool LinuxSocket::send ( void* data, int length ) const
 {
     errno = 0;
     int status = ::send ( m_sock, data, length, MSG_NOSIGNAL );
-    if ( ( status >= 0 ) || ( m_non_blocking  && ( errno == EAGAIN ) ) )
+    if ( ( status >= 0 ) || ( m_non_blocking  && ( ( errno == EAGAIN ) || ( errno == EWOULDBLOCK ) ) ) )
     {
         return true;
     }
@@ -128,16 +129,24 @@ int LinuxSocket::recv ( std::string& s ) const
     memset ( buf, 0, MAXRECV + 1 );
 
     errno = 0;
-    int status = ::recv ( m_sock, buf, MAXRECV, 0 );
+    int status = ::recv ( m_sock, buf, MAXRECV, m_non_blocking ? MSG_DONTWAIT : 0 );
 
-    if ( ( status == 0 ) || ( m_non_blocking  && ( errno == EAGAIN ) ) )
+    cout << status << " " << errno << "\n";
+    if ( status == 0 )
     {
-        return 1; // true result
+        return 0; // connection was gracefully closed
     }
     else if ( status == -1 )
     {
-        cout << "status == -1   errno == " << errno << "  in Socket::recv\n";
-        return 0;
+        if ( m_non_blocking  && ( ( errno == EAGAIN ) || ( errno == EWOULDBLOCK ) ) )
+        {
+            return 1; // true result
+        }
+        else
+        {
+            cout << "status == -1   errno == " << errno << "  in Socket::recv\n";
+            return 0;
+        }
     }
     else
     {
@@ -149,16 +158,23 @@ int LinuxSocket::recv ( std::string& s ) const
 int LinuxSocket::recv ( void* data, int length ) const
 {
     errno = 0;
-    int status = ::recv ( m_sock, data, length, 0 );
+    int status = ::recv ( m_sock, data, length, m_non_blocking ? MSG_DONTWAIT : 0 );
 
-    if ( ( status == 0 ) || ( m_non_blocking  && ( errno == EAGAIN ) ) )
+    if ( status == 0 )
     {
-        return 0;
+        return 0; // connection was gracefully closed
     }
     else if ( status == -1 )
     {
-        cout << "status == -1   errno == " << errno << "  in Socket::recv\n";
-        return 0;
+        if ( m_non_blocking  && ( ( errno == EAGAIN ) || ( errno == EWOULDBLOCK ) ) )
+        {
+            return 0; // no data to return
+        }
+        else
+        {
+            cout << "status == -1   errno == " << errno << "  in Socket::recv\n";
+            return 0;
+        }
     }
     
     return status;
@@ -205,30 +221,6 @@ void LinuxSocket::set_non_blocking ( const bool b )
     m_non_blocking = b;
 }
 
-
-
-LinuxServer::LinuxServer ( int port )
-{
-    if ( ! LinuxSocket::create() )
-    {
-        throw LinuxSocketException ( "Could not create server socket." );
-    }
-
-    if ( ! LinuxSocket::bind ( port ) )
-    {
-        throw LinuxSocketException ( "Could not bind to port." );
-    }
-
-    if ( ! LinuxSocket::listen() )
-    {
-        throw LinuxSocketException ( "Could not listen to socket." );
-    }
-}
-
-LinuxServer::~LinuxServer()
-{
-}
-
 const LinuxSocket& LinuxSocket::operator << ( const std::string& s ) const
 {	
     if ( ! send ( s ) )
@@ -261,4 +253,32 @@ const LinuxSocket& LinuxSocket::operator >> ( std::string& s ) const
 
     return *this;
 }
+
+LinuxServer::LinuxServer ( int port )
+{
+    listen(port);
+}
+
+LinuxServer::~LinuxServer()
+{
+}
+
+void LinuxServer::listen ( int port )
+{
+    if ( ! LinuxSocket::create() )
+    {
+        throw LinuxSocketException ( "Could not create server socket." );
+    }
+
+    if ( ! LinuxSocket::bind ( port ) )
+    {
+        throw LinuxSocketException ( "Could not bind to port." );
+    }
+
+    if ( ! LinuxSocket::listen() )
+    {
+        throw LinuxSocketException ( "Could not listen to socket." );
+    }
+}
+
 
