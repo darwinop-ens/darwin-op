@@ -11,7 +11,7 @@ CC = g++
 AR = ar
 ARFLAGS = cr
 
-TARGET = darwin.a
+TARGET = ../lib/darwin.a
 
 INCLUDE_DIRS = -I../include -I../../Framework/include
 
@@ -47,7 +47,7 @@ OBJS =  ../../Framework/src/CM730.o     	\
         LinuxNetwork.o
 
 $(TARGET): $(OBJS)
-	$(AR) $(ARFLAGS) ../lib/$(TARGET) $(OBJS)
+	$(AR) $(ARFLAGS) $(TARGET) $(OBJS)
 #	$(CC) -o $(TARGET) $(OBJS) $(LFLAGS)
 
 all: $(TARGET)
