@@ -137,7 +137,6 @@ int LinuxSocket::recv ( std::string& s ) const
     errno = 0;
     int status = ::recv ( m_sock, buf, MAXRECV, m_non_blocking ? MSG_DONTWAIT : 0 );
 
-    cout << status << " " << errno << "\n";
     if ( status == 0 )
     {
         return 0; // connection was gracefully closed
