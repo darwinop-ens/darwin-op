@@ -9,4 +9,14 @@ Linux/project/firmware_installer/firmware_installer
 Linux/project/offset_tuner/offset_tuner
 Linux/project/roboplus/roboplus
 Linux/project/walk_tuner/walk_tuner
+Linux/project/arm_copy/arm_copy
+Linux/project/francois_suivre_rouge/
+Linux/project/test_articulation/
+Linux/project/tutorial/action_script/action_script
+Linux/project/tutorial/ball_following/ball_following
+Linux/project/tutorial/camera/camera_tutorial
+Linux/project/tutorial/color_filtering/color_filtering
+Linux/project/tutorial/fsr/fsr
+Linux/project/tutorial/head_tracking/head_tracking
+Linux/project/tutorial/read_write/read_write
 
