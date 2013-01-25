@@ -8,6 +8,8 @@
 #ifndef _MX_28_H_
 #define _MX_28_H_
 
+#include <math.h>
+
 //#define MX28_1024
 
 namespace Robot
@@ -33,14 +35,26 @@ namespace Robot
 		static const double RATIO_VALUE2ANGLE = 0.088; // 360 / 4096
 		static const double RATIO_ANGLE2VALUE = 11.378; // 4096 / 360
 
-		static const int PARAM_BYTES = 7;
+		static const int PARAM_BYTES = 7; 
 #endif
+
+		static const double RATIO_VALUE2SPEED = 0.053;
+		static const double RATIO_SPEED2VALUE = 18.87;
+
+		static const double RATIO_VALUE2TORQUE = 0.01;
+		static const double RATIO_TORQUE2VALUE = 100;
 
         	static int GetMirrorValue(int value)		{ return MAX_VALUE + 1 - value; }
 		static double GetMirrorAngle(double angle)	{ return -angle; }
 
 		static int Angle2Value(double angle) { return (int)(angle*RATIO_ANGLE2VALUE)+CENTER_VALUE; }
 		static double Value2Angle(int value) { return (double)(value-CENTER_VALUE)*RATIO_VALUE2ANGLE; }
+
+		static double Speed2Value(double speed) { int temp = ((int)(fabs(speed)*RATIO_SPEED2VALUE)) & 0x3FF; if (speed < 0) temp |= 0x400; return temp; }
+		static double Value2Speed(int value) { double temp = (value & 0x3FF)*RATIO_VALUE2SPEED; if (value & 0x400) temp = -temp; return temp; }
+
+		static double Torque2Value(double speed) { int temp = ((int)(fabs(speed)*RATIO_TORQUE2VALUE)) & 0x3FF; if (speed < 0) temp |= 0x400; return temp; }
+		static double Value2Torque(int value) { double temp = (value & 0x3FF)*RATIO_VALUE2TORQUE; if (value & 0x400) temp = -temp; return temp; }
 
 		// Address
 #ifdef MX28_1024
