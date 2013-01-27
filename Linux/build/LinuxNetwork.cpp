@@ -101,7 +101,8 @@ bool LinuxSocket::accept ( LinuxSocket& new_socket ) const
 bool LinuxSocket::send ( const std::string s ) const
 {
     errno = 0;
-    int status = ::send ( m_sock, s.c_str(), s.size(), MSG_NOSIGNAL );
+    int status = ::send ( m_sock, s.c_str(), s.size(), MSG_NOSIGNAL | ( m_non_blocking ? MSG_DONTWAIT : 0 ) );
+
     if ( ( status >= 0 ) || ( m_non_blocking  && ( ( errno == EAGAIN ) || ( errno == EWOULDBLOCK ) ) ) )
     {
         return true;
