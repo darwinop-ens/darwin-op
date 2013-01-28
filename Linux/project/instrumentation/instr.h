@@ -4,6 +4,7 @@
 #include <string>
 #include "LinuxNetwork.h"
 #include "CM730.h"
+#include "time.h"
 
 #include "task.h"
 
@@ -17,6 +18,7 @@ class InstrServer: public Task
 		LinuxSocket m_socket;
 		bool m_connected;
 		CM730 m_cm730;
+		struct timeval m_start_time;
 
 		void ProcessPrintCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessReadCommand(string::iterator &iterator, string::iterator &end, string &result);
