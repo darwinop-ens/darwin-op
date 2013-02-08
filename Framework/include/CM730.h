@@ -1,6 +1,6 @@
 /*
  *   CM730.h
- *
+ *   François: I do not understand what this class does
  *   Author: ROBOTIS
  *
  */
@@ -86,6 +86,9 @@ namespace Robot
 			INSTRUCTION     = 64
 		};
 
+		
+		
+		/*EEPROM and RAM p. 4 in MX28 Technical Specifications.pdf ????*/
 		enum
 		{
 			P_MODEL_NUMBER_L		= 0,

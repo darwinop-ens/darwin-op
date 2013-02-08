@@ -1,6 +1,6 @@
 /*
  *   DARwIn.h
- *
+ *   François: this file seems to be included if you want to use the robot
  *   Author: ROBOTIS
  *
  */

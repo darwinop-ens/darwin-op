@@ -1,6 +1,7 @@
 /*
  *   MX28.h
- *
+ *   MX28 is a motor. The DARwin robot is made up of 20 motors.
+ *   This class only provide "static" features: enum, constants and conversion functions.
  *   Author: ROBOTIS
  *
  */
@@ -56,7 +57,10 @@ namespace Robot
 		static double Torque2Value(double speed) { int temp = ((int)(fabs(speed)*RATIO_TORQUE2VALUE)) & 0x3FF; if (speed < 0) temp |= 0x400; return temp; }
 		static double Value2Torque(int value) { double temp = (value & 0x3FF)*RATIO_VALUE2TORQUE; if (value & 0x400) temp = -temp; return temp; }
 
-		// Address
+		
+		/*EEPROM and RAM p. 4 in MX28 Technical Specifications.pdf
+		 This enum enumerates the adresses. The list depends on the version the MX28.
+		*/
 #ifdef MX28_1024
         enum
         {

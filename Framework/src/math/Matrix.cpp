@@ -10,7 +10,7 @@
 
 using namespace Robot;
 
-/*
+/**
 create the identity matrix (of size 4X4)
 */
 Matrix3D::Matrix3D()
@@ -18,6 +18,9 @@ Matrix3D::Matrix3D()
 	Identity();
 }
 
+/**
+TODO: no clear about the side effects
+*/
 Matrix3D::Matrix3D(const Matrix3D &mat)
 {
 	*this = mat;
@@ -27,6 +30,10 @@ Matrix3D::~Matrix3D()
 {
 }
 
+
+/*
+set the current matrix to identity
+*/
 void Matrix3D::Identity()
 {
 	m[m00] = 1; m[m01] = 0; m[m02] = 0; m[m03] = 0;
@@ -35,6 +42,11 @@ void Matrix3D::Identity()
 	m[m30] = 0; m[m31] = 0; m[m32] = 0; m[m33] = 1;
 }
 
+
+/*
+compute the inverse of the matrix
+returns true iff the matrix is invertible
+*/
 bool Matrix3D::Inverse()
 {
 	Matrix3D src, dst, tmp;
@@ -113,6 +125,14 @@ bool Matrix3D::Inverse()
     return true;
 }
 
+
+/*
+compute the matrix
+scale.X         0        0        0
+0            scale.Y     0        0
+0               0      scale.Z    0
+0               0        0        1
+*/
 void Matrix3D::Scale(Vector3D scale)
 {
 	Matrix3D mat;
@@ -123,6 +143,9 @@ void Matrix3D::Scale(Vector3D scale)
 	*this *= mat;
 }
 
+
+
+/*construct the matrix corresponding to a rotation of angle around the axis*/
 void Matrix3D::Rotate(double angle, Vector3D axis)
 {
 	double rad = angle * 3.141592 / 180.0;
@@ -143,6 +166,8 @@ void Matrix3D::Rotate(double angle, Vector3D axis)
 	*this *= mat;
 }
 
+
+/*compute the matrix corresponding to a translation of vector offset*/
 void Matrix3D::Translate(Vector3D offset)
 {
 	Matrix3D mat;
@@ -153,6 +178,8 @@ void Matrix3D::Translate(Vector3D offset)
 	*this *= mat;
 }
 
+
+/*make the product of the current matrix with the point*/
 Point3D Matrix3D::Transform(Point3D point)
 {
 	Point3D result;
@@ -163,6 +190,8 @@ Point3D Matrix3D::Transform(Point3D point)
     return result;
 }
 
+
+/*make the product of the current matrix with the point*/
 Vector3D Matrix3D::Transform(Vector3D vector)
 {
 	Vector3D result;
@@ -173,6 +202,7 @@ Vector3D Matrix3D::Transform(Vector3D vector)
     return result;
 }
 
+/*?*/
 void Matrix3D::SetTransform(Point3D point, Vector3D angle)
 {
 	double Cx = cos(angle.X * 3.141592 / 180.0);

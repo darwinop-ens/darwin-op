@@ -1,6 +1,6 @@
 /*
  *   Point.cpp
- *
+ *   represents a point in 2D
  *   Author: ROBOTIS
  *
  */
@@ -33,6 +33,8 @@ Point2D::~Point2D()
 {
 }
 
+
+/*returns the euclidian distance between pt1 and pt2*/
 double Point2D::Distance(Point2D &pt1, Point2D &pt2)
 {
 	double x = pt1.X - pt2.X;
