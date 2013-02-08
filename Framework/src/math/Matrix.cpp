@@ -1,6 +1,6 @@
 /*
  *   Matrix.cpp
- *
+ *   Matrix3D is the class of matrix of size 4X4.
  *   Author: ROBOTIS
  *
  */
@@ -10,7 +10,9 @@
 
 using namespace Robot;
 
-
+/*
+create the identity matrix (of size 4X4)
+*/
 Matrix3D::Matrix3D()
 {
 	Identity();
