@@ -1,6 +1,7 @@
 /*
  * ColorFinder.h
- *
+ * this class provides features to find a color in an image
+ 
  *  Created on: 2011. 1. 10.
  *      Author: zerom
  */
@@ -19,6 +20,9 @@
 
 namespace Robot
 {
+
+
+
     class ColorFinder
     {
     private:
@@ -39,15 +43,27 @@ namespace Robot
         Image*  m_result;
 
         ColorFinder();
+
+		/*
+		Create an object to detect a color in an image
+		The color is given according to the HSV model (hue, saturation and value)
+		*/
         ColorFinder(int hue, int hue_tol, int min_sat, int min_val, double min_per, double max_per);
-        virtual ~ColorFinder();
+        
+		virtual ~ColorFinder();
 
         void LoadINISettings(minIni* ini);
         void LoadINISettings(minIni* ini, const std::string &section);
         void SaveINISettings(minIni* ini);
         void SaveINISettings(minIni* ini, const std::string &section);
 
-        Point2D& GetPosition(Image* hsv_img);
+        
+		/*
+		input: an image hsv_img
+		output: the average point where the color is found, or (-1, -1) if the color is not found 
+		effects: modify m_result via Filtering
+		*/
+		Point2D& GetPosition(Image* hsv_img);
     };
 }
 

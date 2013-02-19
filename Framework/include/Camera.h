@@ -1,6 +1,6 @@
 /*
  *   Camera.h
- *
+ *   This class contains the constants about the camera.
  *   Author: ROBOTIS
  *
  */

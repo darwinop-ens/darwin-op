@@ -1,6 +1,6 @@
 /*
  *   Image.h
- *
+ *   François : what is the difference between Image and FrameBuffer ?
  *   Author: ROBOTIS
  *
  */
