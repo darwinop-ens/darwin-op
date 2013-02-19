@@ -16,7 +16,8 @@
 #include "LinuxDARwIn.h"
 #include "LinuxNetwork.h"
 
-#include "abstracct
+#include "abstractbehavior.h"
+#include "behaviorarmcopy.h"
 
 
 using namespace Robot;
@@ -61,10 +62,10 @@ int main(void)
   LinuxCM730 linux_cm730("/dev/ttyUSB0");
   CM730* cm730 = new CM730(&linux_cm730);
 
-  AbstractBehavior behavior = new BehaviorArmCopy(cm730);
+  AbstractBehavior* behavior = new BehaviorArmCopy(cm730);
 
   while(1) {
     usleep(10000);
-    CopyExecute(cm730);
+    behavior->oneStep();
   }
 }
