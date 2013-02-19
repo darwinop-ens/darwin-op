@@ -1,6 +1,6 @@
 /*
  *   CM730.h
- *   François: I do not understand what this class does
+*   This class is the secondary controler that controls the motors MX28
  *   Author: ROBOTIS
  *
  */

@@ -1,6 +1,6 @@
 /*
  *   CM730.cpp
- *
+ *   This class is the secondary controler that controls the motors MX28
  *   Author: ROBOTIS
  *
  */
@@ -8,6 +8,7 @@
 #include "FSR.h"
 #include "CM730.h"
 #include "MotionStatus.h"
+
 
 using namespace Robot;
 
@@ -672,7 +673,7 @@ int CM730::MakeWord(int lowbyte, int highbyte)
     word = word << 8;
     word = word + lowbyte;
 
-    return (int)word;
+    return (int) word;
 }
 
 int CM730::GetLowByte(int word)
