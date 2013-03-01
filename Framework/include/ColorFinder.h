@@ -38,10 +38,13 @@ namespace Robot
         double m_min_percent;  /* 0.0 ~ 100.0 */
         double m_max_percent;  /* 0.0 ~ 100.0 */
 
-        std::string color_section;
+        std::string color_section; /*TODO: ?*/
 
         Image*  m_result;
 
+		
+		
+		/*TODO: not clear what it creates*/
         ColorFinder();
 
 		/*
@@ -52,6 +55,10 @@ namespace Robot
         
 		virtual ~ColorFinder();
 
+		
+		
+/*load from INI file*/		
+		
         void LoadINISettings(minIni* ini);
         void LoadINISettings(minIni* ini, const std::string &section);
         void SaveINISettings(minIni* ini);

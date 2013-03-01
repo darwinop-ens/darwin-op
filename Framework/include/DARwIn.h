@@ -1,6 +1,7 @@
 /*
  *   DARwIn.h
- *   François: this file seems to be included if you want to use the robot
+ *   TODO: François: this file seems to be included if you want to use the robot
+ This file is crazy!
  *   Author: ROBOTIS
  *
  */

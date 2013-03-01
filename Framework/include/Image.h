@@ -22,20 +22,30 @@ namespace Robot
 	    static const int RGB_PIXEL_SIZE = 3;
 	    static const int HSV_PIXEL_SIZE = 4;
 
-        	unsigned char *m_ImageData; /* pointer to aligned image data */
-        	int m_Width;                /* image width in pixels */
-        	int m_Height;               /* image height in pixels */
-        	int m_PixelSize;            /* pixel size in bytes */
-        	int m_NumberOfPixels;       /* number of pixels */
-        	int m_WidthStep;            /* size of aligned image row in bytes */
-        	int m_ImageSize;            /* image data size in bytes (=image->m_Height*image->m_WidthStep) */
+		unsigned char *m_ImageData; /* pointer to aligned image data */
+		int m_Width;                /* image width in pixels */
+		int m_Height;               /* image height in pixels */
+		int m_PixelSize;            /* pixel size in bytes */
+		int m_NumberOfPixels;       /* number of pixels */
+		int m_WidthStep;            /* size of aligned image row in bytes = size in bytes of a row, should be equal to the number of pixels X pixel size in bytes */
+		int m_ImageSize;            /* image data size in bytes (=image->m_Height*image->m_WidthStep) */
 
-        	Image(int width, int height, int pixelsize);
+		/*create an image with width, height, pixelsize (number of bytes per pixel)
+		TODO: what is the content of the image?*/
+       	Image(int width, int height, int pixelsize);
+		
+		
 		virtual ~Image();
 
-		Image& operator = (Image &img); //affectation on images
+		/*the affectation on images makes a copy*/
+		Image& operator = (Image &img); 
 	};
 
+	
+	
+	
+	/*TODO: what is the utility of FrameBuffer*/
+	
 	class FrameBuffer
 	{
 		private:

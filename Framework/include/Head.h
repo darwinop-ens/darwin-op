@@ -1,6 +1,6 @@
 /*
  *   Head.h
- *
+ *   represents the head of the robot
  *   Author: ROBOTIS
  *
  */
@@ -66,6 +66,9 @@ namespace Robot
 		void MoveTracking(Point2D err); // For image processing
 		void MoveTracking();
 
+
+/*Read/write from a INI file*/
+		
         void LoadINISettings(minIni* ini);
         void LoadINISettings(minIni* ini, const std::string &section);
         void SaveINISettings(minIni* ini);

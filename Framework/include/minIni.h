@@ -1,6 +1,6 @@
 /*
  *   minIni.h
- *
+ *   minIni - Multi-Platform INI file parser, suitable for embedded systems
  *   Author: ROBOTIS
  *
  */
