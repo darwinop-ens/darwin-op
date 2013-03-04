@@ -1,6 +1,6 @@
 /*
  *   JointData.h
- *
+ *   This class represents the state of all articulations (all the motors MX28)
  *   Author: ROBOTIS
  *
  */
@@ -57,19 +57,21 @@ namespace Robot
 	private:		
 
 	protected:
+	/*the values*/
 		bool m_Enable[NUMBER_OF_JOINTS];
 		int m_Value[NUMBER_OF_JOINTS];
 		double m_Angle[NUMBER_OF_JOINTS];
 		int m_CWSlope[NUMBER_OF_JOINTS];
 		int m_CCWSlope[NUMBER_OF_JOINTS];
 		int m_PGain[NUMBER_OF_JOINTS];
-        	int m_IGain[NUMBER_OF_JOINTS];
-        	int m_DGain[NUMBER_OF_JOINTS];
+        int m_IGain[NUMBER_OF_JOINTS];
+        int m_DGain[NUMBER_OF_JOINTS];
 
 	public:
 		JointData();
 		~JointData();
 
+		/*accessors*/
         void SetEnable(int id, bool enable);
 		void SetEnable(int id, bool enable, bool exclusive);
 		void SetEnableHeadOnly(bool enable);
@@ -95,6 +97,7 @@ namespace Robot
 		void SetValue(int id, int value);
 		int GetValue(int id);
 
+		/*setter/getter angle of articulation id (in degrees)*/
 		void SetAngle(int id, double angle);
 		double GetAngle(int id);
 
@@ -107,12 +110,12 @@ namespace Robot
 		void SetCCWSlope(int id, int ccwSlope);
 		int  GetCCWSlope(int id);
 
-        	void SetPGain(int id, int pgain) { m_PGain[id] = pgain; }
-        	int  GetPGain(int id)            { return m_PGain[id]; }
-        	void SetIGain(int id, int igain) { m_IGain[id] = igain; }
-        	int  GetIGain(int id)            { return m_IGain[id]; }
-        	void SetDGain(int id, int dgain) { m_DGain[id] = dgain; }
-        	int  GetDGain(int id)            { return m_DGain[id]; }
+		void SetPGain(int id, int pgain) { m_PGain[id] = pgain; }
+		int  GetPGain(int id)            { return m_PGain[id]; }
+		void SetIGain(int id, int igain) { m_IGain[id] = igain; }
+		int  GetIGain(int id)            { return m_IGain[id]; }
+		void SetDGain(int id, int dgain) { m_DGain[id] = dgain; }
+		int  GetDGain(int id)            { return m_DGain[id]; }
 	};
 }
 
