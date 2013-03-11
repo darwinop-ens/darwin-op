@@ -1,10 +1,12 @@
 #ifndef INPUTEVENTHANDLER_H
 #define INPUTEVENTHANDLER_H
 
+#include "InputListener.h"
+
 
 class InputEventHandler
 {
-    enum InputEvent
+    enum
     {
         INPUTEVENT_UP,
         INPUTEVENT_DOWN,
@@ -22,7 +24,7 @@ class InputEventHandler
     protected:
     private:
         InputListener* inputListener;
-        void notify(InputEvent inputEvent);
+        void notify(int inputEvent);
 };
 
 #endif // INPUTEVENTHANDLER_H

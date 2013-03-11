@@ -7,7 +7,7 @@ class InputListener
     public:
         InputListener();
         virtual ~InputListener();
-        virtual void notify(InputEvent inputEvent);
+        virtual void notify(int inputEvent) = 0;
     protected:
     private:
 };

@@ -17,7 +17,7 @@ void InputEventHandler::addInputListener(InputListener* inputListener)
 }
 
 
-void InputEventHandler::notify(InputEvent inputEvent)
+void InputEventHandler::notify(int inputEvent)
 {
     this->inputListener->notify(inputEvent);
 }
