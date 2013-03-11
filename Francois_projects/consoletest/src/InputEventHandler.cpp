@@ -1,4 +1,13 @@
 #include "InputEventHandler.h"
+#include <vector>
+
+
+
+using namespace std;
+
+
+
+
 
 InputEventHandler::InputEventHandler()
 {
@@ -13,12 +22,16 @@ InputEventHandler::~InputEventHandler()
 
 void InputEventHandler::addInputListener(InputListener* inputListener)
 {
-    this->inputListener = inputListener;
+    this->inputListeners.push_back(inputListener);
 }
 
 
 void InputEventHandler::notify(int inputEvent)
 {
-    this->inputListener->notify(inputEvent);
+    for(vector<InputListener*>::iterator i = inputListeners.begin(); i != inputListeners.end();++i)
+    {
+        (*i)->notify(inputEvent);
+    }
+
 }
 

@@ -27,3 +27,5 @@ Linux/project/tutorial/read_write/read_write
 /Francois_projects/consoletest/consoletest.layout
 /Francois_projects/consoletest/consoletest.cbp
 /Francois_projects/consoletest/consoletest.depend
+/Francois_projects/consoletest/src/Melody.cpp
+/Francois_projects/consoletest/include/Melody.h
