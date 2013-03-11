@@ -1,3 +1,4 @@
+
 #ifndef CONSOLESPEAKER_H
 #define CONSOLESPEAKER_H
 
@@ -15,3 +16,4 @@ class ConsoleSpeaker : public AbstractSpeaker
 };
 
 #endif // CONSOLESPEAKER_H
+

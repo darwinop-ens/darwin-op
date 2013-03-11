@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string.h>
-#include "VocalSynthesizerSpeaker.h"
+//#include "VocalSynthesizerSpeaker.h"
 #include "AbstractSpeaker.h"
 #include "ConsoleSpeaker.h"
 #include <SDL/SDL.h>
@@ -16,7 +16,7 @@ using namespace std;
 
 int main()
 {
-    AbstractSpeaker* speaker = new VocalSynthesizerSpeaker();
+    AbstractSpeaker* speaker = new ConsoleSpeaker();
 
     if (SDL_Init( SDL_INIT_VIDEO | SDL_INIT_JOYSTICK ) < 0)
     {
@@ -117,3 +117,4 @@ int main()
 
     return 0;
 }
+

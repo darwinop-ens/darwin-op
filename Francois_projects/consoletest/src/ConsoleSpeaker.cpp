@@ -23,3 +23,4 @@ void ConsoleSpeaker::say(std::string text)
     cout << text;
 
 }
+

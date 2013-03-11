@@ -21,3 +21,4 @@ class AbstractSpeaker
 };
 
 #endif // ABSTRACTSPEAKER_H
+

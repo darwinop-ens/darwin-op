@@ -9,3 +9,4 @@ AbstractSpeaker::~AbstractSpeaker()
 {
     //dtor
 }
+
