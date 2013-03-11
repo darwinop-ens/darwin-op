@@ -1090,9 +1090,10 @@
 	"begin_code.h"
 	"close_code.h"
 
-1363009289 source:/darwin/Francois_projects/consoletest/main.cpp
+1363011102 source:/darwin/Francois_projects/consoletest/main.cpp
 	<iostream>
 	<string.h>
+	"VocalSynthesizerSpeaker.h"
 	"AbstractSpeaker.h"
 	"ConsoleSpeaker.h"
 	<SDL/SDL.h>
@@ -1331,6 +1332,7 @@
 	"ConsoleSpeaker.h"
 	<iostream>
 
-1363009121 source:/darwin/Francois_projects/consoletest/src/VocalSynthesizerSpeaker.cpp
+1363010877 source:/darwin/Francois_projects/consoletest/src/VocalSynthesizerSpeaker.cpp
 	"VocalSynthesizerSpeaker.h"
+	<speak_lib.h>
 
