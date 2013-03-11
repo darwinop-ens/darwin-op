@@ -16,6 +16,10 @@
 #include "LinuxDARwIn.h"
 #include "LinuxNetwork.h"
 
+#include "abstractbehavior.h"
+#include "behaviorarmcopy.h"
+
+
 using namespace Robot;
 
 /*handling the signals (Ctrl + C to quit etc.)*/
@@ -47,63 +51,6 @@ void signalInitialize()
 //JointData::ID_R_ELBOW              = 5,
 //JointData::ID_L_ELBOW              = 6,
 
-/*connect to the robot (in order to make motions)*/
-void CopyInitialize(CM730* cm730)
-{
-  printf("Try to connect to the robot...\n");
-  if(cm730->Connect() == false)
-  {
-    printf("ERROR: impossible to connect to the robot\n");
-    return;
-  }
-  printf("Connexion succeeded\n");
-
-  cm730->WriteByte(JointData::ID_L_ELBOW, MX28::P_TORQUE_ENABLE, 0, 0);
-  cm730->WriteByte(JointData::ID_L_SHOULDER_ROLL, MX28::P_TORQUE_ENABLE, 0, 0);
-  cm730->WriteByte(JointData::ID_L_SHOULDER_PITCH, MX28::P_TORQUE_ENABLE, 0, 0);
-  printf("Bras gauche debloque\n");
-  cm730->WriteByte(JointData::ID_R_ELBOW, MX28::P_TORQUE_ENABLE, 1, 0);
-  cm730->WriteByte(JointData::ID_R_SHOULDER_ROLL, MX28::P_TORQUE_ENABLE, 1, 0);
-  cm730->WriteByte(JointData::ID_R_SHOULDER_PITCH, MX28::P_TORQUE_ENABLE, 1, 0);
-  printf("Bras droit bloque\n");
-}
-
-
-
-
-
-/*the loop that takes the position of the left arm and reports to the right arm*/
-void CopyExecute(CM730* cm730)
-{
-  int v;
-
-  if(cm730->ReadWord(JointData::ID_L_ELBOW, MX28::P_PRESENT_POSITION_L, &v, 0) == CM730::SUCCESS)
-  {
-    cm730->WriteWord(JointData::ID_R_ELBOW, MX28::P_GOAL_POSITION_L, 4096-v, 0);
-  }
-  else
-  {
-    printf("can not read the present position of left elbow\n");
-  }
-
-  if(cm730->ReadWord(JointData::ID_L_SHOULDER_ROLL, MX28::P_PRESENT_POSITION_L, &v, 0) == CM730::SUCCESS)
-  {
-    cm730->WriteWord(JointData::ID_R_SHOULDER_ROLL, MX28::P_GOAL_POSITION_L, 4096-v, 0);
-  }
-  else
-  {
-    printf("can not read the present position of left shoulder (pitch)\n");
-  }
-
-  if(cm730->ReadWord(JointData::ID_L_SHOULDER_PITCH, MX28::P_PRESENT_POSITION_L, &v, 0) == CM730::SUCCESS)
-  {
-    cm730->WriteWord(JointData::ID_R_SHOULDER_PITCH, MX28::P_GOAL_POSITION_L, 4096-v, 0);
-  }
-  else
-  {
-    printf("can not read the present position of left elbow\n");
-  }
-}
 
 
 /*main function*/
@@ -115,10 +62,10 @@ int main(void)
   LinuxCM730 linux_cm730("/dev/ttyUSB0");
   CM730* cm730 = new CM730(&linux_cm730);
 
-  CopyInitialize(cm730);
+  AbstractBehavior* behavior = new BehaviorArmCopy(cm730);
 
   while(1) {
     usleep(10000);
-    CopyExecute(cm730);
+    behavior->oneStep();
   }
 }

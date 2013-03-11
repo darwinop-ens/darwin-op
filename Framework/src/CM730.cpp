@@ -151,7 +151,7 @@ int CM730::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int prio
 				int get_length = 0;
 				if(DEBUG_PRINT == true)
 					fprintf(stderr, "RX: ");
-				
+
 				while(1)
 				{
 					length = m_Platform->ReadPort(&rxpacket[get_length], to_length - get_length);
@@ -185,7 +185,7 @@ int CM730::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int prio
 								res = SUCCESS;
 							else
 								res = RX_CORRUPT;
-							
+
 							break;
 						}
 						else
@@ -193,7 +193,7 @@ int CM730::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int prio
 							for(int j = 0; j < (get_length - i); j++)
 								rxpacket[j] = rxpacket[j+i];
 							get_length -= i;
-						}						
+						}
 					}
 					else
 					{
@@ -203,7 +203,7 @@ int CM730::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int prio
 								res = RX_TIMEOUT;
 							else
 								res = RX_CORRUPT;
-							
+
 							break;
 						}
 					}
@@ -327,10 +327,10 @@ int CM730::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int prio
                 }
 			}
 			else
-				res = SUCCESS;			
+				res = SUCCESS;
 		}
 		else
-			res = TX_FAIL;		
+			res = TX_FAIL;
 	}
 	else
 		res = TX_CORRUPT;
@@ -493,7 +493,7 @@ bool CM730::DXLPowerOn()
 	{
 		if(DEBUG_PRINT == true)
 			fprintf(stderr, " Succeed to change Dynamixel power!\n");
-		
+
 		WriteWord(CM730::ID_CM, CM730::P_LED_HEAD_L, MakeColor(255, 128, 0), 0);
 		m_Platform->Sleep(300); // about 300msec
 	}
@@ -539,7 +539,7 @@ int CM730::Ping(int id, int *error)
 
 	result = TxRxPacket(txpacket, rxpacket, 2);
 	if(result == SUCCESS && txpacket[ID] != ID_BROADCAST)
-	{		
+	{
 		if(error != 0)
 			*error = (int)rxpacket[ERRBIT];
 	}

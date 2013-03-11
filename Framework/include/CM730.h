@@ -30,6 +30,13 @@ namespace Robot
         int ReadWord(int address);
     };
 
+
+/*
+PlatformCM730
+
+This abstract class corresponds to a platform CM730 that is the secondary controler that controls the motors MX28
+For instance, LinuxCM730 is a concretisation of this class.
+*/
 	class PlatformCM730
 	{
 	public:
@@ -86,8 +93,8 @@ namespace Robot
 			INSTRUCTION     = 64
 		};
 
-		
-		
+
+
 		/*EEPROM and RAM p. 4 in MX28 Technical Specifications.pdf ????*/
 		enum
 		{
@@ -96,7 +103,7 @@ namespace Robot
 			P_VERSION				= 2,
 			P_ID					= 3,
 			P_BAUD_RATE				= 4,
-			P_RETURN_DELAY_TIME		= 5,			
+			P_RETURN_DELAY_TIME		= 5,
 			P_RETURN_LEVEL			= 16,
 			P_DXL_POWER				= 24,
 			P_LED_PANNEL			= 25,
@@ -104,7 +111,7 @@ namespace Robot
 			P_LED_HEAD_H			= 27,
 			P_LED_EYE_L				= 28,
 			P_LED_EYE_H				= 29,
-			P_BUTTON				= 30,			
+			P_BUTTON				= 30,
 			P_GYRO_Z_L				= 38,
 			P_GYRO_Z_H				= 39,
 			P_GYRO_Y_L				= 40,
@@ -174,7 +181,9 @@ namespace Robot
 		CM730(PlatformCM730 *platform);
 		~CM730();
 
+/*this method is to be used first to connect to the robot. Returns true when success and false when fail*/
 		bool Connect();
+
         bool ChangeBaud(int baud);
 		void Disconnect();
 		bool DXLPowerOn();

@@ -63,6 +63,10 @@ int  ini_getkey(const TCHAR *Section, int idx, TCHAR *Buffer, int BufferSize, co
     minIni(const std::string& filename) : iniFilename(filename)
       { }
 
+	  
+/*read operations*/
+	  
+	  
     double getd(const std::string& Section, const std::string& Key, double DefValue=0) const
       { return ini_getd(Section.c_str(), Key.c_str(), DefValue, iniFilename.c_str()); }
 
@@ -72,7 +76,9 @@ int  ini_getkey(const TCHAR *Section, int idx, TCHAR *Buffer, int BufferSize, co
     long getl(const std::string& Section, const std::string& Key, long DefValue=0) const
       { return ini_getl(Section.c_str(), Key.c_str(), DefValue, iniFilename.c_str()); }
 
-    int geti(const std::string& Section, const std::string& Key, int DefValue=0) const
+	/*input: Section, Key, DefValue (default value)
+	  output: get the integer value in the current ini file (if the value does not exist, return DefValue)*/
+	  int geti(const std::string& Section, const std::string& Key, int DefValue=0) const
       { return static_cast<int>(this->getl(Section, Key, long(DefValue))); }
 
     std::string gets(const std::string& Section, const std::string& Key, const std::string& DefValue="") const
@@ -95,6 +101,14 @@ int  ini_getkey(const TCHAR *Section, int idx, TCHAR *Buffer, int BufferSize, co
         ini_getkey(Section.c_str(), idx, buffer, INI_BUFFERSIZE, iniFilename.c_str());
         return buffer;
       }
+
+	  
+	  
+	  
+	  
+	  
+/*write operations*/
+
 
 #if ! defined INI_READONLY
     bool put(const std::string& Section, const std::string& Key, float Value) const

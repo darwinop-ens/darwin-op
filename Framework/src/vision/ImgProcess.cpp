@@ -183,6 +183,9 @@ void ImgProcess::Dilation(Image* img)
     delete[] temp_img;
 }
 
+
+/*TODO: not understandable... src, dest should have the same number of bytes / pixel?
+what does this method? It does not appear to me that it is a dilation?*/
 void ImgProcess::Dilation(Image* src, Image* dest)
 {
     int x, y;

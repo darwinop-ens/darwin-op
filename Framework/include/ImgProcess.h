@@ -1,6 +1,6 @@
 /*
  *   ImgProcess.h
- *   This class contains functions for image processing.
+ *   This class contains functions for image processing. The class is static.
  *   Author: ROBOTIS
  *
  */

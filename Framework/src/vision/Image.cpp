@@ -19,6 +19,7 @@ Image::Image(int width, int height, int pixelsize) :
         m_WidthStep(m_Width*m_PixelSize),
         m_ImageSize(m_Height*m_WidthStep)
 {
+	/*creates an array containing the data of the image*/
     m_ImageData = new unsigned char[m_ImageSize];
 }
 
