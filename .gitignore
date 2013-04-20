@@ -11,6 +11,7 @@ Linux/project/offset_tuner/offset_tuner
 Linux/project/roboplus/roboplus
 Linux/project/walk_tuner/walk_tuner
 Linux/project/arm_copy/arm_copy
+Linux/project/arm_copy_with_pointers/arm_copy
 Linux/project/francois_suivre_rouge/
 Linux/project/test_articulation/
 Linux/project/tutorial/action_script/action_script
