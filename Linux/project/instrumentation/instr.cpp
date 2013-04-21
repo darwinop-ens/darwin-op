@@ -11,6 +11,10 @@
 
 using namespace std;
 
+// written by webcam.cpp
+int BallPositionX;
+int BallPositionY;
+
 InstrServer::InstrServer(CM730 &cm730):
 	m_server(),
 	m_socket(),
@@ -69,6 +73,28 @@ void InstrServer::Execute(void)
 	}
 }
 
+void InstrServer::ProcessBallPositionXCommand(string::iterator &iterator, string::iterator &end, string &result)
+{
+	// skip "x"
+	iterator++;
+
+	// print result
+	char buf[10];
+	sprintf(buf, "%d", BallPositionX);
+	result += string(buf);
+}
+
+void InstrServer::ProcessBallPositionYCommand(string::iterator &iterator, string::iterator &end, string &result)
+{
+	// skip "y"
+	iterator++;
+
+	// print result
+	char buf[10];
+	sprintf(buf, "%d", BallPositionY);
+	result += string(buf);
+}
+
 void InstrServer::ProcessData(string &data, string &result)
 {
 	string::iterator iterator = data.begin();
@@ -99,6 +125,12 @@ void InstrServer::ProcessData(string &data, string &result)
 				break;
 			case 'p':
 				ProcessPrintCommand(iterator, end, result);
+				break;
+			case 'x':
+				ProcessBallPositionXCommand(iterator, end, result);
+				break;
+			case 'y':
+				ProcessBallPositionYCommand(iterator, end, result);
 				break;
 			case '\r':
 				result += '\r';

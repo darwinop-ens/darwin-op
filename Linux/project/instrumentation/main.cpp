@@ -20,6 +20,7 @@
 
 #include "echo.h"
 #include "instr.h"
+#include "webcam.h"
 
 using namespace std;
 using namespace Robot;
@@ -58,21 +59,24 @@ int main(void)
 	}
 	else
 	{
-		cout << "robot: impossible to connect to the robot" << endl;
+		cout << "robot: unable to connect to the robot" << endl;
 		exit(0);
 	}
 
 	EchoServer echo = EchoServer();
 	InstrServer instr = InstrServer(cm730);
+	Webcam wc = Webcam();
 
 	signalInitialize();
 
 	//echo.Initialize();
 	instr.Initialize();
+	wc.Initialize();
 
 	while(1)
 	{
 		//echo.Execute();
 		instr.Execute();
+		wc.Execute();
 	}
 }
