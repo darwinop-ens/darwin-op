@@ -17,17 +17,38 @@ using namespace Robot;
 extern int BallPositionX;
 extern int BallPositionY;
 
+static void* thread_webcam(void* arg)
+{
+	WebcamThreadArg* ThreadArg = (WebcamThreadArg*) arg;
+	Point2D BallPosition;
+
+	while(ThreadArg->Continue)
+	{
+		ThreadArg->Camera->CaptureFrame();
+		BallPosition = ThreadArg->BallFinder->GetPosition(ThreadArg->Camera->fbuffer->m_HSVFrame);
+		BallPositionX = BallPosition.X;
+		BallPositionY = BallPosition.Y;
+	}
+
+	return NULL;
+}
+
 Webcam::Webcam()
 {
 	IniSettings = new minIni(INI_FILE_PATH);
-	BallFinder = new ColorFinder();
-	Camera = LinuxCamera::GetInstance();
+	ThreadArg.ThreadID = 0;
+	ThreadArg.BallFinder = new ColorFinder();
+	ThreadArg.Camera = LinuxCamera::GetInstance();
+	ThreadArg.Continue = true;
 }
 
 Webcam::~Webcam()
 {
+	ThreadArg.Continue = false;
+	pthread_join(ThreadArg.ThreadID, NULL);
+	delete ThreadArg.BallFinder;
+	delete ThreadArg.Camera;
 	delete IniSettings;
-	delete BallFinder;
 }
 
 void Webcam::Initialize(void)
@@ -35,21 +56,22 @@ void Webcam::Initialize(void)
 	cout << "webcam: initializing" << endl;
 
 	// initialize webcam
-	Camera->Initialize(0);
-	Camera->SetCameraSettings(CameraSettings());    // set default settings
-	Camera->LoadINISettings(IniSettings);           // load from ini
+	ThreadArg.Camera->Initialize(0);
+	ThreadArg.Camera->SetCameraSettings(CameraSettings());    // set default settings
+	ThreadArg.Camera->LoadINISettings(IniSettings);           // load from ini
 
 	// initialize ball finder
-    	BallFinder->LoadINISettings(IniSettings);
+    	ThreadArg.BallFinder->LoadINISettings(IniSettings);
+
+	// initialize working thread
+	if (pthread_create(&ThreadArg.ThreadID, NULL, &thread_webcam, &ThreadArg))
+		cout << "webcam: failed to create working thread" << endl;
 
 	cout << "webcam: initialized" << endl;
 }
 
 void Webcam::Execute(void)
 {
-	Camera->CaptureFrame();
-	BallPosition = BallFinder->GetPosition(Camera->fbuffer->m_HSVFrame);
-	BallPositionX = BallPosition.X;
-	BallPositionY = BallPosition.Y;
+	// everything is done in working thread
 }
 

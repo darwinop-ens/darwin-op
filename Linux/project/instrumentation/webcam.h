@@ -2,6 +2,7 @@
 #define __WEBCAM_H__
 
 #include <string>
+#include <pthread.h>
 #include "minIni.h"
 #include "task.h"
 
@@ -10,13 +11,18 @@
 using namespace Robot;
 using namespace std;
 
+typedef struct {
+	pthread_t ThreadID;
+	LinuxCamera* Camera;
+	ColorFinder* BallFinder;
+	bool Continue;
+} WebcamThreadArg;
+
 class Webcam: public Task
 {
 	private:
 		minIni *IniSettings;
-		ColorFinder* BallFinder;
-		Point2D BallPosition;
-		LinuxCamera* Camera;
+		WebcamThreadArg ThreadArg;
 	public:
 		Webcam();
 		~Webcam();
