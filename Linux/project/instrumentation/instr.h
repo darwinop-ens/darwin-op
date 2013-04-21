@@ -29,6 +29,9 @@ class InstrServer: public Task
 		void ProcessBallPositionXCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessBallPositionYCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessDebugCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessControllerCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessControllerOnCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessControllerOffCommand(string::iterator &iterator, string::iterator &end, string &result);
 
 		void ProcessData(string &data, string &result);
 	public:

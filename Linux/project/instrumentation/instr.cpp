@@ -17,6 +17,16 @@ using namespace std;
 extern int BallPositionX;
 extern int BallPositionY;
 
+// read in controller.cpp
+extern bool ControllerEnable;
+extern int ControllerSamplingTime;
+extern int ControllerReferenceX;
+extern float ControllerProportionalX;
+extern float ControllerIntegralX;
+extern int ControllerReferenceY;
+extern float ControllerProportionalY;
+extern float ControllerIntegralY;
+
 InstrServer::InstrServer(CM730 &cm730):
 	m_server(),
 	m_socket(),
@@ -115,6 +125,127 @@ void InstrServer::ProcessBallPositionYCommand(string::iterator &iterator, string
 		cout << "instr: Y Command = " << string(buf) << endl;
 }
 
+void InstrServer::ProcessControllerCommand(string::iterator &iterator, string::iterator &end, string &result)
+{
+	string s_te(""), s_rx(""), s_px(""), s_ix(""), s_ry(""), s_py(""), s_iy("");
+
+	// skip "c"
+	iterator++;
+
+	// skip spaces
+	while ((iterator < end) && isspace(*iterator))
+		iterator++;
+
+	// parse sampling time
+	while ((iterator < end) && !isspace(*iterator))
+	{
+		s_te += *iterator;
+		iterator++;
+	}
+
+	// skip spaces
+	while ((iterator < end) && isspace(*iterator))
+		iterator++;
+
+	// parse reference x
+	while ((iterator < end) && !isspace(*iterator))
+	{
+		s_rx += *iterator;
+		iterator++;
+	}
+
+	// skip spaces
+	while ((iterator < end) && isspace(*iterator))
+		iterator++;
+
+	// parse proportional x
+	while ((iterator < end) && !isspace(*iterator))
+	{
+		s_px += *iterator;
+		iterator++;
+	}
+
+	// skip spaces
+	while ((iterator < end) && isspace(*iterator))
+		iterator++;
+
+	// parse integral x
+	while ((iterator < end) && !isspace(*iterator))
+	{
+		s_ix += *iterator;
+		iterator++;
+	}
+
+	// skip spaces
+	while ((iterator < end) && isspace(*iterator))
+		iterator++;
+
+	// parse reference y
+	while ((iterator < end) && !isspace(*iterator))
+	{
+		s_ry += *iterator;
+		iterator++;
+	}
+
+	// skip spaces
+	while ((iterator < end) && isspace(*iterator))
+		iterator++;
+
+	// parse proportional y
+	while ((iterator < end) && !isspace(*iterator))
+	{
+		s_py += *iterator;
+		iterator++;
+	}
+
+	// skip spaces
+	while ((iterator < end) && isspace(*iterator))
+		iterator++;
+
+	// parse integral y
+	while ((iterator < end) && !isspace(*iterator))
+	{
+		s_iy += *iterator;
+		iterator++;
+	}
+
+	// convert string values to integer
+	ControllerSamplingTime = atoi(s_te.c_str());
+	ControllerReferenceX = atoi(s_rx.c_str());
+	ControllerProportionalX = atof(s_px.c_str());
+	ControllerIntegralX = atof(s_ix.c_str());
+	ControllerReferenceY = atoi(s_ry.c_str());
+	ControllerProportionalY = atof(s_py.c_str());
+	ControllerIntegralY = atof(s_iy.c_str());
+
+	if (m_print_debug)
+		cout << "instr: controller command te=" << s_te
+                     << " refx=" << s_rx << " propx=" << s_px << " intx=" << s_ix
+                     << " refy=" << s_ry << " propy=" << s_py << " inty=" << s_iy << endl;
+}
+
+void InstrServer::ProcessControllerOnCommand(string::iterator &iterator, string::iterator &end, string &result)
+{
+	// skip "n"
+	iterator++;
+
+	ControllerEnable = true;
+
+	if (m_print_debug)
+		cout << "instr: controller on" << endl;
+}
+
+void InstrServer::ProcessControllerOffCommand(string::iterator &iterator, string::iterator &end, string &result)
+{
+	// skip "f"
+	iterator++;
+
+	ControllerEnable = false;
+
+	if (m_print_debug)
+		cout << "instr: controller off" << endl;
+}
+
 void InstrServer::ProcessData(string &data, string &result)
 {
 	string::iterator iterator = data.begin();
@@ -155,6 +286,15 @@ void InstrServer::ProcessData(string &data, string &result)
 				break;
 			case 'd':
 				ProcessDebugCommand(iterator, end, result);
+				break;
+			case 'c':
+				ProcessControllerCommand(iterator, end, result);
+				break;
+			case 'n':
+				ProcessControllerOnCommand(iterator, end, result);
+				break;
+			case 'f':
+				ProcessControllerOffCommand(iterator, end, result);
 				break;
 			case '\r':
 				result += '\r';

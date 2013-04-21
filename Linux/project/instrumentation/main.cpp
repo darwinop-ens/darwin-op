@@ -21,6 +21,7 @@
 #include "echo.h"
 #include "instr.h"
 #include "webcam.h"
+#include "controller.h"
 
 using namespace std;
 using namespace Robot;
@@ -66,12 +67,14 @@ int main(void)
 	EchoServer echo = EchoServer();
 	InstrServer instr = InstrServer(cm730);
 	Webcam wc = Webcam();
+	Controller control = Controller(cm730);
 
 	signalInitialize();
 
 	//echo.Initialize();
 	instr.Initialize();
 	wc.Initialize();
+	control.Initialize();
 
 	while(1)
 	{
@@ -79,5 +82,6 @@ int main(void)
 		//echo.Execute();
 		instr.Execute();
 		wc.Execute();
+		control.Execute();
 	}
 }
