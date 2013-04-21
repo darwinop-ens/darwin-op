@@ -13,9 +13,9 @@ using namespace Robot;
 
 #define INI_FILE_PATH       "/darwin/Data/config.ini"
 
-// link to the variables in instr.cpp
-extern int BallPositionX;
-extern int BallPositionY;
+// variables read in instr.cpp
+int BallPositionX;
+int BallPositionY;
 
 static void* thread_webcam(void* arg)
 {

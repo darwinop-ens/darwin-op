@@ -13,8 +13,8 @@
 using namespace std;
 
 // written by webcam.cpp
-int BallPositionX;
-int BallPositionY;
+extern int BallPositionX;
+extern int BallPositionY;
 
 InstrServer::InstrServer(CM730 &cm730):
 	m_server(),
