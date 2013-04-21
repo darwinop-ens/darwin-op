@@ -5,6 +5,7 @@
 #include <iostream>
 #include <ctype.h>
 #include <unistd.h>
+#include <pthread.h>
 
 #include "instr.h"
 #include "LinuxDARwIn.h"
@@ -33,12 +34,22 @@ InstrServer::~InstrServer()
 void InstrServer::Initialize(void)
 {
 	cout << "instr: initializing" << endl;
+
+	// create server socket
 	m_server.listen(1234);
 	m_server.set_non_blocking(true);
 	m_connected = false;
-	cout << "instr: initialized" << endl;
 
+	// get current time as time reference
 	gettimeofday(&m_start_time, NULL);
+
+	// change current thread priority to reduce latency
+	struct sched_param params;
+	params.sched_priority = 99;
+	if (pthread_setschedparam(pthread_self(), SCHED_RR, &params))
+		cout << "instr: failed to change current thread priority" << endl;
+
+	cout << "instr: initialized" << endl;
 }
 
 void InstrServer::Execute(void)

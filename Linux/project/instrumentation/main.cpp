@@ -75,6 +75,7 @@ int main(void)
 
 	while(1)
 	{
+		usleep(500); // sleep for about 0.5ms
 		//echo.Execute();
 		instr.Execute();
 		wc.Execute();
