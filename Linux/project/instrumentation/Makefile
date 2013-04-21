@@ -16,7 +16,7 @@ CXXFLAGS += -O2 -DLINUX -Wall $(INCLUDE_DIRS)
 #CXXFLAGS += -O2 -DDEBUG -DLINUX -Wall $(INCLUDE_DIRS)
 LFLAGS += -lpthread -ljpeg -lrt
 
-OBJECTS = main.o task.o echo.o instr.o webcam.o
+OBJECTS = main.o task.o echo.o instr.o webcam.o timeutils.o
 
 all: $(TARGET)
 
