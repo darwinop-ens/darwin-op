@@ -19,6 +19,7 @@ class InstrServer: public Task
 		bool m_connected;
 		CM730 m_cm730;
 		struct timeval m_start_time;
+		bool m_print_debug;
 
 		void ProcessPrintCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessReadCommand(string::iterator &iterator, string::iterator &end, string &result);
@@ -27,6 +28,7 @@ class InstrServer: public Task
 		void ProcessWriteCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessBallPositionXCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessBallPositionYCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessDebugCommand(string::iterator &iterator, string::iterator &end, string &result);
 
 		void ProcessData(string &data, string &result);
 	public:

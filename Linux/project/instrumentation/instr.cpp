@@ -19,7 +19,8 @@ InstrServer::InstrServer(CM730 &cm730):
 	m_server(),
 	m_socket(),
 	m_connected(false),
-	m_cm730(cm730)
+	m_cm730(cm730),
+	m_print_debug(false)
 {
 
 }
@@ -49,6 +50,7 @@ void InstrServer::Execute(void)
 		{
 			cout << "instr: connected" << endl;
 			m_socket.set_non_blocking(true);
+			m_print_debug = false;
 		}
 	}
 	else // connected
@@ -82,6 +84,9 @@ void InstrServer::ProcessBallPositionXCommand(string::iterator &iterator, string
 	char buf[10];
 	sprintf(buf, "%d", BallPositionX);
 	result += string(buf);
+
+	if (m_print_debug)
+		cout << "instr: X Command = " << string(buf) << endl;
 }
 
 void InstrServer::ProcessBallPositionYCommand(string::iterator &iterator, string::iterator &end, string &result)
@@ -93,6 +98,9 @@ void InstrServer::ProcessBallPositionYCommand(string::iterator &iterator, string
 	char buf[10];
 	sprintf(buf, "%d", BallPositionY);
 	result += string(buf);
+
+	if (m_print_debug)
+		cout << "instr: Y Command = " << string(buf) << endl;
 }
 
 void InstrServer::ProcessData(string &data, string &result)
@@ -100,7 +108,8 @@ void InstrServer::ProcessData(string &data, string &result)
 	string::iterator iterator = data.begin();
 	string::iterator end = data.end();
 
-	cout << "instr: processing data" << endl;
+	if (m_print_debug)
+		cout << "instr: processing data" << endl;
 
 	while ( iterator < end )
 	{
@@ -132,6 +141,9 @@ void InstrServer::ProcessData(string &data, string &result)
 			case 'y':
 				ProcessBallPositionYCommand(iterator, end, result);
 				break;
+			case 'd':
+				ProcessDebugCommand(iterator, end, result);
+				break;
 			case '\r':
 				result += '\r';
 				iterator++;
@@ -153,7 +165,18 @@ void InstrServer::ProcessData(string &data, string &result)
 		}
 	}
 
-	cout << "instr: processed data" << endl;
+	if (m_print_debug)
+		cout << "instr: processed data" << endl;
+}
+
+void InstrServer::ProcessDebugCommand(string::iterator &iterator, string::iterator &end, string &result)
+{
+	// skip 'd'
+	iterator++;
+
+	m_print_debug = true;
+
+	cout << "instr: debug enabled" << endl;
 }
 
 void InstrServer::ProcessPrintCommand(string::iterator &iterator, string::iterator &end, string &result)
@@ -246,7 +269,8 @@ void InstrServer::ProcessReadCommand(string::iterator &iterator, string::iterato
 	start = atoi(s_start.c_str());
 	length = atoi(s_length.c_str());
 
-	cout << "instr: read id = " << id << " start = " << start << " length = " << length << endl;
+	if (m_print_debug)
+		cout << "instr: read id = " << id << " start = " << start << " length = " << length << endl;
 
 	// check if conversions were successful
 	if ((id >= 0) && (start >= 0) && (length >= 0))
@@ -288,6 +312,9 @@ void InstrServer::ProcessStartCommand(string::iterator &iterator, string::iterat
 
 	// get current time
 	gettimeofday(&m_start_time, NULL);
+
+	if (m_print_debug)
+		cout << "instr: start Command" << endl;
 }
 
 // the following function is taken from http://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html
@@ -335,6 +362,9 @@ void InstrServer::ProcessTimeCommand(string::iterator &iterator, string::iterato
 	// print result
 	sprintf(buf, "%d", (int)(diff.tv_sec*1000 + diff.tv_usec/1000));
 	result += string(buf);
+
+	if (m_print_debug)
+		cout << "instr: Time Command = " << string(buf) << endl;
 }
 
 void InstrServer::ProcessWriteCommand(string::iterator &iterator, string::iterator &end, string &result)
@@ -395,7 +425,8 @@ void InstrServer::ProcessWriteCommand(string::iterator &iterator, string::iterat
 	length = atoi(s_length.c_str());
 	value = atoi(s_value.c_str());
 
-	cout << "instr: write id = " << id << " start = " << start << " length = " << length << " value = " << value << endl;
+	if (m_print_debug)
+		cout << "instr: write id = " << id << " start = " << start << " length = " << length << " value = " << value << endl;
 
 	// check if conversions were successful
 	if ((id >= 0) && (start >= 0) && (length >= 0))
