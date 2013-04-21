@@ -22,6 +22,7 @@ class InstrServer: public Task
 
 		void ProcessPrintCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessReadCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessStartCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessTimeCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessWriteCommand(string::iterator &iterator, string::iterator &end, string &result);
 

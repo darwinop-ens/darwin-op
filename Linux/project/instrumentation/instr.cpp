@@ -88,6 +88,9 @@ void InstrServer::ProcessData(string &data, string &result)
 			case 'r':
 				ProcessReadCommand(iterator, end, result);
 				break;
+			case 's':
+				ProcessStartCommand(iterator, end, result);
+				break;
 			case 't':
 				ProcessTimeCommand(iterator, end, result);
 				break;
@@ -244,6 +247,15 @@ void InstrServer::ProcessReadCommand(string::iterator &iterator, string::iterato
 	{
 		cout << "instr: read: syntax error" << endl;
 	}
+}
+
+void InstrServer::ProcessStartCommand(string::iterator &iterator, string::iterator &end, string &result)
+{
+	// skip "s"
+	iterator++;
+
+	// get current time
+	gettimeofday(&m_start_time, NULL);
 }
 
 // the following function is taken from http://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html
