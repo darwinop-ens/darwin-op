@@ -5,6 +5,7 @@
  *      Author: François Schwarzentruber
  */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <limits.h>
@@ -14,7 +15,6 @@
 
 #include "CM730.h"
 #include "LinuxDARwIn.h"
-#include "LinuxNetwork.h"
 
 using namespace Robot;
 
