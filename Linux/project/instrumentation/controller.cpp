@@ -26,13 +26,13 @@ int ControllerErrorX;
 int ControllerErrorX1;
 float ControllerProportionalX;
 float ControllerIntegralX;
-int ControllerCommandX;
+float ControllerCommandX;
 int ControllerReferenceY;
 int ControllerErrorY;
 int ControllerErrorY1;
 float ControllerProportionalY;
 float ControllerIntegralY;
-int ControllerCommandY;
+float ControllerCommandY;
 
 Controller::Controller(CM730 &cm730):
 	m_cm730(cm730)
@@ -53,11 +53,11 @@ void Controller::Initialize(void)
 	ControllerEnable = false;
 	ControllerSamplingTime = 10; // ms
 	ControllerReferenceX = 160;
-	ControllerProportionalX = 1.0;
-	ControllerIntegralX = 0.0;
+	ControllerProportionalX = 0.32;
+	ControllerIntegralX = 0.096;
 	ControllerReferenceY = 120;
-	ControllerProportionalY = 1.0;
-	ControllerIntegralY = 0.0;
+	ControllerProportionalY = 0.427;
+	ControllerIntegralY = 0.128;
 
 	cout << "controller: initialized" << endl;
 }
@@ -79,12 +79,20 @@ void Controller::Execute(void)
 			ControllerErrorX1 = ControllerErrorX;
 			ControllerErrorX = BallPositionX - ControllerReferenceX;
 			ControllerCommandX += ControllerProportionalX*((1+ControllerSamplingTime/ControllerIntegralX)*ControllerErrorX - ControllerErrorX1);
-			m_cm730.WriteWord(19, 30, ControllerCommandX, 0);
+			if (ControllerCommandX < -1000)
+				ControllerCommandX = -1000;
+			if (ControllerCommandX > 1000)
+				ControllerCommandX = 1000;
+			m_cm730.WriteWord(19, 30, 2048-ControllerCommandX, 0);
 
 			ControllerErrorY1 = ControllerErrorY;
 			ControllerErrorY = BallPositionY - ControllerReferenceY;
 			ControllerCommandY += ControllerProportionalY*((1+ControllerSamplingTime/ControllerIntegralY)*ControllerErrorY - ControllerErrorY1);
-			m_cm730.WriteWord(20, 30, ControllerCommandY, 0);
+			if (ControllerCommandY < -900)
+				ControllerCommandY = -900;
+			if (ControllerCommandY > 200)
+				ControllerCommandY = 200;
+			m_cm730.WriteWord(20, 30, 2048-ControllerCommandY, 0);
 
 			m_previous_time = current_time;
 		}
@@ -92,7 +100,9 @@ void Controller::Execute(void)
 	else
 	{
 		ControllerErrorX1 = 0;
+		ControllerCommandX = 0;
 		ControllerErrorY1 = 0;
+		ControllerCommandY = 0;
 		// get current time
 		gettimeofday(&m_previous_time, NULL);
 	}
