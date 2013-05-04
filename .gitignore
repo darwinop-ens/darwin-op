@@ -9,6 +9,7 @@ Linux/project/firmware_installer/firmware_installer
 Linux/project/instrumentation/instrumentation
 Linux/project/offset_tuner/offset_tuner
 Linux/project/roboplus/roboplus
+Linux/project/vertical/vertical
 Linux/project/walk_tuner/walk_tuner
 Linux/project/arm_copy/arm_copy
 Linux/project/arm_copy_with_pointers/arm_copy
