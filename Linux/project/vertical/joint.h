@@ -10,7 +10,9 @@ class Joint: public DxlPeripheral
 		unsigned char m_id;
 	public:
 		Joint(CM730 &cm730, unsigned char id);
+		bool WriteTorqueEnable(bool enable);
 		bool WriteRawPosition(unsigned short pos);
+		bool ReadTorqueEnable(bool &enable);
 		bool ReadRawPosition(unsigned short &pos);
 };
 
