@@ -16,7 +16,7 @@ CXXFLAGS += -O2 -DLINUX -Wall $(INCLUDE_DIRS)
 #CXXFLAGS += -O2 -DDEBUG -DLINUX -Wall $(INCLUDE_DIRS)
 LFLAGS += -lpthread -ljpeg -lrt
 
-OBJECTS = main.o dxl_peripheral.o accelerometer.o arm.o left_arm.o right_arm.o
+OBJECTS = main.o dxl_peripheral.o accelerometer.o arm.o left_arm.o right_arm.o joint.o
 
 all: $(TARGET)
 

@@ -17,29 +17,8 @@
 // shoulder roll adduction (along the body) = 1576
 
 RightArm::RightArm(CM730 &cm730):
-	Arm(cm730)
+	Arm(cm730, JointData::ID_R_SHOULDER_PITCH, JointData::ID_R_SHOULDER_ROLL, JointData::ID_R_ELBOW)
 {
-}
-
-bool RightArm::WriteRawElbowPosition(unsigned short pos)
-{
-	int result;
-	result = sub_controller.WriteWord(JointData::ID_R_ELBOW, MX28::P_GOAL_POSITION_L, pos, 0);
-	return (result == CM730::SUCCESS);
-}
-
-bool RightArm::WriteRawShoulderRollPosition(unsigned short pos)
-{
-	int result;
-	result = sub_controller.WriteWord(JointData::ID_R_SHOULDER_ROLL, MX28::P_GOAL_POSITION_L, pos, 0);
-	return (result == CM730::SUCCESS);
-}
-
-bool RightArm::WriteRawShoulderPitchPosition(unsigned short pos)
-{
-	int result;
-	result = sub_controller.WriteWord(JointData::ID_R_SHOULDER_PITCH, MX28::P_GOAL_POSITION_L, pos, 0);
-	return (result == CM730::SUCCESS);
 }
 
 bool RightArm::WriteSphericalPosition(double polar_angle, double azimuth_angle)
@@ -63,9 +42,9 @@ bool RightArm::WriteSphericalPosition(double polar_angle, double azimuth_angle)
 		{
 			pitch = 0.0;
 		}			
-		WriteRawShoulderRollPosition(2600.0 - roll*1024.0/M_PI_2);
-		WriteRawShoulderPitchPosition(pitch*1024.0/M_PI_2);
-		WriteRawElbowPosition(1024);
+		ShoulderRoll.WriteRawPosition(2600.0 - roll*1024.0/M_PI_2);
+		ShoulderPitch.WriteRawPosition(pitch*1024.0/M_PI_2);
+		Elbow.WriteRawPosition(1024);
 		return true;
 	}
 	else
