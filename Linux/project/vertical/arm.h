@@ -7,7 +7,7 @@
 class Arm: public DxlPeripheral
 {
 	public:
-		Arm(CM730 *cm730): DxlPeripheral(cm730) {};
+		Arm(CM730 &cm730);
 		bool virtual WriteRawElbowPosition(unsigned short pos) = 0;
 		bool virtual WriteRawShoulderRollPosition(unsigned short pos) = 0;
 		bool virtual WriteRawShoulderPitchPosition(unsigned short pos) = 0;

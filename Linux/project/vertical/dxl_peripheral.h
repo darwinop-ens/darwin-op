@@ -8,9 +8,9 @@ using namespace Robot;
 class DxlPeripheral
 {
 	protected:
-		CM730 *sub_controller;
+		CM730 &sub_controller;
 	public:
-		DxlPeripheral(CM730 *cm730);
+		DxlPeripheral(CM730 &cm730);
 };
 
 #endif // __dxl_peripheral_h__

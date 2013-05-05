@@ -7,7 +7,7 @@
 class LeftArm: public Arm
 {
 	public:
-		LeftArm(CM730 *cm730);
+		LeftArm(CM730 &cm730);
 		bool virtual WriteRawElbowPosition(unsigned short pos);
 		bool virtual WriteRawShoulderRollPosition(unsigned short pos);
 		bool virtual WriteRawShoulderPitchPosition(unsigned short pos);

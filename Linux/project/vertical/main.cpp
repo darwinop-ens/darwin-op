@@ -61,9 +61,9 @@ int main(void)
 	}
 	printf("Connexion succeeded\n");
 
-	Accelerometer Acc(&cm730);
-	LeftArm LA(&cm730);
-	RightArm RA(&cm730);
+	Accelerometer Acc(cm730);
+	LeftArm LA(cm730);
+	RightArm RA(cm730);
 
 	while(1) {
 		double magnitude, polar, azimuth;

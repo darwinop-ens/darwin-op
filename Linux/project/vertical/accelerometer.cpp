@@ -1,7 +1,7 @@
 #include "accelerometer.h"
 #include <math.h>
 
-Accelerometer::Accelerometer(CM730 *cm730):
+Accelerometer::Accelerometer(CM730 &cm730):
 	DxlPeripheral(cm730)
 {
 }
@@ -14,7 +14,7 @@ bool Accelerometer::ReadRawValues(unsigned short &ax, unsigned short &ay, unsign
 	for(int i=0; i<CM730::MAXNUM_ADDRESS; i++)
 		table[i] = 0;
 
-	result = sub_controller->ReadTable(CM730::ID_CM, CM730::P_ACCEL_X_L, CM730::P_ACCEL_Z_H, table, 0);
+	result = sub_controller.ReadTable(CM730::ID_CM, CM730::P_ACCEL_X_L, CM730::P_ACCEL_Z_H, table, 0);
 
 	if (result == CM730::SUCCESS)
 	{

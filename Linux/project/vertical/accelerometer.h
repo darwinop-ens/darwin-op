@@ -7,7 +7,7 @@
 class Accelerometer: public DxlPeripheral
 {
 	public:
-		Accelerometer(CM730 *cm730);
+		Accelerometer(CM730 &cm730);
 		bool ReadRawValues(unsigned short &ax, unsigned short &ay, unsigned short &az);
 		bool ReadCartesianValues(double &ax, double &ay, double &az);
 		bool ReadSphericalValues(double &magnitude, double &polar_angle, double &azimuth_angle);
