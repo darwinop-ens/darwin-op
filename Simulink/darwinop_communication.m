@@ -41,8 +41,8 @@ end
 block.NumDialogPrms     = 7;
 block.DialogPrmsTunable = {'Nontunable','Nontunable','Nontunable','Nontunable','Nontunable','Nontunable','Nontunable'};
 
-% Register continuous sample times [0 offset]
-block.SampleTimes = [0 0];
+% Register inherited discrete sample time [-1 offset]
+block.SampleTimes = [-1 0];
 
 % No parallel queries
 block.SupportsMultipleExecInstances(false);
