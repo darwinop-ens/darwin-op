@@ -199,11 +199,12 @@ end
 try
     fwrite(NetObj,uint8(Frame)); %(1:NetObj.InputBufferSize)));
     Data = fread(NetObj);
-    if length(Data) ~= NetObj.InputBufferSize
-        error('network communication error: insufficient bytes are returned');
-    end
 catch
     error('network communication error: write/read failure');
+end
+
+if length(Data) ~= NetObj.InputBufferSize
+    error('network communication error: insufficient bytes are returned (%d of %d)',length(Data),NetObj.InputBufferSize);
 end
 
 for i=1:size(ReadIndex,1)
