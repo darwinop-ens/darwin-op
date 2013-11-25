@@ -156,7 +156,7 @@ int LinuxSocket::recv ( std::string& s ) const
     }
     else
     {
-        s = buf;
+        s = string(buf,status);
         return status;
     }
 }
