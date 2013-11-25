@@ -21,17 +21,17 @@ class InstrServer: public Task
 		struct timeval m_start_time;
 		bool m_print_debug;
 
-		void ProcessPrintCommand(string::iterator &iterator, string::iterator &end, string &result);
-		void ProcessReadCommand(string::iterator &iterator, string::iterator &end, string &result);
-		void ProcessStartCommand(string::iterator &iterator, string::iterator &end, string &result);
-		void ProcessTimeCommand(string::iterator &iterator, string::iterator &end, string &result);
-		void ProcessWriteCommand(string::iterator &iterator, string::iterator &end, string &result);
-		void ProcessBallPositionXCommand(string::iterator &iterator, string::iterator &end, string &result);
-		void ProcessBallPositionYCommand(string::iterator &iterator, string::iterator &end, string &result);
-		void ProcessDebugCommand(string::iterator &iterator, string::iterator &end, string &result);
-		void ProcessControllerCommand(string::iterator &iterator, string::iterator &end, string &result);
-		void ProcessControllerOnCommand(string::iterator &iterator, string::iterator &end, string &result);
-		void ProcessControllerOffCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessTextPrintCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessTextReadCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessTextStartCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessTextTimeCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessTextWriteCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessTextBallPositionXCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessTextBallPositionYCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessTextDebugCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessTextControllerCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessTextControllerOnCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessTextControllerOffCommand(string::iterator &iterator, string::iterator &end, string &result);
 
 		void ProcessData(string &data, string &result);
 	public:

@@ -97,7 +97,82 @@ void InstrServer::Execute(void)
 	}
 }
 
-void InstrServer::ProcessBallPositionXCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessData(string &data, string &result)
+{
+	string::iterator iterator = data.begin();
+	string::iterator end = data.end();
+
+	if (m_print_debug)
+		cout << "instr: processing data" << endl;
+
+	while ( iterator < end )
+	{
+                // one command per line
+		// command format
+                // "t" print current time in ms
+                // "r 12 36 2" with r = read, 12 = id, 36 = start address, 2 = length
+                // "w 12 36 2 1534" with w = write, 12 = id, 36 = start address, 2 = length, 1534 = value
+		// "p "blah"" with p = print
+		switch(*iterator) {
+			case 'r':
+				ProcessTextReadCommand(iterator, end, result);
+				break;
+			case 's':
+				ProcessTextStartCommand(iterator, end, result);
+				break;
+			case 't':
+				ProcessTextTimeCommand(iterator, end, result);
+				break;
+			case 'w':
+				ProcessTextWriteCommand(iterator, end, result);
+				break;
+			case 'p':
+				ProcessTextPrintCommand(iterator, end, result);
+				break;
+			case 'x':
+				ProcessTextBallPositionXCommand(iterator, end, result);
+				break;
+			case 'y':
+				ProcessTextBallPositionYCommand(iterator, end, result);
+				break;
+			case 'd':
+				ProcessTextDebugCommand(iterator, end, result);
+				break;
+			case 'c':
+				ProcessTextControllerCommand(iterator, end, result);
+				break;
+			case 'n':
+				ProcessTextControllerOnCommand(iterator, end, result);
+				break;
+			case 'f':
+				ProcessTextControllerOffCommand(iterator, end, result);
+				break;
+			case '\r':
+				result += '\r';
+				iterator++;
+				break;
+			case '\n':
+				result += '\n';
+				iterator++;
+				break;
+			case ' ':
+				iterator++;
+				break;
+			default:
+				// affiche un message
+				cout << "instr: unknown command \"" << *iterator << "\"" << endl;
+				// skip current line
+				while ((iterator < end) && (*iterator != '\n'))
+					iterator++;
+				break;
+		}
+	}
+
+	if (m_print_debug)
+		cout << "instr: processed data" << endl;
+}
+
+void InstrServer::ProcessTextBallPositionXCommand(string::iterator &iterator, string::iterator &end, string &result)
 {
 	// skip "x"
 	iterator++;
@@ -111,7 +186,7 @@ void InstrServer::ProcessBallPositionXCommand(string::iterator &iterator, string
 		cout << "instr: X Command = " << string(buf) << endl;
 }
 
-void InstrServer::ProcessBallPositionYCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessTextBallPositionYCommand(string::iterator &iterator, string::iterator &end, string &result)
 {
 	// skip "y"
 	iterator++;
@@ -125,7 +200,7 @@ void InstrServer::ProcessBallPositionYCommand(string::iterator &iterator, string
 		cout << "instr: Y Command = " << string(buf) << endl;
 }
 
-void InstrServer::ProcessControllerCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessTextControllerCommand(string::iterator &iterator, string::iterator &end, string &result)
 {
 	string s_te(""), s_rx(""), s_px(""), s_ix(""), s_ry(""), s_py(""), s_iy("");
 
@@ -224,7 +299,7 @@ void InstrServer::ProcessControllerCommand(string::iterator &iterator, string::i
                      << " refy=" << s_ry << " propy=" << s_py << " inty=" << s_iy << endl;
 }
 
-void InstrServer::ProcessControllerOnCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessTextControllerOnCommand(string::iterator &iterator, string::iterator &end, string &result)
 {
 	// skip "n"
 	iterator++;
@@ -235,7 +310,7 @@ void InstrServer::ProcessControllerOnCommand(string::iterator &iterator, string:
 		cout << "instr: controller on" << endl;
 }
 
-void InstrServer::ProcessControllerOffCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessTextControllerOffCommand(string::iterator &iterator, string::iterator &end, string &result)
 {
 	// skip "f"
 	iterator++;
@@ -246,82 +321,7 @@ void InstrServer::ProcessControllerOffCommand(string::iterator &iterator, string
 		cout << "instr: controller off" << endl;
 }
 
-void InstrServer::ProcessData(string &data, string &result)
-{
-	string::iterator iterator = data.begin();
-	string::iterator end = data.end();
-
-	if (m_print_debug)
-		cout << "instr: processing data" << endl;
-
-	while ( iterator < end )
-	{
-                // one command per line
-		// command format
-                // "t" print current time in ms
-                // "r 12 36 2" with r = read, 12 = id, 36 = start address, 2 = length
-                // "w 12 36 2 1534" with w = write, 12 = id, 36 = start address, 2 = length, 1534 = value
-		// "p "blah"" with p = print
-		switch(*iterator) {
-			case 'r':
-				ProcessReadCommand(iterator, end, result);
-				break;
-			case 's':
-				ProcessStartCommand(iterator, end, result);
-				break;
-			case 't':
-				ProcessTimeCommand(iterator, end, result);
-				break;
-			case 'w':
-				ProcessWriteCommand(iterator, end, result);
-				break;
-			case 'p':
-				ProcessPrintCommand(iterator, end, result);
-				break;
-			case 'x':
-				ProcessBallPositionXCommand(iterator, end, result);
-				break;
-			case 'y':
-				ProcessBallPositionYCommand(iterator, end, result);
-				break;
-			case 'd':
-				ProcessDebugCommand(iterator, end, result);
-				break;
-			case 'c':
-				ProcessControllerCommand(iterator, end, result);
-				break;
-			case 'n':
-				ProcessControllerOnCommand(iterator, end, result);
-				break;
-			case 'f':
-				ProcessControllerOffCommand(iterator, end, result);
-				break;
-			case '\r':
-				result += '\r';
-				iterator++;
-				break;
-			case '\n':
-				result += '\n';
-				iterator++;
-				break;
-			case ' ':
-				iterator++;
-				break;
-			default:
-				// affiche un message
-				cout << "instr: unknown command \"" << *iterator << "\"" << endl;
-				// skip current line
-				while ((iterator < end) && (*iterator != '\n'))
-					iterator++;
-				break;
-		}
-	}
-
-	if (m_print_debug)
-		cout << "instr: processed data" << endl;
-}
-
-void InstrServer::ProcessDebugCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessTextDebugCommand(string::iterator &iterator, string::iterator &end, string &result)
 {
 	// skip 'd'
 	iterator++;
@@ -331,7 +331,7 @@ void InstrServer::ProcessDebugCommand(string::iterator &iterator, string::iterat
 	cout << "instr: debug enabled" << endl;
 }
 
-void InstrServer::ProcessPrintCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessTextPrintCommand(string::iterator &iterator, string::iterator &end, string &result)
 {
 	// skip 'p'
 	iterator++;
@@ -375,7 +375,7 @@ void InstrServer::ProcessPrintCommand(string::iterator &iterator, string::iterat
 	}
 }
 
-void InstrServer::ProcessReadCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessTextReadCommand(string::iterator &iterator, string::iterator &end, string &result)
 {
 	string s_id(""), s_start(""), s_length("");
 	int id = -1, start = -1, length = -1;
@@ -457,7 +457,7 @@ void InstrServer::ProcessReadCommand(string::iterator &iterator, string::iterato
 	}
 }
 
-void InstrServer::ProcessStartCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessTextStartCommand(string::iterator &iterator, string::iterator &end, string &result)
 {
 	// skip "s"
 	iterator++;
@@ -469,7 +469,7 @@ void InstrServer::ProcessStartCommand(string::iterator &iterator, string::iterat
 		cout << "instr: start Command" << endl;
 }
 
-void InstrServer::ProcessTimeCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessTextTimeCommand(string::iterator &iterator, string::iterator &end, string &result)
 {
 	struct timeval current_time, diff;
 	char buf[10];
@@ -490,7 +490,7 @@ void InstrServer::ProcessTimeCommand(string::iterator &iterator, string::iterato
 		cout << "instr: Time Command = " << string(buf) << endl;
 }
 
-void InstrServer::ProcessWriteCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessTextWriteCommand(string::iterator &iterator, string::iterator &end, string &result)
 {
 	string s_id(""), s_start(""), s_length(""), s_value("");
 	int id = -1, start = -1, length = -1, value = -1;
