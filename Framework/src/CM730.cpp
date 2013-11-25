@@ -665,6 +665,30 @@ int CM730::WriteWord(int id, int address, int value, int *error)
 	return result;
 }
 
+int CM730::WriteTable(int id, int start_addr, int end_addr, unsigned char *table, int *error)
+{
+	unsigned char txpacket[MAXNUM_TXPARAM + 10] = {0, };
+	unsigned char rxpacket[MAXNUM_RXPARAM + 10] = {0, };
+	int result;
+	int length = end_addr - start_addr + 1;
+
+	txpacket[ID]           = (unsigned char)id;
+	txpacket[INSTRUCTION]  = INST_WRITE;
+	txpacket[PARAMETER]    = (unsigned char)start_addr;
+	for(int i=0;i<length;i++)
+		txpacket[PARAMETER+i+1] = table[start_addr+i];
+	txpacket[LENGTH]       = 3+length;
+
+	result = TxRxPacket(txpacket, rxpacket, 2);
+	if(result == SUCCESS && id != ID_BROADCAST)
+	{
+		if(error != 0)
+			*error = (int)rxpacket[ERRBIT];
+	}
+
+	return result;
+}
+
 int CM730::MakeWord(int lowbyte, int highbyte)
 {
 	unsigned short word;

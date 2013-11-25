@@ -199,6 +199,7 @@ For instance, LinuxCM730 is a concretisation of this class.
 		int ReadTable(int id, int start_addr, int end_addr, unsigned char *table, int *error);
 		int WriteByte(int id, int address, int value, int *error);
 		int WriteWord(int id, int address, int value, int *error);
+		int WriteTable(int id, int start_addr, int end_addr, unsigned char *table, int *error);
 
 		// For motion control
 		int SyncWrite(int start_addr, int each_length, int number, int *pParam);
