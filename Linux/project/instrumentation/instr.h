@@ -21,6 +21,12 @@ class InstrServer: public Task
 		struct timeval m_start_time;
 		bool m_print_debug;
 
+		void ProcessData(string &data, string &result);
+
+		void ProcessRawReadCommand(string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessRawWriteCommand(string::iterator &iterator, string::iterator &end,
+string &result);
+
 		void ProcessTextPrintCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessTextReadCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessTextStartCommand(string::iterator &iterator, string::iterator &end, string &result);
@@ -32,8 +38,6 @@ class InstrServer: public Task
 		void ProcessTextControllerCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessTextControllerOnCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessTextControllerOffCommand(string::iterator &iterator, string::iterator &end, string &result);
-
-		void ProcessData(string &data, string &result);
 	public:
 		InstrServer(CM730 &cm730);
 		~InstrServer();

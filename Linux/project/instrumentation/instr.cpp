@@ -114,6 +114,12 @@ void InstrServer::ProcessData(string &data, string &result)
                 // "w 12 36 2 1534" with w = write, 12 = id, 36 = start address, 2 = length, 1534 = value
 		// "p "blah"" with p = print
 		switch(*iterator) {
+			case 2:
+				ProcessRawReadCommand(iterator, end, result);
+				break;
+			case 3:
+				ProcessRawWriteCommand(iterator, end, result);
+				break;
 			case 'r':
 				ProcessTextReadCommand(iterator, end, result);
 				break;
@@ -170,6 +176,55 @@ void InstrServer::ProcessData(string &data, string &result)
 
 	if (m_print_debug)
 		cout << "instr: processed data" << endl;
+}
+
+void InstrServer::ProcessRawReadCommand(string::iterator &iterator, string::iterator &end, string &result)
+{
+	unsigned char id, start, length;
+	unsigned char buf[256];
+
+	// skip 2
+	iterator++;
+	// get id, start and length
+	id = *iterator;
+	iterator++;
+	start = *iterator;
+	iterator++;
+	length = *iterator;
+	iterator++;
+
+	if (m_print_debug)
+		cout << "instr: read id = " << id << " start = " << start << " length = " << length << endl;
+
+	m_cm730.ReadTable(id, start, start+length-1, buf, NULL);
+	for (int i=0;i<length;i++)
+		result += buf[start+i];
+}
+
+void InstrServer::ProcessRawWriteCommand(string::iterator &iterator, string::iterator &end, string &result)
+{
+	unsigned char id, start, length;
+	unsigned char buf[256];
+
+	// skip 2
+	iterator++;
+	// get id, start and length
+	id = *iterator;
+	iterator++;
+	start = *iterator;
+	iterator++;
+	length = *iterator;
+	iterator++;
+
+	if (m_print_debug)
+		cout << "instr: write id = " << id << " start = " << start << " length = " << length << endl;
+
+	for (int i=0;i<length;i++)
+	{
+		buf[start+i] = *iterator;
+		iterator++;
+	}
+	m_cm730.WriteTable(id, start, start+length-1, buf, NULL);
 }
 
 void InstrServer::ProcessTextBallPositionXCommand(string::iterator &iterator, string::iterator &end, string &result)
