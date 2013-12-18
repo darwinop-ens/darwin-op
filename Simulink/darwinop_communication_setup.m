@@ -493,11 +493,15 @@ if strcmp(get_param(hModel,'lock'),'on') == 0
         value_write_index ...
       };
 
+    % break library link not to modify the library block (which leads to error in most cases)
+    set_param(hBlk,'LinkStatus','none');
+
     set_param(hBlk,'MaskValues',values);
 
+    set_param(hBlk,'Mask','on');
+    set_param(hBlk,'MaskSelfModifiable','on');
     mask_display = [{'image(''darwin-blk.jpg'')'}; read_mask_display; write_mask_display];
     set_param(hBlk,'MaskDisplay',char(mask_display));
-
     block_user_data.selected_read_fields = data.selected_read_fields;
     block_user_data.selected_write_fields = data.selected_write_fields;
     set_param(hBlk,'UserData',block_user_data);
