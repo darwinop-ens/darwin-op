@@ -353,8 +353,7 @@ end
 
 function SaveFigure(f)
 
-callback_button_id(0,[],1);
-callback_button_id(0,[],2);
+refresh_listbox;
 
 data = guidata(f);
 hBlk = data.simulink_block;
@@ -572,7 +571,7 @@ end
 
 function refresh_listbox
     data = guidata(gcf);
-    if isfield(data,'old_index') && (data.old_index ~= data.current_index)
+    if isfield(data,'old_index')
         read_value = get(data.read_listbox,'Value');
         selected_read_fields = zeros(size(data.selected_read_fields{data.old_index}));
         for i = read_value
