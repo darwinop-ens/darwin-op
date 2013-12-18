@@ -496,6 +496,10 @@ if strcmp(get_param(hModel,'lock'),'on') == 0
     % break library link not to modify the library block (which leads to error in most cases)
     set_param(hBlk,'LinkStatus','none');
 
+    % disable inputs/outputs draw commands to avoid warnings when the
+    % number of inputs/ouputs is modified by the next instruction
+    set_param(hBlk,'MaskDisplay','image(''darwin-blk.jpg'')');
+
     set_param(hBlk,'MaskValues',values);
 
     set_param(hBlk,'Mask','on');
