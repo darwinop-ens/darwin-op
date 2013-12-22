@@ -53,7 +53,7 @@ block.SetAccelRunOnTLC(false);
 
 block.RegBlockMethod('CheckParameters',          @CheckPrms);
 block.RegBlockMethod('ProcessParameters',        @ProcessPrms);
-block.RegBlockMethod('InitializeConditions',     @InitializeConditions);
+block.RegBlockMethod('Start',                    @Start);
 block.RegBlockMethod('PostPropagationSetup',     @DoPostPropagationSetup);
 block.RegBlockMethod('SetInputPortSamplingMode', @SetInputPortSamplingMode);
 block.RegBlockMethod('Outputs',                  @Outputs);
@@ -121,7 +121,7 @@ block.Dwork(1).Name = 'NetObj';
 
 end
 
-function InitializeConditions(block)
+function Start(block)
 
 IP = block.DialogPrm(1).Data;
 Port  = block.DialogPrm(2).Data;
