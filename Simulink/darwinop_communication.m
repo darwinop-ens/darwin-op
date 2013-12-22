@@ -222,11 +222,13 @@ end
 
 function Terminate(block)
     global NetObjects;
-    NetObj = NetObjects(block.Dwork(1).Data);
-    try
-        fclose(NetObj);
-    catch
-        error('network communication error: failed to close the communication');
+    if block.Dwork(1).Data > 0
+        NetObj = NetObjects(block.Dwork(1).Data);
+        try
+            fclose(NetObj);
+        catch
+            error('network communication error: failed to close the communication');
+        end
+        NetObjects(block.Dwork(1).Data) = NetObj;
     end
-    NetObjects(block.Dwork(1).Data) = NetObj;
 end
