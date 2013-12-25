@@ -1,0 +1,52 @@
+#------------------------ Macros read by make_rtw ------------------------------
+#
+# The following macros are read by the build procedure:
+#
+#  MAKECMD         - This is the command used to invoke the make utility
+#  HOST            - What platform this template makefile is targeted for
+#                    (i.e. PC or UNIX)
+#  BUILD           - Invoke make from the build procedure (yes/no)?
+#  SYS_TARGET_FILE - Name of system target file.
+
+MAKECMD         = |>MATLAB_BIN<|/|>ARCH<|/gmake
+HOST            = UNIX
+BUILD           = yes
+SYS_TARGET_FILE = darwinoplib.tlc
+COMPILER_TOOL_CHAIN = unix
+
+###############################################################
+#
+# Purpose: Makefile for "|>MODEL_NAME<|"
+#
+###############################################################
+
+TARGET = |>MODEL_NAME<|
+
+INCLUDE_DIRS = -I../../include -I../../../Framework/include
+
+CXX = g++
+CXXFLAGS += -O2 -DLINUX -Wall $(INCLUDE_DIRS)
+#CXXFLAGS += -O2 -DDEBUG -DLINUX -Wall $(INCLUDE_DIRS)
+LFLAGS += -lpthread -ljpeg -lrt
+
+SOURCES = |>MODEL_MODULES<| |>MODEL_NAME<|.|>TARGET_LANG_EXT<|
+OBJECTS = $(patsubst %.|>TARGET_LANG_EXT<|,%.o,$(SOURCES))
+
+all: $(TARGET)
+
+clean:
+	rm -f *.a *.o $(TARGET) core *~ *.so *.lo
+
+libclean:
+	make -C ../../build clean
+
+distclean: clean libclean
+
+darwin.a:
+	make -C ../../build
+
+$(TARGET): darwin.a $(OBJECTS)
+	$(CXX) $(CFLAGS) $(LFLAGS) $(OBJECTS) ../../lib/darwin.a -o $(TARGET)
+	chmod 755 $(TARGET)
+
+# EOF: ert_darwinoplib.tmf

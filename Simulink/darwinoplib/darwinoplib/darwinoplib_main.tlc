@@ -1,0 +1,76 @@
+%selectfile NULL_FILE
+
+%function FcnSingleTaskingMain(mainFileName) void
+
+  %<LibSetCodeTemplateComplianceLevel(1)>
+
+  %if GenerateSampleERTMain
+    %assign CompiledModel.GenerateSampleERTMain = TLC_FALSE
+  %endif
+
+  %assign cFile = LibCreateSourceFile("Source", "Custom", mainFileName)
+  
+  %openfile tmpBuf
+  #include "%<LibGetMdlPubHdrBaseName()>.h"
+  #ifdef EXT_MODE
+    #include <ext_work.h>          /* External mode header files */
+    #include <ext_svr.h>
+    #include <ext_share.h>
+    #include <updown.h>
+  #endif /* EXT_MODE */  
+  %closefile tmpBuf
+  
+  %<LibSetSourceFileSection(cFile, "Includes", tmpBuf)>
+
+  %openfile tmpBuf
+
+  %closefile tmpBuf
+
+  %<LibSetSourceFileSection(cFile, "Declarations", tmpBuf)>
+  
+  %openfile tmpBuf
+  void __cxa_pure_virtual(void){}
+  
+  #define STEP_SIZE_MILLIS (%<CompiledModel.FundamentalStepSize>*1000)
+
+  int_T main(void)
+  {
+    unsigned long previous = 0;
+    
+    /* Initialize model */
+    init();
+    
+    #ifdef EXT_MODE
+       /* initialize external mode */
+       rtParseArgsForExtMode(0, NULL);
+    #endif
+
+    %<LibCallModelInitialize()>\
+    
+    while (%<ERTStopCheck()>) {
+        if(millis()-previous >= STEP_SIZE_MILLIS) {
+            previous = millis();
+		%<LibCallModelStep(0)>\
+        }
+    }
+
+    %<LibCallModelTerminate()>\
+    return 0;
+  }
+  %closefile tmpBuf
+  
+  %<LibSetSourceFileSection(cFile, "Functions", tmpBuf)>
+
+%endfunction
+
+%if !IsModelReferenceTarget()
+%%Might call %matlab here to find the version and use ert_main/rt_main
+%%accordingly.. From the other hand side, using the same name is even better
+  %%assign mdlName = LibGetModelName()
+  %%assign mainFileName = "main_%<mdlName>"
+  %assign ModelName = CompiledModel.Name
+  %assign mainFileName = "%<ModelName>_main"
+  %<FcnSingleTaskingMain(mainFileName)>
+%endif
+
+%selectfile NULL_FILE
