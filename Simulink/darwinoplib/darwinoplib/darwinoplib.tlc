@@ -110,5 +110,8 @@
   %% (OPTIONAL) target inheritance declaration
   rtwgensettings.DerivedFrom = 'ert.tlc';
 
+  %% (OPTIONAL) callback script to force required settings in the UI
+  rtwgensettings.SelectCallback = ['darwinoplib_select_callback(hDlg, hSrc)'];
+
   END_RTW_OPTIONS 
  %/
