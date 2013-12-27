@@ -95,6 +95,7 @@ function send_archive(modelName, archiveName)
   DarwinOPIP = get_string_param('DarwinOPIP');
   DarwinOPPort = get_string_param('DarwinOPPort');
   DarwinOPTimeout = str2double(get_string_param('DarwinOPTimeout'));
+  DarwinOPDisconnect = str2double(get_string_param('DarwinOPDisconnect'));
   DarwinOPUser = get_string_param('DarwinOPUser');
   DarwinOPPassword = get_string_param('DarwinOPPassword');
   DarwinOPWork = get_string_param('DarwinOPWork');
@@ -103,7 +104,8 @@ function send_archive(modelName, archiveName)
   fprintf('### Settings are:\n');
   fprintf('###   IP = %s\n', DarwinOPIP);
   fprintf('###   Port = %s\n', DarwinOPPort);
-  fprintf('###   Timeout = %d\n', DarwinOPTimeout);
+  fprintf('###   Timeout = %d s\n', DarwinOPTimeout);
+  fprintf('###   Disconnect = %d s\n', DarwinOPDisconnect);
   fprintf('###   User = %s\n', DarwinOPUser);
   fprintf('###   Password = %s\n', DarwinOPPassword);
   fprintf('###   Work = %s\n', DarwinOPPort);
@@ -244,6 +246,21 @@ function send_archive(modelName, archiveName)
     ssh_os.flush();
     ssh_wait_ready(ssh_proc, DarwinOPTimeout);
 
+    disp('### making executable');
+    ssh_os.write(['make -f ', ...
+                  modelName, ...
+                  '.mk', ...
+                  new_line]);
+    ssh_os.flush();
+    ssh_wait_ready(ssh_proc, DarwinOPTimeout);
+
+    disp('### launching program');
+    ssh_os.write(['./', ...
+                  modelName, ...
+                  new_line]);
+    ssh_os.flush();
+    ssh_wait_disconnect(ssh_proc, DarwinOPDisconnect);
+
     % close SSH connection
     disp('### closing connection');
     ssh_os.write(['exit', ...
@@ -297,9 +314,25 @@ function ssh_wait_ready(ssh_proc, timeout)
         fprintf('%c', c);
       end
     else
-      pause(0.1);
+      pause(0.01);
     end
   end
   disp('### SSH command timeout');
   error('SSH command timeout');
+end
+
+function ssh_wait_disconnect(ssh_proc, timeout)
+  % get ssh input stream
+  ssh_is = ssh_proc.getInputStream();
+  % time reference
+  tic;
+  % check for timeout
+  while toc < timeout
+    if ssh_is.available()
+      c = ssh_is.read();
+      fprintf('%c', c);
+    else
+      pause(0.01);
+    end
+  end
 end
