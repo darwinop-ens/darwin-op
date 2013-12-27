@@ -108,7 +108,7 @@ function send_archive(modelName, archiveName)
   fprintf('###   Disconnect = %d s\n', DarwinOPDisconnect);
   fprintf('###   User = %s\n', DarwinOPUser);
   fprintf('###   Password = %s\n', DarwinOPPassword);
-  fprintf('###   Work = %s\n', DarwinOPPort);
+  fprintf('###   Work = %s\n', DarwinOPWork);
   fprintf('###\n');
 
   % get current script directory
