@@ -100,6 +100,16 @@
 
   oIdx = oIdx + 1;
 
+  rtwoptions(oIdx).prompt         = 'Auto-disconnect time:';
+  rtwoptions(oIdx).type           = 'Edit';
+  rtwoptions(oIdx).default        = '15';
+  rtwoptions(oIdx).tlcvariable    = 'DarwinOPDisconnect';
+  rtwoptions(oIdx).makevariable   = 'DarwinOPDisconnect';
+  rtwoptions(oIdx).tooltip        = sprintf([...
+    'Auto-disconnect time after the program is launched, defaults to 15']);
+
+  oIdx = oIdx + 1;
+
   rtwoptions(oIdx).prompt         = 'User name:';
   rtwoptions(oIdx).type           = 'Edit';
   rtwoptions(oIdx).default        = 'darwin';
