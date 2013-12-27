@@ -80,6 +80,26 @@
 
   oIdx = oIdx + 1;
 
+  rtwoptions(oIdx).prompt         = 'Port:';
+  rtwoptions(oIdx).type           = 'Edit';
+  rtwoptions(oIdx).default        = '22';
+  rtwoptions(oIdx).tlcvariable    = 'DarwinOPPort';
+  rtwoptions(oIdx).makevariable   = 'DarwinOPPort';
+  rtwoptions(oIdx).tooltip        = sprintf([...
+    'SSH Port of the DarwinOP robot, defaults to 22']);
+
+  oIdx = oIdx + 1;
+
+  rtwoptions(oIdx).prompt         = 'Timeout:';
+  rtwoptions(oIdx).type           = 'Edit';
+  rtwoptions(oIdx).default        = '15';
+  rtwoptions(oIdx).tlcvariable    = 'DarwinOPTimeout';
+  rtwoptions(oIdx).makevariable   = 'DarwinOPTimeout';
+  rtwoptions(oIdx).tooltip        = sprintf([...
+    'Timeout delay for the DarwinOP robot, defaults to 15']);
+
+  oIdx = oIdx + 1;
+
   rtwoptions(oIdx).prompt         = 'User name:';
   rtwoptions(oIdx).type           = 'Edit';
   rtwoptions(oIdx).default        = 'darwin';
@@ -97,6 +117,16 @@
   rtwoptions(oIdx).makevariable   = 'DarwinOPPassword';
   rtwoptions(oIdx).tooltip        = sprintf([...
     'Password of the DarwinOP robot, defaults to 111111']);
+
+  oIdx = oIdx + 1;
+
+  rtwoptions(oIdx).prompt         = 'Working directory:';
+  rtwoptions(oIdx).type           = 'Edit';
+  rtwoptions(oIdx).default        = '/darwin/Linux/Simulink';
+  rtwoptions(oIdx).tlcvariable    = 'DarwinOPWork';
+  rtwoptions(oIdx).makevariable   = 'DarwinOPWork';
+  rtwoptions(oIdx).tooltip        = sprintf([...
+    'Working directory in the DarwinOP robot, defaults to /darwin/Linux/Simulink']);
 
   %----------------------------------------%
   % Configure code generation settings %
