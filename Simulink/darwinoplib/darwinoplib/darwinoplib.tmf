@@ -45,8 +45,11 @@ distclean: clean libclean
 darwin.a:
 	make -C ../../build
 
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
 $(TARGET): darwin.a $(OBJECTS)
-	$(CXX) $(CFLAGS) $(LFLAGS) $(OBJECTS) ../../lib/darwin.a -o $(TARGET)
+	$(CXX) $(CXXFLAGS) $(LFLAGS) $(OBJECTS) ../../lib/darwin.a -o $(TARGET)
 	chmod 755 $(TARGET)
 
 # EOF: ert_darwinoplib.tmf
