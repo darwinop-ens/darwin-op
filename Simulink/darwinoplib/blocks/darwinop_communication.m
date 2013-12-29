@@ -245,25 +245,36 @@ function WriteRTW(block)
     ReadIndex   = block.DialogPrm(6).Data;
     WriteIndex   = block.DialogPrm(7).Data;
 
-    OperationKind = [];
-    OperationID = [];
-    OperationAddress = [];
-    OperationSize = [];
-    
-    InputOperationIndex = [];
-    InputOperationAddress = [];
-    InputOperationSize = [];
-    
-    OutputOperationIndex = [];
-    OutputOperationAddress = [];
-    OutputOperationSize = [];
+    % first pass to get number of bus operations
+    OperationCount = 0;
+    i=1;
+    while (i<=length(Frame))
+        if Frame(i) == 2
+            i = i+4;
+        else
+            i = i+4+Frame(i+3);
+        end
+        OperationCount = OperationCount + 1;
+    end
+    OperationKind = zeros(1,OperationCount);
+    OperationID = zeros(1,OperationCount);
+    OperationAddress = zeros(1,OperationCount);
+    OperationSize = zeros(1,OperationCount);
+    InputCount = size(WriteIndex,1);
+    InputOperationIndex = zeros(1,InputCount);
+    InputOperationAddress = zeros(1,InputCount);
+    InputOperationSize = zeros(1,InputCount);
+    OutputCount = size(ReadIndex,1);
+    OutputOperationIndex = zeros(1,OutputCount);
+    OutputOperationAddress = zeros(1,OutputCount);
+    OutputOperationSize = zeros(1,OutputCount);
 
     i=1;
     OperationIndex = 1;
     InputIndex = 1;
     OutputIndex = 1;
     ReadLen = 0;
-    while (i<length(Frame))
+    while (i<=length(Frame))
         Kind = Frame(i);
         OperationKind(OperationIndex) = Kind;
         ID = Frame(i+1);
