@@ -10,7 +10,16 @@
   %<LibCacheExtern(buffer)>
 %endfunction
 
-%% Function: mdlOutputs ========================================================
+%% Function: Start ========================================================
+%% Abstract:
+%% Initialization code
+%function Start(block, system) Output
+  /* %<Type> Block: %<Name> */
+  {
+  }
+%endfunction
+
+%% Function: Outputs ========================================================
 %% Abstract:
 %% Implement darwinop_communication main code in C++
 %function Outputs(block, system) Output
@@ -76,3 +85,13 @@
   }
   
 %endfunction
+
+%% Function: Terminate ========================================================
+%% Abstract:
+%% Finalization code
+%function Terminate(block, system) Output
+  /* %<Type> Block: %<Name> */
+  {
+  }
+%endfunction
+
