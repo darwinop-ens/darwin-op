@@ -125,6 +125,15 @@ end
 
 function Start(block)
 
+if strcmp(get_param(gcs,'RTWCGKeepContext'),'on')
+    disp('### Detecting a RTW build');
+    % do not start the simulation locally
+    % why is this function called when the RTW model is being built?
+    return;
+else
+    disp('### Detecting a normal simulation');
+end
+
 IP = block.DialogPrm(1).Data;
 Port  = block.DialogPrm(2).Data;
 Protocol  = block.DialogPrm(3).Data;
