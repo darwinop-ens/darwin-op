@@ -147,7 +147,7 @@ NetObj.OutputBufferSize = length(Frame);
 try
     fopen(NetObj);
 catch
-    error('network communication error: failed to open the communcation');
+    error('network communication error: failed to open the communication');
 end
 
 global NetObjects;
