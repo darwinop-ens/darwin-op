@@ -12,7 +12,7 @@ values = get_param(block.BlockHandle,'MaskValues');
 % values{1} = IP
 % values{2} = Port
 % values{3} = Protocol
-% values{4} = Timeout
+% values{4} = SampleTime
 % values{5} = Frame
 % values{6} = ReadIndex
 % values{7} = WriteIndex
@@ -69,7 +69,7 @@ function CheckPrms(block)
 %IP = block.DialogPrm(1).Data;
 Port  = block.DialogPrm(2).Data;
 Protocol  = block.DialogPrm(3).Data;
-Timeout   = block.DialogPrm(4).Data;
+SampleTime   = block.DialogPrm(4).Data;
 Frame   = block.DialogPrm(5).Data;
 ReadIndex   = block.DialogPrm(6).Data;
 WriteIndex   = block.DialogPrm(7).Data;
@@ -83,8 +83,8 @@ if (Protocol ~= 1) && (Protocol ~= 2)
     error('invalid communication protocol');
 end
 
-if ~isreal(Timeout) || ~isfloat(Timeout) || (length(Timeout) ~= 1)
-    error('invalid timeout, it should be a floating point scalar');
+if ~isreal(SampleTime) || ~isfloat(SampleTime) || (length(SampleTime) ~= 1)
+    error('invalid sample time, it should be a floating point scalar');
 end
 
 if ~isreal(Frame) || ~isfloat(Frame)
@@ -139,7 +139,7 @@ end
 IP = block.DialogPrm(1).Data;
 Port  = block.DialogPrm(2).Data;
 Protocol  = block.DialogPrm(3).Data;
-Timeout   = block.DialogPrm(4).Data;
+SampleTime   = block.DialogPrm(4).Data;
 Frame   = block.DialogPrm(5).Data;
 ReadIndex   = block.DialogPrm(6).Data;
 %WriteIndex   = block.DialogPrm(7).Data;
@@ -151,7 +151,7 @@ if Protocol == 1
 else
     NetObj = udp(IP, Port);
 end
-NetObj.Timeout = Timeout;
+NetObj.Timeout = SampleTime;
 NetObj.InputBufferSize = InputBufferSize;
 NetObj.OutputBufferSize = length(Frame);
 
@@ -265,7 +265,7 @@ function WriteRTW(block)
     %IP = block.DialogPrm(1).Data;
     %Port  = block.DialogPrm(2).Data;
     %Protocol  = block.DialogPrm(3).Data;
-    %Timeout   = block.DialogPrm(4).Data;
+    %SampleTime   = block.DialogPrm(4).Data;
     Frame   = block.DialogPrm(5).Data;
     ReadIndex   = block.DialogPrm(6).Data;
     WriteIndex   = block.DialogPrm(7).Data;
