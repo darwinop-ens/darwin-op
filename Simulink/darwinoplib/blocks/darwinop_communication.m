@@ -29,6 +29,8 @@ for i = 1:block.NumInputPorts
     block.InputPort(i).DatatypeID  = 0;  % double
     block.InputPort(i).Complexity  = 'Real';
     block.InputPort(i).SamplingMode = 'Sample'; % sample based
+    block.InputPort(i).SampleTime = [-1 0];
+    block.InputPort(i).DirectFeedthrough = false;
 end
 
 % Override output port properties
@@ -36,13 +38,11 @@ for i = 1:block.NumOutputPorts
     block.OutputPort(i).DatatypeID  = 0; % double
     block.OutputPort(i).Complexity  = 'Real';
     block.OutputPort(i).SamplingMode = 'Sample'; % sample based
+    block.OutputPort(i).SampleTime = [-1 0];
 end
 
 block.NumDialogPrms     = 7;
 block.DialogPrmsTunable = {'Nontunable','Nontunable','Nontunable','Nontunable','Nontunable','Nontunable','Nontunable'};
-
-% Register inherited discrete sample time [-1 offset]
-block.SampleTimes = [-1 0];
 
 % No parallel queries
 block.SupportsMultipleExecInstances(false);
@@ -55,6 +55,8 @@ block.RegBlockMethod('CheckParameters',          @CheckPrms);
 block.RegBlockMethod('ProcessParameters',        @ProcessPrms);
 block.RegBlockMethod('Start',                    @Start);
 block.RegBlockMethod('PostPropagationSetup',     @DoPostPropagationSetup);
+block.RegBlockMethod('SetInputPortSampleTime',   @SetInputPortSampleTime);
+block.RegBlockMethod('SetOutputPortSampleTime',  @SetOutputPortSampleTime);
 block.RegBlockMethod('SetInputPortSamplingMode', @SetInputPortSamplingMode);
 block.RegBlockMethod('Outputs',                  @Outputs);
 block.RegBlockMethod('Terminate',                @Terminate);
@@ -183,6 +185,20 @@ block.InputPort(idx).SamplingMode = mode;
 for i = 1:block.NumOutputPorts
     block.OutputPort(i).SamplingMode = 'Sample';
 end
+
+end
+
+function SetInputPortSampleTime(block, idx, time)
+
+%fprintf('in %d: %d,%d\n',idx,time(1),time(2));
+block.InputPort(idx).SampleTime = time;
+
+end
+
+function SetOutputPortSampleTime(block, idx, time)
+
+%fprintf('out %d: %d,%d\n',idx,time(1),time(2));
+block.InputPort(idx).SampleTime = time;
 
 end
 
