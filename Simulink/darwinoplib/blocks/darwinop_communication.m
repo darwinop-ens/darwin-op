@@ -58,6 +58,8 @@ block.RegBlockMethod('PostPropagationSetup',     @DoPostPropagationSetup);
 block.RegBlockMethod('SetInputPortSamplingMode', @SetInputPortSamplingMode);
 block.RegBlockMethod('Outputs',                  @Outputs);
 block.RegBlockMethod('Terminate',                @Terminate);
+block.RegBlockMethod('WriteRTW',                 @WriteRTW);
+
 end
 
 function CheckPrms(block)
@@ -231,4 +233,90 @@ function Terminate(block)
         end
         NetObjects(block.Dwork(1).Data) = NetObj;
     end
+end
+
+function WriteRTW(block)
+
+    %IP = block.DialogPrm(1).Data;
+    %Port  = block.DialogPrm(2).Data;
+    %Protocol  = block.DialogPrm(3).Data;
+    %Timeout   = block.DialogPrm(4).Data;
+    Frame   = block.DialogPrm(5).Data;
+    ReadIndex   = block.DialogPrm(6).Data;
+    WriteIndex   = block.DialogPrm(7).Data;
+
+    OperationKind = [];
+    OperationID = [];
+    OperationAddress = [];
+    OperationSize = [];
+    
+    InputOperationIndex = [];
+    InputOperationAddress = [];
+    InputOperationSize = [];
+    
+    OutputOperationIndex = [];
+    OutputOperationAddress = [];
+    OutputOperationSize = [];
+
+    i=1;
+    OperationIndex = 1;
+    InputIndex = 1;
+    OutputIndex = 1;
+    ReadLen = 0;
+    while (i<length(Frame))
+        Kind = Frame(i);
+        OperationKind(OperationIndex) = Kind;
+        ID = Frame(i+1);
+        OperationID(OperationIndex) = ID;
+        Addr = Frame(i+2);
+        OperationAddress(OperationIndex) = Addr;
+        Len = Frame(i+3);
+        OperationSize(OperationIndex) = Len;
+        if Kind == 2
+            % read operation
+            for j=1:size(ReadIndex,1)
+                if ((ReadIndex(j,1) - 1)>= ReadLen) && ...
+                   ((ReadIndex(j,1) - 1 + ReadIndex(j,2)) <= (ReadLen + Len))
+                    OutputOperationIndex(OutputIndex) = OperationIndex-1;
+                    OutputOperationAddress(OutputIndex) = Addr + ReadIndex(j,1) - 1 - ReadLen;
+                    OutputOperationSize(OutputIndex) = ReadIndex(j,2);
+                    OutputIndex = OutputIndex+1;
+                end
+            end
+            ReadLen = ReadLen + Len;
+            % skip the header bytes
+            i = i+4;
+        else
+            % write operation
+            for j=1:size(WriteIndex,1)
+                if (WriteIndex(j,1) >= (i+4)) && ...
+                   ((WriteIndex(j,1) + WriteIndex(j,2)) <= (i+4+Len))
+                    InputOperationIndex(InputIndex) = OperationIndex-1;
+                    InputOperationAddress(InputIndex) = Addr + WriteIndex(j,1) - (i+4);
+                    InputOperationSize(InputIndex) = WriteIndex(j,2);
+                    InputIndex = InputIndex+1;
+                end
+            end
+            % skip the header and data bytes
+            i = i+4+Len;
+        end
+        OperationIndex = OperationIndex+1;
+    end
+
+    block.WriteRTWParam('matrix', 'OperationCount', int32(length(OperationKind)));
+    block.WriteRTWParam('matrix', 'OperationKind', int32(OperationKind));
+    block.WriteRTWParam('matrix', 'OperationID', int32(OperationID));
+    block.WriteRTWParam('matrix', 'OperationAddress', int32(OperationAddress));
+    block.WriteRTWParam('matrix', 'OperationSize', int32(OperationSize));
+
+    block.WriteRTWParam('matrix', 'InputCount', int32(length(InputOperationIndex)));
+    block.WriteRTWParam('matrix', 'InputOperationIndex', int32(InputOperationIndex));
+    block.WriteRTWParam('matrix', 'InputOperationAddress', int32(InputOperationAddress));
+    block.WriteRTWParam('matrix', 'InputOperationSize', int32(InputOperationSize));
+
+    block.WriteRTWParam('matrix', 'OutputCount', int32(length(OutputOperationIndex)));
+    block.WriteRTWParam('matrix', 'OutputOperationIndex', int32(OutputOperationIndex));
+    block.WriteRTWParam('matrix', 'OutputOperationAddress', int32(OutputOperationAddress));
+    block.WriteRTWParam('matrix', 'OutputOperationSize', int32(OutputOperationSize));
+
 end
