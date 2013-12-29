@@ -45,9 +45,9 @@ function darwinoplib_make_rtw_hook(hookMethod,modelName,~,~,~,~)
    case 'after_make'
     % Called after make process is complete. All arguments are valid at 
     % this stage.
-    disp('after make');
-    disp(modelName);
-    disp(pwd);
+    %disp('after make');
+    %disp(modelName);
+    %disp(pwd);
     archiveName = package_archive(modelName);
     send_archive(modelName, archiveName);
     
