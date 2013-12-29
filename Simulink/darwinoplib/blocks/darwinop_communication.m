@@ -38,7 +38,7 @@ for i = 1:block.NumOutputPorts
     block.OutputPort(i).DatatypeID  = 0; % double
     block.OutputPort(i).Complexity  = 'Real';
     block.OutputPort(i).SamplingMode = 'Sample'; % sample based
-    block.OutputPort(i).SampleTime = [-1 0];
+    block.OutputPort(i).SampleTime = [eval(values{4}) 0];
 end
 
 block.NumDialogPrms     = 7;
