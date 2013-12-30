@@ -1,6 +1,7 @@
 function darwinoplib_setup()
 
-curpath = pwd;
+scriptname = mfilename('fullpath');
+[curpath,~,~] = fileparts(scriptname);
 tgtpath = curpath(1:end-length('\darwinoplib'));
 addpath(tgtpath);
 addpath(fullfile(tgtpath, 'darwinoplib'));
