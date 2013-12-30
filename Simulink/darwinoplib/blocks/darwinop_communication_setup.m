@@ -98,7 +98,7 @@ data = guidata(f);
 
 data.simulink_block = hBlk;
 
-[data.mx28_fields,data.cm730_fields,data.ids,~] = darwinop_consts;
+[data.mx28_fields,data.cm730_fields,data.ids,~] = LoadConsts;
 
 data.read_text = uicontrol(f,'Style','text', ...
                              'String','Select items to read (ctrl+click for multiple):', ...
@@ -284,6 +284,18 @@ callback_button_id(data.id_buttons(1),[],1);
 
 SetFigureName(f);
 
+end
+
+function [mx28_fields,cm730_fields,ids,lang] = LoadConsts
+    try
+        if ispref('darwinoplib','consts')
+            [mx28_fields,cm730_fields,ids,lang] = eval(getpref('darwinoplib','consts'));
+        else
+            [mx28_fields,cm730_fields,ids,lang] = darwinop_consts;
+        end
+    catch
+        [mx28_fields,cm730_fields,ids,lang] = darwinop_consts;
+    end 
 end
 
 function LoadFigure(f)
