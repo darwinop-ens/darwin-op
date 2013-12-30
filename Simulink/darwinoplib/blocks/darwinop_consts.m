@@ -1,4 +1,4 @@
-function [mx28_fields,cm730_fields,ids] = darwinop_consts
+function [mx28_fields,cm730_fields,ids,lang] = darwinop_consts
 mx28_fields = {
     field(0,2,'Model Number','Model number','AR'), ...
     field(0,1,'Model Number (L)','Lowest byte of model number','AR'), ...
@@ -162,6 +162,7 @@ ids = {
     id('Head Tilt',20,235,355), ...
     id('Sub controller',200,235,265) ...
   };
+  lang = 'english';
 end
 
 function s = field(address, size, name, description, mode)

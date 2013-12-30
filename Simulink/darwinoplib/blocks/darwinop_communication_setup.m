@@ -98,7 +98,7 @@ data = guidata(f);
 
 data.simulink_block = hBlk;
 
-[data.mx28_fields,data.cm730_fields,data.ids] = darwinop_consts;
+[data.mx28_fields,data.cm730_fields,data.ids,~] = darwinop_consts;
 
 data.read_text = uicontrol(f,'Style','text', ...
                              'String','Select items to read (ctrl+click for multiple):', ...
