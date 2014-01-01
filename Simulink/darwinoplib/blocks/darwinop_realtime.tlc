@@ -1,0 +1,32 @@
+%implements "darwinop_realtime" "C"
+
+%function BlockTypeSetup(block, system) void
+
+%endfunction
+
+%% Function: Start ========================================================
+%% Abstract:
+%% Initialization code
+%function Start(block, system) Output
+  /* %<Type> Block: %<Name> */
+  {
+  }
+%endfunction
+
+%% Function: Outputs ========================================================
+%% Abstract:
+%% Implement darwinop_communication main code in C++
+%function Outputs(block, system) Output
+  /* %<Type> Block: %<Name> */
+  {
+  }
+%endfunction
+
+%% Function: Terminate ========================================================
+%% Abstract:
+%% Finalization code
+%function Terminate(block, system) Output
+  /* %<Type> Block: %<Name> */
+  {
+  }
+%endfunction
