@@ -156,7 +156,14 @@ NetObj.InputBufferSize = InputBufferSize;
 NetObj.OutputBufferSize = length(Frame);
 
 try
-    fopen(NetObj);
+    try
+        fopen(NetObj);
+    catch
+        StartInstrumentation;
+    end
+    if ~strcmp(NetObj.status, 'open')
+        fopen(NetObj);
+    end
 catch
     error('network communication error: failed to open the communication');
 end
@@ -177,6 +184,121 @@ else
     block.Dwork(1).Data = length(NetObjects);
 end
 
+end
+
+function StartInstrumentation
+
+  % get current settings from Simulink
+  DarwinOPIP = get_string_param('DarwinOPIP');
+  DarwinOPPort = get_string_param('DarwinOPPort');
+  DarwinOPTimeout = str2double(get_string_param('DarwinOPTimeout'));
+  %DarwinOPDisconnect = str2double(get_string_param('DarwinOPDisconnect'));
+  DarwinOPUser = get_string_param('DarwinOPUser');
+  DarwinOPPassword = get_string_param('DarwinOPPassword');
+  %DarwinOPWork = get_string_param('DarwinOPWork');
+
+  % get current script directory
+  scriptName = mfilename('fullpath');
+  [scriptDirectory,~,~] = fileparts(scriptName);
+
+  % build ssh command line
+  sshName = fullfile(scriptDirectory, '..', 'putty', 'plink.exe');
+  sshCmd = {sshName, ...
+            '-l', ...
+            DarwinOPUser, ...
+            '-pw', ...
+            DarwinOPPassword, ...
+            '-P', ...
+            DarwinOPPort, ...
+            '-ssh', ...
+            '-4', ...
+            '-noagent', ...
+            DarwinOPIP, ...
+           };
+  % initialize ssh process
+  ssh_pb = java.lang.ProcessBuilder(sshCmd);
+  ssh_pb.redirectErrorStream(true);
+
+  ssh_proc = [];
+  new_line = char(10);
+
+  try
+    % start ssh process
+    disp('### connecting to darwin');
+    ssh_proc = ssh_pb.start();
+    ssh_os = java.io.PrintWriter(ssh_proc.getOutputStream());
+    ssh_wait_ready(ssh_proc, DarwinOPTimeout);
+
+    % configure remote shell
+    disp('### configuring remote shell');
+    ssh_os.write(['export PS1=\$', ...
+                  new_line]);
+    ssh_os.flush();
+    ssh_wait_ready(ssh_proc, DarwinOPTimeout); % skip '$' in command
+    ssh_wait_ready(ssh_proc, DarwinOPTimeout);
+
+    disp('### launching program');
+    ssh_os.write(['/darwin/Linux/project/instrumentation/instrumentation', ...
+                  '&', ...
+                  new_line]);
+    ssh_os.flush();
+    ssh_wait_ready(ssh_proc, DarwinOPTimeout);
+
+    % close SSH connection
+    disp('### closing connection');
+    ssh_os.write(['exit', ...
+                  new_line]);
+    ssh_os.flush();
+    % wait for the plink process to terminate
+    ssh_proc.waitFor();
+    % print ssh status
+    if ssh_proc.exitValue() == 0
+      disp('### SSH command success');
+    else
+      disp('### SSH command failure, return value is %d', ssh_proc.exitValue());
+      error('SSH command failure, return value is %d', ssh_proc.exitValue());
+    end
+  catch me
+    if ssh_proc ~= [] %#ok
+      ssh_proc.destroy();
+    end
+    rethrow(me);
+  end
+end
+
+function val = get_string_param(name)
+  val = get_param(gcs,name);
+  switch class(val)
+    case 'char'
+      return;
+    case {'single','double'}
+      val = sprintf('%d', val);
+    otherwise
+      disp(sprintf('### unknown setting class %s', class(val))); %#ok
+      error('unknown setting class %s', class(val));
+  end
+end
+
+function ssh_wait_ready(ssh_proc, timeout)
+  % get ssh input stream
+  ssh_is = ssh_proc.getInputStream();
+  % time reference
+  tic;
+  % check for timeout
+  while toc < timeout
+    if ssh_is.available()
+      c = ssh_is.read();
+      if c == 36 % '$'
+        return;
+      else
+        fprintf('%c', c);
+      end
+    else
+      pause(0.01);
+    end
+  end
+  disp('### SSH command timeout');
+  error('SSH command timeout');
 end
 
 function SetInputPortSamplingMode(block, idx, mode)
