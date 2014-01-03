@@ -250,6 +250,12 @@ function StartInstrumentation
     ssh_os.flush();
     ssh_wait_ready(ssh_proc, DarwinOPTimeout);
 
+    disp('### wait initialization time');
+    ssh_os.write(['sleep 5', ...
+                  new_line]);
+    ssh_os.flush();
+    ssh_wait_ready(ssh_proc, DarwinOPTimeout);
+
     % close SSH connection
     disp('### closing connection');
     ssh_os.write(['exit', ...
