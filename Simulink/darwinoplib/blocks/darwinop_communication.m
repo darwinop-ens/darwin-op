@@ -237,6 +237,12 @@ function StartInstrumentation
     ssh_wait_ready(ssh_proc, DarwinOPTimeout); % skip '$' in command
     ssh_wait_ready(ssh_proc, DarwinOPTimeout);
 
+    disp('### kill existing programs');
+    ssh_os.write(['kill `lsof -t /dev/ttyUSB0`', ...
+                  new_line]);
+    ssh_os.flush();
+    ssh_wait_ready(ssh_proc, DarwinOPTimeout);
+
     disp('### launching program');
     ssh_os.write(['/darwin/Linux/project/instrumentation/instrumentation', ...
                   '&', ...

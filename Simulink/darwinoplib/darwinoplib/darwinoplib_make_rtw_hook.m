@@ -208,7 +208,13 @@ function send_archive(modelName, archiveName)
       disp('### upload command failure, return value is %d',scp_proc.exitValue());
       error('SCP command failure, return value is %d',scp_proc.exitValue());
     end
-  
+ 
+    disp('### kill existing programs');
+    ssh_os.write(['kill `lsof -t /dev/ttyUSB0`', ...
+                  new_line]);
+    ssh_os.flush();
+    ssh_wait_ready(ssh_proc, DarwinOPTimeout);
+
     disp('### removing existing files for this model');
     ssh_os.write(['rm -rf ', ...
                   DarwinOPWork, ...
