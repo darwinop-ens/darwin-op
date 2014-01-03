@@ -1,0 +1,97 @@
+%implements "darwinop_communication" "C"
+
+%function BlockTypeSetup(block, system) void
+  %<LibAddToCommonIncludes("CM730.h")>
+
+  %openfile buffer
+  extern Robot::CM730 *cm730;
+  %closefile buffer
+
+  %<LibCacheExtern(buffer)>
+%endfunction
+
+%% Function: Start ========================================================
+%% Abstract:
+%% Initialization code
+%function Start(block, system) Output
+  /* %<Type> Block: %<Name> */
+  {
+  }
+%endfunction
+
+%% Function: Outputs ========================================================
+%% Abstract:
+%% Implement darwinop_communication main code in C++
+%function Outputs(block, system) Output
+  
+  /* %<Type> Block: %<Name> */
+  {
+    unsigned char buf[256];
+    %assign rollVars = ["U", "Y", "P"]
+
+    %assign OperationCount = ParamSettings.OperationCount[0]
+    %assign OperationKind = ParamSettings.OperationKind[0]
+    %assign OperationID = ParamSettings.OperationID[0]
+    %assign OperationAddress = ParamSettings.OperationAddress[0]
+    %assign OperationSize = ParamSettings.OperationSize[0]
+
+    %assign InputCount = ParamSettings.InputCount[0]
+    %assign InputOperationIndex = ParamSettings.InputOperationIndex[0]
+    %assign InputOperationAddress = ParamSettings.InputOperationAddress[0]
+    %assign InputOperationSize = ParamSettings.InputOperationSize[0]
+
+    %assign OutputCount = ParamSettings.OutputCount[0]
+    %assign OutputOperationIndex = ParamSettings.OutputOperationIndex[0]
+    %assign OutputOperationAddress = ParamSettings.OutputOperationAddress[0]
+    %assign OutputOperationSize = ParamSettings.OutputOperationSize[0]
+
+    %if InputCount[0] > 0
+    unsigned int int_value;
+    %endif
+    %foreach i = OperationCount[0]
+      %assign l = %<OperationAddress[i]>+%<OperationSize[i]>-1
+      %if OperationKind[i] == 3
+        %% write operation
+        %foreach j = InputCount[0]
+          %if InputOperationIndex[j] == i
+            %assign u = LibBlockInputSignal(j, "", "", 0)
+    int_value = (unsigned int) %<u>;
+            %if InputOperationSize[j] == 1
+    buf[%<InputOperationAddress[j]>] = (unsigned char) int_value;
+            %else
+    buf[%<InputOperationAddress[j]>] = (unsigned char) int_value;
+              %assign v = %<InputOperationAddress[j]>+1
+    buf[%<v>] = (unsigned char)(int_value >> 8);
+            %endif
+          %endif
+        %endforeach
+    cm730->WriteTable(%<OperationID[i]>, %<OperationAddress[i]>, %<l>, buf, NULL);
+      %else
+        %% read operation
+    cm730->ReadTable(%<OperationID[i]>, %<OperationAddress[i]>, %<l>, buf, NULL);
+        %foreach j = OutputCount[0]
+          %if OutputOperationIndex[j] == i
+            %assign y = LibBlockOutputSignal(j, "", "", 0)
+            %if OutputOperationSize[j] == 1
+    %<y> = buf[%<OutputOperationAddress[j]>];
+            %else
+              %assign v = %<OutputOperationAddress[j]>+1
+    %<y> = (((unsigned int)buf[%<v>]) << 8) + buf[%<OutputOperationAddress[j]>];
+            %endif
+          %endif
+        %endforeach
+      %endif
+    %endforeach
+  }
+  
+%endfunction
+
+%% Function: Terminate ========================================================
+%% Abstract:
+%% Finalization code
+%function Terminate(block, system) Output
+  /* %<Type> Block: %<Name> */
+  {
+  }
+%endfunction
+

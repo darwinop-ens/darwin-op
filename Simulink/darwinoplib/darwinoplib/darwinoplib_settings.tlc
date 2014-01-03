@@ -1,0 +1,50 @@
+%selectfile NULL_FILE
+
+%% Read user preferences for the target and add to CompiledModel
+%assign prefs = FEVAL("RTW.TargetPrefs.load","mytarget.prefs","structure")
+%addtorecord CompiledModel Settings prefs
+
+%% Check for unsupported Embedded Coder options and error/warn
+%if PurelyIntegerCode == 1
+  %assign PurelyIntegerCode = 0
+  %assign msg = "Disabling checks of floating point data types, the program can contain floating point as well as integer data types."
+  %warning %<msg>
+%endif
+
+%%%if GenerateSampleERTMain == 1
+%%  %assign msg = "Generating an example main is not supported as the proper main function is inherently generated. Unselect the \"Generate an example main program\" checkbox under ERT code generation options."
+%%  %exit %<msg>
+%%%endif
+
+%if GenerateErtSFunction == 1
+  %assign msg = "Generating a Simulink S-Function is not supported. Unselect the \"Create SIL block\" checkbox under ERT code generation options."
+  %exit %<msg>
+%endif
+
+%if MatFileLogging == 1
+  %assign msg = "MAT-file logging is not currently supported. Unselect the \"MAT-file logging\" checkbox under ERT code generation options."
+  %exit %<msg>
+%endif
+
+%if MultiInstanceERTCode == 1
+  %assign msg = "Generate reuseable code is not currently supported. Unselect the \"Generate reuseable code\" checkbox under ERT code generation options."
+  %exit %<msg>
+%endif
+
+%%%if CodeReplacementLibrary == "ISO_C"
+%%  %assign msg = "Code replacement libraries other than ANSI-C are not currently supported. Select ANSI-C for the \"Code replacement library\" option under ERT code generation options."
+%%  %exit %<msg>
+%%%endif
+
+%% To display added TLC settings for debugging purposes, set EchoConfigSettings to 1.
+%assign EchoConfigSettings = 0
+%if EchoConfigSettings
+  %selectfile STDOUT
+  ###############################################################
+  IMPLEMENTATION is:
+  %<CompiledModel.Settings.Implementation>
+  IMPLEMENTATION path is:
+  %<CompiledModel.Settings.ImpPath>
+  ###############################################################
+  %selectfile NULL_FILE
+%endif
