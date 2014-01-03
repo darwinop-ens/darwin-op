@@ -480,7 +480,7 @@ if strcmp(get_param(hModel,'lock'),'on') == 0
             for k = write_ranges(j,1):write_ranges(j,2)
                 value_frame = [value_frame,'0 ']; %#ok
             end
-            write_position = write_position + (write_ranges(j,1) - write_ranges(j,2) + 1);
+            write_position = write_position + (write_ranges(j,2) - write_ranges(j,1) + 1);
         end
     end
     value_frame(end) = ']';
