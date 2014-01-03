@@ -29,7 +29,9 @@ CXXFLAGS += -O2 -DLINUX -Wall $(INCLUDE_DIRS)
 #CXXFLAGS += -O2 -DDEBUG -DLINUX -Wall $(INCLUDE_DIRS)
 LFLAGS += -lpthread -ljpeg -lrt
 
-SOURCES = |>MODEL_MODULES<| |>MODEL_NAME<|.|>TARGET_LANG_EXT<|
+SOURCES = $(wildcard *.cpp) $(wildcard *.c)
+# |>MODEL_MODULES<| |>MODEL_NAME<|.|>TARGET_LANG_EXT<|
+# |>MODEL_MODULES<| is sometimes buggy and omits some modules
 OBJECTS = $(patsubst %.|>TARGET_LANG_EXT<|,%.o,$(SOURCES))
 
 all: $(TARGET)
