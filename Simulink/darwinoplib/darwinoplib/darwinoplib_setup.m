@@ -25,7 +25,7 @@ for f=1:length(listing)
     if strncmp(filename, ref, length(ref)) && (filename(end-1) == '.') && ...
        ((filename(end) == 'M') || (filename(end) == 'm'))
         language_files{i} = filename(1:end-2);
-        [~,~,~,~,~,language] = eval(filename(1:end-2));
+        [~,~,~,~,~,~,language] = eval(filename(1:end-2));
         languages{i} = language;
         i = i+1;
     end

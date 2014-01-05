@@ -456,7 +456,7 @@ function WriteRTW(block)
             ReadLen = ReadLen + Len;
             % skip the header bytes
             i = i+4;
-        else
+        elseif Kind == 3
             % write operation
             for j=1:size(WriteIndex,1)
                 if (WriteIndex(j,1) >= (i+4)) && ...
@@ -467,6 +467,16 @@ function WriteRTW(block)
                     InputIndex = InputIndex+1;
                 end
             end
+            % skip the header and data bytes
+            i = i+4+Len;
+        elseif Kind == 17
+            % internal read operation
+            % TODO translation in C++
+            % skip the header bytes
+            i = i+4;
+        elseif Kind == 18
+            % internal write operation
+            % TODO translation in C++
             % skip the header and data bytes
             i = i+4+Len;
         end

@@ -98,7 +98,7 @@ data = guidata(f);
 
 data.simulink_block = hBlk;
 
-[data.mx28_fields,data.cm730_fields,data.fsr_fields,data.ids,data.labels,~] = LoadConsts;
+[data.mx28_fields,data.cm730_fields,data.fsr_fields,data.vision_fields,data.ids,data.labels,~] = LoadConsts;
 
 data.read_text = uicontrol(f,'Style','text', ...
                              'String',data.labels{2}, ...
@@ -148,15 +148,25 @@ for i=1:length(data.ids)
     elseif (data.ids{i}.address == 111) || (data.ids{i}.address == 112)
         data.selected_read_fields{i} = zeros(size(data.fsr_fields));
         data.selected_write_fields{i} = zeros(size(data.fsr_fields));
+    elseif data.ids{i}.address == -1
+        data.selected_read_fields{i} = zeros(size(data.vision_fields));
+        data.selected_write_fields{i} = zeros(size(data.vision_fields));
     else
         data.selected_read_fields{i} = zeros(size(data.mx28_fields));
         data.selected_write_fields{i} = zeros(size(data.mx28_fields));
     end
+    if data.ids{i}.address == -1
+        width = 40;
+        text = 'vision';
+    else
+        width = 20;
+        text = num2str(data.ids{i}.address);
+    end
     data.id_buttons(i) = uicontrol(f,'Style','pushbutton', ...
-                                     'String',data.ids{i}.address, ...
+                                     'String',text, ...
                                      'BackgroundColor',data.background_color, ...
                                      'Units','pixels', ...
-                                     'Position',[data.ids{i}.posx+8,data.ids{i}.posy-10,20,20], ...
+                                     'Position',[data.ids{i}.posx+8,data.ids{i}.posy-10,width,20], ...
                                      'Callback',{@callback_button_id,i});
 end
 
@@ -289,15 +299,15 @@ SetFigureName(f);
 
 end
 
-function [mx28_fields,cm730_fields,fsr_fields,ids,labels,lang] = LoadConsts
+function [mx28_fields,cm730_fields,fsr_fields,vision_fields,ids,labels,lang] = LoadConsts
     try
         if ispref('darwinoplib','consts')
-            [mx28_fields,cm730_fields,fsr_fields,ids,labels,lang] = eval(getpref('darwinoplib','consts'));
+            [mx28_fields,cm730_fields,fsr_fields,vision_fields,ids,labels,lang] = eval(getpref('darwinoplib','consts'));
         else
-            [mx28_fields,cm730_fields,fsr_fields,ids,labels,lang] = darwinop_consts;
+            [mx28_fields,cm730_fields,fsr_fields,vision_fields,ids,labels,lang] = darwinop_consts;
         end
     catch
-        [mx28_fields,cm730_fields,fsr_fields,ids,labels,lang] = darwinop_consts;
+        [mx28_fields,cm730_fields,fsr_fields,vision_fields,ids,labels,lang] = darwinop_consts;
     end 
 end
 
@@ -348,6 +358,8 @@ if ~isempty(block_user_data)
             ref = zeros(size(data.cm730_fields));
         elseif (data.ids{i}.address == 111) || (data.ids{i}.address == 112)
             ref = zeros(size(data.fsr_fields));
+        elseif data.ids{i}.address == -1
+            ref = zeros(size(data.vision_fields));
         else
             ref = zeros(size(data.mx28_fields));
         end
@@ -427,6 +439,8 @@ if strcmp(get_param(hModel,'lock'),'on') == 0
             fields = data.cm730_fields;
         elseif (data.ids{i}.address == 111) || (data.ids{i}.address == 112)
             fields = data.fsr_fields;
+        elseif data.ids{i}.address == -1
+            fields = data.vision_fields;
         else
             fields = data.mx28_fields;
         end
@@ -442,7 +456,7 @@ if strcmp(get_param(hModel,'lock'),'on') == 0
                                      ',''', ...
                                      data.ids{i}.name, ...
                                      '(', ...
-                                     num2str(data.ids{i}.address), ...
+                                     num2str(abs(data.ids{i}.address)), ...
                                      ')/', ...
                                      field.name, ...
                                      ''')' ...
@@ -462,7 +476,7 @@ if strcmp(get_param(hModel,'lock'),'on') == 0
                                       ',''', ...
                                       data.ids{i}.name, ...
                                       '(', ...
-                                      num2str(data.ids{i}.address), ...
+                                      num2str(abs(data.ids{i}.address)), ...
                                       ')/', ...
                                       fields{j}.name, ...
                                       ''')' ...
@@ -472,10 +486,15 @@ if strcmp(get_param(hModel,'lock'),'on') == 0
         end
         
         read_ranges = get_ranges(read_fields) - 1;
+        if data.ids{i}.address >= 0
+            instruction = 2;
+        else
+            instruction = 17;
+        end
         for j = 1:size(read_ranges,1)
             value_frame = [value_frame, ...
-                           '2 ', ...
-                           num2str(data.ids{i}.address),' ', ...
+                           num2str(instruction),' ', ...
+                           num2str(abs(data.ids{i}.address)),' ', ...
                            num2str(read_ranges(j,1)),' ', ...
                            num2str(read_ranges(j,2)-read_ranges(j,1)+1),' ' ...
                           ]; %#ok
@@ -493,10 +512,15 @@ if strcmp(get_param(hModel,'lock'),'on') == 0
         end
         
         write_ranges = get_ranges(write_fields) - 1;
+        if data.ids{i}.address >= 0
+            instruction = 3;
+        else
+            instruction = 18;
+        end
         for j = 1:size(write_ranges,1)
             value_frame = [value_frame, ...
-                           '3 ', ...
-                           num2str(data.ids{i}.address),' ', ...
+                           num2str(instruction),' ', ...
+                           num2str(abs(data.ids{i}.address)),' ', ...
                            num2str(write_ranges(j,1)),' ', ...
                            num2str(write_ranges(j,2)-write_ranges(j,1)+1),' ' ...
                           ]; %#ok
@@ -658,6 +682,8 @@ function refresh_listbox
         fields = data.cm730_fields;
     elseif (data.ids{data.current_index}.address == 111) || (data.ids{data.current_index}.address == 112)
         fields = data.fsr_fields;
+    elseif data.ids{data.current_index}.address == -1
+        fields = data.vision_fields;
     else
         fields = data.mx28_fields;
     end
