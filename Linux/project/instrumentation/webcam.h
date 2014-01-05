@@ -14,9 +14,23 @@ using namespace std;
 typedef struct {
 	pthread_t ThreadID;
 	LinuxCamera* Camera;
+	bool Enable;
+	bool BallEnable;
 	ColorFinder* BallFinder;
 	int BallPositionX;
 	int BallPositionY;
+	bool RedEnable;
+	ColorFinder* RedFinder;
+	int RedPositionX;
+	int RedPositionY;
+	bool YellowEnable;
+	ColorFinder* YellowFinder;
+	int YellowPositionX;
+	int YellowPositionY;
+	bool BlueEnable;
+	ColorFinder* BlueFinder;
+	int BluePositionX;
+	int BluePositionY;
 	bool Continue;
 } WebcamThreadArg;
 
@@ -29,6 +43,7 @@ class Webcam: public Task
 		~Webcam();
 		virtual void Initialize(void);
 		virtual void Execute(void);
+	public:
 		WebcamThreadArg ThreadArg;
 };
 
