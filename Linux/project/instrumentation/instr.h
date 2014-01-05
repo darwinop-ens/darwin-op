@@ -7,6 +7,7 @@
 #include "time.h"
 
 #include "task.h"
+#include "webcam.h"
 
 using namespace Robot;
 using namespace std;
@@ -43,6 +44,8 @@ string &result);
 		~InstrServer();
 		virtual void Initialize(void);
 		virtual void Execute(void);
+	public:
+		WebcamThreadArg* webcam;
 };
 
 #endif // __INSTR_H__

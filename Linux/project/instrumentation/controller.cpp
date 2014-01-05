@@ -14,10 +14,6 @@ using namespace Robot;
 
 #define INI_FILE_PATH       "/darwin/Data/config.ini"
 
-// link to the variables in webcam.cpp
-extern int BallPositionX;
-extern int BallPositionY;
-
 // link to the variables in instr.cpp
 bool ControllerEnable;
 int ControllerSamplingTime;
@@ -77,7 +73,7 @@ void Controller::Execute(void)
 		if ((diff.tv_sec*1000 + diff.tv_usec/1000) >= ControllerSamplingTime)
 		{
 			ControllerErrorX1 = ControllerErrorX;
-			ControllerErrorX = BallPositionX - ControllerReferenceX;
+			ControllerErrorX = webcam->BallPositionX - ControllerReferenceX;
 			ControllerCommandX += ControllerProportionalX*((1+ControllerSamplingTime/ControllerIntegralX)*ControllerErrorX - ControllerErrorX1);
 			if (ControllerCommandX < -1000)
 				ControllerCommandX = -1000;
@@ -86,7 +82,7 @@ void Controller::Execute(void)
 			m_cm730.WriteWord(19, 30, 2048-ControllerCommandX, 0);
 
 			ControllerErrorY1 = ControllerErrorY;
-			ControllerErrorY = BallPositionY - ControllerReferenceY;
+			ControllerErrorY = webcam->BallPositionY - ControllerReferenceY;
 			ControllerCommandY += ControllerProportionalY*((1+ControllerSamplingTime/ControllerIntegralY)*ControllerErrorY - ControllerErrorY1);
 			if (ControllerCommandY < -900)
 				ControllerCommandY = -900;

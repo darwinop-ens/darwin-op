@@ -13,10 +13,6 @@ using namespace Robot;
 
 #define INI_FILE_PATH       "/darwin/Data/config.ini"
 
-// variables read in instr.cpp
-int BallPositionX;
-int BallPositionY;
-
 static void* thread_webcam(void* arg)
 {
 	WebcamThreadArg* ThreadArg = (WebcamThreadArg*) arg;
@@ -26,8 +22,8 @@ static void* thread_webcam(void* arg)
 	{
 		ThreadArg->Camera->CaptureFrame();
 		BallPosition = ThreadArg->BallFinder->GetPosition(ThreadArg->Camera->fbuffer->m_HSVFrame);
-		BallPositionX = BallPosition.X;
-		BallPositionY = BallPosition.Y;
+		ThreadArg->BallPositionX = BallPosition.X;
+		ThreadArg->BallPositionY = BallPosition.Y;
 	}
 
 	return NULL;

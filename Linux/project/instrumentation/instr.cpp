@@ -13,10 +13,6 @@
 
 using namespace std;
 
-// written by webcam.cpp
-extern int BallPositionX;
-extern int BallPositionY;
-
 // read in controller.cpp
 extern bool ControllerEnable;
 extern int ControllerSamplingTime;
@@ -234,7 +230,7 @@ void InstrServer::ProcessTextBallPositionXCommand(string::iterator &iterator, st
 
 	// print result
 	char buf[10];
-	sprintf(buf, "%d", BallPositionX);
+	sprintf(buf, "%d", webcam->BallPositionX);
 	result += string(buf);
 
 	if (m_print_debug)
@@ -248,7 +244,7 @@ void InstrServer::ProcessTextBallPositionYCommand(string::iterator &iterator, st
 
 	// print result
 	char buf[10];
-	sprintf(buf, "%d", BallPositionY);
+	sprintf(buf, "%d", webcam->BallPositionY);
 	result += string(buf);
 
 	if (m_print_debug)

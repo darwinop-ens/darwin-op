@@ -8,6 +8,7 @@
 #include "time.h"
 
 #include "LinuxDARwIn.h"
+#include "webcam.h"
 
 using namespace Robot;
 using namespace std;
@@ -22,6 +23,8 @@ class Controller: public Task
 		~Controller();
 		virtual void Initialize(void);
 		virtual void Execute(void);
+	public:
+		WebcamThreadArg* webcam;
 };
 
 #endif // __CONTROLLER_H__
