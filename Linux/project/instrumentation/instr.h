@@ -25,8 +25,8 @@ class InstrServer: public Task
 
 		void ProcessData(string &data, string &result);
 
-		void ProcessRawReadCommand(string::iterator &iterator, string::iterator &end, string &result);
-		void ProcessRawWriteCommand(string::iterator &iterator, string::iterator &end,
+		void ProcessRawReadCommand(bool internal, string::iterator &iterator, string::iterator &end, string &result);
+		void ProcessRawWriteCommand(bool internal, string::iterator &iterator, string::iterator &end,
 string &result);
 
 		void ProcessTextPrintCommand(string::iterator &iterator, string::iterator &end, string &result);
@@ -40,6 +40,9 @@ string &result);
 		void ProcessTextControllerCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessTextControllerOnCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessTextControllerOffCommand(string::iterator &iterator, string::iterator &end, string &result);
+
+		void WebcamReadTable(unsigned char *buf);
+		void WebcamWriteTable(unsigned char start, unsigned char end, unsigned char *buf);
 	public:
 		InstrServer(CM730 &cm730);
 		~InstrServer();

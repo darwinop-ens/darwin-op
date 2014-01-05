@@ -101,10 +101,16 @@ void InstrServer::ProcessData(string &data, string &result)
 		// "p "blah"" with p = print
 		switch(*iterator) {
 			case 2:
-				ProcessRawReadCommand(iterator, end, result);
+				ProcessRawReadCommand(false, iterator, end, result);
 				break;
 			case 3:
-				ProcessRawWriteCommand(iterator, end, result);
+				ProcessRawWriteCommand(false, iterator, end, result);
+				break;
+			case 17:
+				ProcessRawReadCommand(true, iterator, end, result);
+				break;
+			case 18:
+				ProcessRawWriteCommand(true, iterator, end, result);
 				break;
 			case 'r':
 				ProcessTextReadCommand(iterator, end, result);
@@ -164,7 +170,7 @@ void InstrServer::ProcessData(string &data, string &result)
 		cout << "instr: processed data" << endl;
 }
 
-void InstrServer::ProcessRawReadCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessRawReadCommand(bool internal, string::iterator &iterator, string::iterator &end, string &result)
 {
 	unsigned char id, start, length;
 	unsigned char buf[256];
@@ -179,15 +185,32 @@ void InstrServer::ProcessRawReadCommand(string::iterator &iterator, string::iter
 	length = *iterator;
 	iterator++;
 
-	if (m_print_debug)
-		cout << "instr: read id = " << id << " start = " << start << " length = " << length << endl;
-
-	m_cm730.ReadTable(id, start, start+length-1, buf, NULL);
+	if (internal)
+	{
+		if (m_print_debug)
+			cout << "instr: internal read id = " << id << " start = " << start << " length = " << length << endl;
+		switch (id)
+		{
+			case 1:
+				WebcamReadTable(buf);
+				break;
+			default:
+				cout << "invalid internal id = " << id << endl;
+				memset(buf, 0, 256);
+				break;
+		}
+	}
+	else
+	{
+		if (m_print_debug)
+			cout << "instr: read id = " << id << " start = " << start << " length = " << length << endl;
+		m_cm730.ReadTable(id, start, start+length-1, buf, NULL);
+	}
 	for (int i=0;i<length;i++)
 		result += buf[start+i];
 }
 
-void InstrServer::ProcessRawWriteCommand(string::iterator &iterator, string::iterator &end, string &result)
+void InstrServer::ProcessRawWriteCommand(bool internal, string::iterator &iterator, string::iterator &end, string &result)
 {
 	unsigned char id, start, length;
 	unsigned char buf[256];
@@ -201,16 +224,32 @@ void InstrServer::ProcessRawWriteCommand(string::iterator &iterator, string::ite
 	iterator++;
 	length = *iterator;
 	iterator++;
-
-	if (m_print_debug)
-		cout << "instr: write id = " << id << " start = " << start << " length = " << length << endl;
 
 	for (int i=0;i<length;i++)
 	{
 		buf[start+i] = *iterator;
 		iterator++;
 	}
-	m_cm730.WriteTable(id, start, start+length-1, buf, NULL);
+	if (internal)
+	{
+		if (m_print_debug)
+			cout << "instr: internal write id = " << id << " start = " << start << " length = " << length << endl;
+		switch (id)
+		{
+			case 1:
+				WebcamWriteTable(start, start+length-1, buf);
+				break;
+			default:
+				cout << "invalid internal id = " << id << endl;
+				break;
+		}
+	}
+	else
+	{
+		if (m_print_debug)
+			cout << "instr: write id = " << id << " start = " << start << " length = " << length << endl;
+		m_cm730.WriteTable(id, start, start+length-1, buf, NULL);
+	}
 }
 
 void InstrServer::ProcessTextBallPositionXCommand(string::iterator &iterator, string::iterator &end, string &result)
@@ -615,5 +654,142 @@ void InstrServer::ProcessTextWriteCommand(string::iterator &iterator, string::it
 	{
 		cout << "instr: write: syntax error" << endl;
 	}
+}
+
+void InstrServer::WebcamReadTable(unsigned char *buf)
+{
+	buf[1] = webcam->Enable;
+	*((int*)&buf[2]) = Camera::WIDTH;
+	*((int*)&buf[4]) = Camera::HEIGHT;
+	buf[6] = webcam->BallEnable;
+	buf[7] = webcam->RedEnable;
+	buf[8] = webcam->YellowEnable;
+	buf[9] = webcam->BlueEnable;
+
+	*((int*)&buf[20]) = webcam->BallFinder->m_hue;
+	*((int*)&buf[22]) = webcam->BallFinder->m_hue_tolerance;
+	buf[24] = webcam->BallFinder->m_min_saturation;
+	buf[25] = webcam->BallFinder->m_max_saturation;
+	buf[26] = webcam->BallFinder->m_min_value;
+	buf[27] = webcam->BallFinder->m_max_value;
+	buf[28] = webcam->BallFinder->m_min_percent;
+	buf[29] = webcam->BallFinder->m_min_percent;
+	*((int*)&buf[30]) = webcam->BallPositionX;
+	*((int*)&buf[32]) = webcam->BallPositionY;
+
+	*((int*)&buf[40]) = webcam->RedFinder->m_hue;
+	*((int*)&buf[42]) = webcam->RedFinder->m_hue_tolerance;
+	buf[44] = webcam->RedFinder->m_min_saturation;
+	buf[45] = webcam->RedFinder->m_max_saturation;
+	buf[46] = webcam->RedFinder->m_min_value;
+	buf[47] = webcam->RedFinder->m_max_value;
+	buf[48] = webcam->RedFinder->m_min_percent;
+	buf[49] = webcam->RedFinder->m_min_percent;
+	*((int*)&buf[50]) = webcam->RedPositionX;
+	*((int*)&buf[52]) = webcam->RedPositionY;
+
+	*((int*)&buf[60]) = webcam->YellowFinder->m_hue;
+	*((int*)&buf[62]) = webcam->YellowFinder->m_hue_tolerance;
+	buf[64] = webcam->YellowFinder->m_min_saturation;
+	buf[65] = webcam->YellowFinder->m_max_saturation;
+	buf[66] = webcam->YellowFinder->m_min_value;
+	buf[67] = webcam->YellowFinder->m_max_value;
+	buf[68] = webcam->YellowFinder->m_min_percent;
+	buf[69] = webcam->YellowFinder->m_min_percent;
+	*((int*)&buf[70]) = webcam->YellowPositionX;
+	*((int*)&buf[72]) = webcam->YellowPositionY;
+
+	*((int*)&buf[80]) = webcam->BlueFinder->m_hue;
+	*((int*)&buf[82]) = webcam->BlueFinder->m_hue_tolerance;
+	buf[84] = webcam->BlueFinder->m_min_saturation;
+	buf[85] = webcam->BlueFinder->m_max_saturation;
+	buf[86] = webcam->BlueFinder->m_min_value;
+	buf[87] = webcam->BlueFinder->m_max_value;
+	buf[88] = webcam->BlueFinder->m_min_percent;
+	buf[89] = webcam->BlueFinder->m_min_percent;
+	*((int*)&buf[90]) = webcam->BluePositionX;
+	*((int*)&buf[92]) = webcam->BluePositionY;
+}
+
+void InstrServer::WebcamWriteTable(unsigned char start, unsigned char end, unsigned char *buf)
+{
+	if (start <= 1 && end >= 1)
+		webcam->Enable = buf[1];
+	if (start <= 6 && end >= 6)
+		webcam->BallEnable = buf[6];
+	if (start <= 7 && end >= 7)
+		webcam->RedEnable = buf[7];
+	if (start <= 8 && end >= 8)
+		webcam->YellowEnable = buf[8];
+	if (start <= 9 && end >= 9)
+		webcam->BlueEnable = buf[9];
+
+	if (start <= 20 && end >= 21)
+		webcam->BallFinder->m_hue = *((int*)&buf[20]);
+	if (start <= 22 && end >= 23)
+		webcam->BallFinder->m_hue_tolerance = *((int*)&buf[22]);
+	if (start <= 24 && end >= 24)
+		webcam->BallFinder->m_min_saturation = buf[24];
+	if (start <= 25 && end >= 25)
+		webcam->BallFinder->m_max_saturation = buf[25];
+	if (start <= 26 && end >= 26)
+		webcam->BallFinder->m_min_value = buf[26];
+	if (start <= 27 && end >= 27)
+		webcam->BallFinder->m_max_value = buf[27];
+	if (start <= 28 && end >= 28)
+		webcam->BallFinder->m_min_percent = buf[28];
+	if (start <= 29 && end >= 29)
+		webcam->BallFinder->m_min_percent = buf[29];
+
+	if (start <= 40 && end >= 41)
+		webcam->RedFinder->m_hue = *((int*)&buf[40]);
+	if (start <= 42 && end >= 43)
+		webcam->RedFinder->m_hue_tolerance = *((int*)&buf[42]);
+	if (start <= 44 && end >= 44)
+		webcam->RedFinder->m_min_saturation = buf[44];
+	if (start <= 45 && end >= 45)
+		webcam->RedFinder->m_max_saturation = buf[45];
+	if (start <= 46 && end >= 46)
+		webcam->RedFinder->m_min_value = buf[46];
+	if (start <= 47 && end >= 47)
+		webcam->RedFinder->m_max_value = buf[47];
+	if (start <= 48 && end >= 48)
+		webcam->RedFinder->m_min_percent = buf[48];
+	if (start <= 49 && end >= 49)
+		webcam->RedFinder->m_min_percent = buf[49];
+
+	if (start <= 60 && end >= 61)
+		webcam->YellowFinder->m_hue = *((int*)&buf[60]);
+	if (start <= 62 && end >= 63)
+		webcam->YellowFinder->m_hue_tolerance = *((int*)&buf[62]);
+	if (start <= 64 && end >= 64)
+		webcam->YellowFinder->m_min_saturation = buf[64];
+	if (start <= 65 && end >= 65)
+		webcam->YellowFinder->m_max_saturation = buf[65];
+	if (start <= 66 && end >= 66)
+		webcam->YellowFinder->m_min_value = buf[66];
+	if (start <= 67 && end >= 67)
+		webcam->YellowFinder->m_max_value = buf[67];
+	if (start <= 68 && end >= 68)
+		webcam->YellowFinder->m_min_percent = buf[68];
+	if (start <= 69 && end >= 69)
+		webcam->YellowFinder->m_min_percent = buf[69];
+
+	if (start <= 80 && end >= 81)
+		webcam->BlueFinder->m_hue = *((int*)&buf[80]);
+	if (start <= 82 && end >= 83)
+		webcam->BlueFinder->m_hue_tolerance = *((int*)&buf[82]);
+	if (start <= 84 && end >= 84)
+		webcam->BlueFinder->m_min_saturation = buf[84];
+	if (start <= 85 && end >= 85)
+		webcam->BlueFinder->m_max_saturation = buf[85];
+	if (start <= 86 && end >= 86)
+		webcam->BlueFinder->m_min_value = buf[86];
+	if (start <= 87 && end >= 87)
+		webcam->BlueFinder->m_max_value = buf[87];
+	if (start <= 88 && end >= 88)
+		webcam->BlueFinder->m_min_percent = buf[88];
+	if (start <= 89 && end >= 89)
+		webcam->BlueFinder->m_min_percent = buf[89];
 }
 
