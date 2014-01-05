@@ -98,7 +98,7 @@ data = guidata(f);
 
 data.simulink_block = hBlk;
 
-[data.mx28_fields,data.cm730_fields,data.ids,data.labels,~] = LoadConsts;
+[data.mx28_fields,data.cm730_fields,data.fsr_fields,data.ids,data.labels,~] = LoadConsts;
 
 data.read_text = uicontrol(f,'Style','text', ...
                              'String',data.labels{2}, ...
@@ -145,6 +145,9 @@ for i=1:length(data.ids)
     if data.ids{i}.address == 200
         data.selected_read_fields{i} = zeros(size(data.cm730_fields));
         data.selected_write_fields{i} = zeros(size(data.cm730_fields));
+    elseif (data.ids{i}.address == 111) || (data.ids{i}.address == 112)
+        data.selected_read_fields{i} = zeros(size(data.fsr_fields));
+        data.selected_write_fields{i} = zeros(size(data.fsr_fields));
     else
         data.selected_read_fields{i} = zeros(size(data.mx28_fields));
         data.selected_write_fields{i} = zeros(size(data.mx28_fields));
@@ -286,15 +289,15 @@ SetFigureName(f);
 
 end
 
-function [mx28_fields,cm730_fields,ids,labels,lang] = LoadConsts
+function [mx28_fields,cm730_fields,fsr_fields,ids,labels,lang] = LoadConsts
     try
         if ispref('darwinoplib','consts')
-            [mx28_fields,cm730_fields,ids,labels,lang] = eval(getpref('darwinoplib','consts'));
+            [mx28_fields,cm730_fields,fsr_fields,ids,labels,lang] = eval(getpref('darwinoplib','consts'));
         else
-            [mx28_fields,cm730_fields,ids,labels,lang] = darwinop_consts;
+            [mx28_fields,cm730_fields,fsr_fields,ids,labels,lang] = darwinop_consts;
         end
     catch
-        [mx28_fields,cm730_fields,ids,labels,lang] = darwinop_consts;
+        [mx28_fields,cm730_fields,fsr_fields,ids,labels,lang] = darwinop_consts;
     end 
 end
 
@@ -339,6 +342,25 @@ block_user_data = get_param(hBlk,'UserData');
 if ~isempty(block_user_data)
     data.selected_read_fields = block_user_data.selected_read_fields;
     data.selected_write_fields = block_user_data.selected_write_fields;
+    % perform update if new ids are available
+    for i=(length(data.selected_read_fields)+1):length(data.ids)
+        if data.ids{i}.address == 200
+            data.selected_read_fields{i} = zeros(size(data.cm730_fields));
+        elseif (data.ids{i}.address == 111) || (data.ids{i}.address == 112)
+            data.selected_read_fields{i} = zeros(size(data.fsr_fields));
+        else
+            data.selected_read_fields{i} = zeros(size(data.mx28_fields));
+        end
+    end
+    for i=(length(data.selected_write_fields)+1):length(data.ids)
+        if data.ids{i}.address == 200
+            data.selected_write_fields{i} = zeros(size(data.cm730_fields));
+        elseif (data.ids{i}.address == 111) || (data.ids{i}.address == 112)
+            data.selected_write_fields{i} = zeros(size(data.fsr_fields));
+        else
+            data.selected_write_fields{i} = zeros(size(data.mx28_fields));
+        end
+    end
 end
 
 for i = 1:length(data.id_buttons)
@@ -394,6 +416,8 @@ if strcmp(get_param(hModel,'lock'),'on') == 0
     for i = 1:length(data.ids)
         if data.ids{i}.address == 200
             fields = data.cm730_fields;
+        elseif (data.ids{i}.address == 111) || (data.ids{i}.address == 112)
+            fields = data.fsr_fields;
         else
             fields = data.mx28_fields;
         end
@@ -623,6 +647,8 @@ function refresh_listbox
     
     if data.ids{data.current_index}.address == 200
         fields = data.cm730_fields;
+    elseif (data.ids{data.current_index}.address == 111) || (data.ids{data.current_index}.address == 112)
+        fields = data.fsr_fields;
     else
         fields = data.mx28_fields;
     end
