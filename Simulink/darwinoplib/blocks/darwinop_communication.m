@@ -472,13 +472,15 @@ function WriteRTW(block)
         elseif Kind == 17
             % internal read operation
             % TODO translation in C++
+            error('embedded code generation for vision is not supported yet');
             % skip the header bytes
-            i = i+4;
+            %i = i+4;
         elseif Kind == 18
             % internal write operation
             % TODO translation in C++
+            error('embedded code generation for vision is not supported yet');
             % skip the header and data bytes
-            i = i+4+Len;
+            %i = i+4+Len;
         end
         OperationIndex = OperationIndex+1;
     end

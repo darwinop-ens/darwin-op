@@ -66,7 +66,7 @@
           %endif
         %endforeach
     cm730->WriteTable(%<OperationID[i]>, %<OperationAddress[i]>, %<l>, buf, NULL);
-      %else
+      %elsif OperationKind[i] == 2
         %% read operation
     cm730->ReadTable(%<OperationID[i]>, %<OperationAddress[i]>, %<l>, buf, NULL);
         %foreach j = OutputCount[0]
