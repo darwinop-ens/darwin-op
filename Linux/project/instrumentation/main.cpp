@@ -71,6 +71,7 @@ int main(void)
 
 	instr.webcam = &wc.ThreadArg;
 	control.webcam = &wc.ThreadArg;
+	instr.controllersettings = &control.settings;
 
 	signalInitialize();
 

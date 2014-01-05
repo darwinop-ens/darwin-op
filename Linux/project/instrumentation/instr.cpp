@@ -13,16 +13,6 @@
 
 using namespace std;
 
-// read in controller.cpp
-extern bool ControllerEnable;
-extern int ControllerSamplingTime;
-extern int ControllerReferenceX;
-extern float ControllerProportionalX;
-extern float ControllerIntegralX;
-extern int ControllerReferenceY;
-extern float ControllerProportionalY;
-extern float ControllerIntegralY;
-
 InstrServer::InstrServer(CM730 &cm730):
 	m_server(),
 	m_socket(),
@@ -336,13 +326,13 @@ void InstrServer::ProcessTextControllerCommand(string::iterator &iterator, strin
 	}
 
 	// convert string values to integer
-	ControllerSamplingTime = atoi(s_te.c_str());
-	ControllerReferenceX = atoi(s_rx.c_str());
-	ControllerProportionalX = atof(s_px.c_str());
-	ControllerIntegralX = atof(s_ix.c_str());
-	ControllerReferenceY = atoi(s_ry.c_str());
-	ControllerProportionalY = atof(s_py.c_str());
-	ControllerIntegralY = atof(s_iy.c_str());
+	controllersettings->ControllerSamplingTime = atoi(s_te.c_str());
+	controllersettings->ControllerReferenceX = atoi(s_rx.c_str());
+	controllersettings->ControllerProportionalX = atof(s_px.c_str());
+	controllersettings->ControllerIntegralX = atof(s_ix.c_str());
+	controllersettings->ControllerReferenceY = atoi(s_ry.c_str());
+	controllersettings->ControllerProportionalY = atof(s_py.c_str());
+	controllersettings->ControllerIntegralY = atof(s_iy.c_str());
 
 	if (m_print_debug)
 		cout << "instr: controller command te=" << s_te
@@ -355,7 +345,7 @@ void InstrServer::ProcessTextControllerOnCommand(string::iterator &iterator, str
 	// skip "n"
 	iterator++;
 
-	ControllerEnable = true;
+	controllersettings->ControllerEnable = true;
 
 	if (m_print_debug)
 		cout << "instr: controller on" << endl;
@@ -366,7 +356,7 @@ void InstrServer::ProcessTextControllerOffCommand(string::iterator &iterator, st
 	// skip "f"
 	iterator++;
 
-	ControllerEnable = false;
+	controllersettings->ControllerEnable = false;
 
 	if (m_print_debug)
 		cout << "instr: controller off" << endl;

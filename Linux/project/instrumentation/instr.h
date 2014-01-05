@@ -8,6 +8,7 @@
 
 #include "task.h"
 #include "webcam.h"
+#include "controller.h"
 
 using namespace Robot;
 using namespace std;
@@ -46,6 +47,7 @@ string &result);
 		virtual void Execute(void);
 	public:
 		WebcamThreadArg* webcam;
+		ControllerSettings* controllersettings;
 };
 
 #endif // __INSTR_H__
