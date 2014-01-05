@@ -342,24 +342,33 @@ block_user_data = get_param(hBlk,'UserData');
 if ~isempty(block_user_data)
     data.selected_read_fields = block_user_data.selected_read_fields;
     data.selected_write_fields = block_user_data.selected_write_fields;
-    % perform update if new ids are available
-    for i=(length(data.selected_read_fields)+1):length(data.ids)
+    % perform update if new ids or new fields are available
+    for i=1:length(data.ids)
         if data.ids{i}.address == 200
-            data.selected_read_fields{i} = zeros(size(data.cm730_fields));
+            ref = zeros(size(data.cm730_fields));
         elseif (data.ids{i}.address == 111) || (data.ids{i}.address == 112)
-            data.selected_read_fields{i} = zeros(size(data.fsr_fields));
+            ref = zeros(size(data.fsr_fields));
         else
-            data.selected_read_fields{i} = zeros(size(data.mx28_fields));
+            ref = zeros(size(data.mx28_fields));
         end
-    end
-    for i=(length(data.selected_write_fields)+1):length(data.ids)
-        if data.ids{i}.address == 200
-            data.selected_write_fields{i} = zeros(size(data.cm730_fields));
-        elseif (data.ids{i}.address == 111) || (data.ids{i}.address == 112)
-            data.selected_write_fields{i} = zeros(size(data.fsr_fields));
+        if i <= length(data.selected_read_fields)
+            selected_read_fields = data.selected_read_fields{i};
+            for j=(length(selected_read_fields)+1):length(ref)
+                selected_read_fields(j) = 0;
+            end
         else
-            data.selected_write_fields{i} = zeros(size(data.mx28_fields));
+            selected_read_fields = ref;
         end
+        data.selected_read_fields{i} = selected_read_fields;
+        if i <= length(data.selected_write_fields)
+            selected_write_fields = data.selected_write_fields{i};
+            for j=(length(selected_write_fields)+1):length(ref)
+                selected_write_fields(j) = 0;
+            end
+        else
+            selected_write_fields = ref;
+        end
+        data.selected_write_fields{i} = selected_write_fields;
     end
 end
 
