@@ -422,7 +422,7 @@ if strcmp(get_param(hModel,'lock'),'on') == 0
             fields = data.mx28_fields;
         end
         selected_read_fields = data.selected_read_fields{i};
-        read_fields = zeros(size(selected_read_fields));
+        read_fields = zeros(1,256);
         for j = 1:length(selected_read_fields)
             field = fields{j};
             if selected_read_fields(j)
@@ -442,7 +442,7 @@ if strcmp(get_param(hModel,'lock'),'on') == 0
             end
         end
         selected_write_fields = data.selected_write_fields{i};
-        write_fields = zeros(size(selected_write_fields));
+        write_fields = zeros(1,256);
         for j = 1:length(selected_write_fields)
             field = fields{j};
             if selected_write_fields(j)
