@@ -1,0 +1,3 @@
+[submodule "Simulink"]
+	path = Simulink
+	url = https://github.com/darwinop-ens/simulink.git
