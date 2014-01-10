@@ -5,6 +5,27 @@ for more information on Webots visit
 http://www.cyberbotics.com
 
 =====================================
+          DARwIn-OP v1.6.1
+=====================================
+>>> Date: 07 Jan 2014
+
+>>> New functionality/features
+
+    * None.
+
+
+>>> Changes
+    
+    * Makefile changed.
+    
+
+>>> Bug fixes
+    
+    * None.
+
+
+
+=====================================
           DARwIn-OP v1.6.0
 =====================================
 >>> Date: 11 Apr 2013
@@ -26,11 +47,6 @@ http://www.cyberbotics.com
 >>> Bug fixes
     
     * None.
-
-
-
-
-
 
 
 
