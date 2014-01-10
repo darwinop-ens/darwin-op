@@ -212,6 +212,10 @@ For instance, LinuxCM730 is a concretisation of this class.
 		static int GetLowByte(int word);
 		static int GetHighByte(int word);
 		static int MakeColor(int red, int green, int blue);
+
+// ***   WEBOTS PART  *** //
+
+		void MakeBulkReadPacketWb();
 	};
 }
 

@@ -37,7 +37,9 @@ void JointData::SetEnable(int id, bool enable)
 
 void JointData::SetEnable(int id, bool enable, bool exclusive)
 {
+#ifndef WEBOTS // Because MotionManager is not included in the lite version of the Framework used in the simulation
     if(enable && exclusive) MotionManager::GetInstance()->SetJointDisable(id);
+#endif
     m_Enable[id] = enable;
 }
 

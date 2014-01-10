@@ -722,3 +722,33 @@ int CM730::MakeColor(int red, int green, int blue)
 
 	return (int)(((b>>3)<<10)|((g>>3)<<5)|(r>>3));
 }
+
+// ***   WEBOTS PART  *** //
+
+void CM730::MakeBulkReadPacketWb()
+{
+		int number = 0;
+
+		m_BulkReadTxPacket[ID] = (unsigned char)ID_BROADCAST;
+		m_BulkReadTxPacket[INSTRUCTION] = INST_BULK_READ;
+		m_BulkReadTxPacket[PARAMETER] = (unsigned char)0x0;
+
+		if(Ping(CM730::ID_CM, 0) == SUCCESS)
+		{
+				m_BulkReadTxPacket[PARAMETER+3*number+1] = 30;
+				m_BulkReadTxPacket[PARAMETER+3*number+2] = CM730::ID_CM;
+				m_BulkReadTxPacket[PARAMETER+3*number+3] = CM730::P_DXL_POWER;
+				number++;
+		}
+
+		for(int id = 1; id < JointData::NUMBER_OF_JOINTS; id++)
+		{
+				m_BulkReadTxPacket[PARAMETER+3*number+1] = 6; // length (goal + speed + torque)
+				m_BulkReadTxPacket[PARAMETER+3*number+2] = id;	// id
+				m_BulkReadTxPacket[PARAMETER+3*number+3] = MX28::P_PRESENT_POSITION_L; // start address
+				number++;
+		}
+
+		m_BulkReadTxPacket[LENGTH] = (number * 3) + 3;
+}
+

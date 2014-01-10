@@ -32,7 +32,7 @@ darwin.a:
 	make -C ../../build
 
 $(TARGET): darwin.a $(OBJECTS)
-	$(CXX) $(CFLAGS) $(LFLAGS) $(OBJECTS) ../../lib/darwin.a -o $(TARGET)
+	$(CXX) $(CFLAGS) $(OBJECTS) ../../lib/darwin.a -o $(TARGET) $(LFLAGS)
 	chmod 755 $(TARGET)
 
 # useful to make a backup "make tgz"
