@@ -1,6 +1,39 @@
 You can get the latest version at below link.
 https://sourceforge.net/projects/darwinop/
 
+for more information on Webots visit
+http://www.cyberbotics.com
+
+=====================================
+          DARwIn-OP v1.6.0
+=====================================
+>>> Date: 11 Apr 2013
+
+>>> New functionality/features
+
+    * Webots controller can be compiled into DARwin-OP.
+    * DARwIn-OP can be controller from Webots GUI.
+    * MX28.cpp, Camera.cpp added to ensure compatibility with Webots.
+
+
+>>> Changes
+    
+    * CM730, Image, Imgprocess, LinuxCamera, JointData, Action, Kinematics added Webots functionality
+    * MX28.h values now reside in MX28.cpp
+    * Camera.h values now reside in Camera.cpp
+    
+
+>>> Bug fixes
+    
+    * None.
+
+
+
+
+
+
+
+
 =====================================
           DARwIn-OP v1.5.1
 =====================================

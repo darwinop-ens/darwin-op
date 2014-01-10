@@ -445,3 +445,121 @@ void LinuxCamera::CaptureFrame()
     }
 }
 
+// WEBOTS PART //
+
+int LinuxCamera::ReadFrameWb()
+{
+    struct v4l2_buffer buf;
+
+    CLEAR (buf);
+
+    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    buf.memory = V4L2_MEMORY_MMAP;
+
+    if (-1 == ioctl (camera_fd, VIDIOC_DQBUF, &buf)) {
+        switch (errno) {
+        case EAGAIN:
+            return 0;
+
+        case EIO:
+            /* Could ignore EIO, see spec. */
+
+            /* fall through */
+
+        default:
+            exit (EXIT_FAILURE);
+        }
+    }
+
+    assert (buf.index < n_buffers);
+
+    // Extract the image from the buffer, flip it (H and V) and convert it in BGRA format (everything in only one loop)
+    unsigned char *yuyv = (unsigned char*)buffers[buf.index].start + fbuffer->m_YUVFrame->m_ImageSize/2 - 1;
+    unsigned char *bgra  = fbuffer->m_BGRAFrame->m_ImageData;
+    int z = 0;
+
+    while(yuyv > (((unsigned char*)buffers[buf.index].start))) {
+            int r, g, b;
+            int y, u, v;
+
+            if(z)
+                y = yuyv[-3] << 8;
+            else
+                y = yuyv[-1] << 8;
+            u = yuyv[-2] - 128;
+            v = yuyv[0] - 128;
+
+            r = (y + (359 * v)) >> 8;
+            g = (y - (88 * u) - (183 * v)) >> 8;
+            b = (y + (454 * u)) >> 8;
+
+            *(bgra++) = (b > 255) ? 255 : ((b < 0) ? 0 : b);
+            *(bgra++) = (g > 255) ? 255 : ((g < 0) ? 0 : g);
+            *(bgra++) = (r > 255) ? 255 : ((r < 0) ? 0 : r);
+            *(bgra++) = 255; // a
+
+            if (z++)
+            {
+                z = 0;
+                yuyv -= 4;
+            }
+    }
+
+
+    if (-1 == ioctl (camera_fd, VIDIOC_QBUF, &buf))
+        ErrorExit ("VIDIOC_QBUF");
+
+    return 1;
+}
+
+void LinuxCamera::CaptureFrameWb()
+{
+	if(DEBUG_PRINT == true)
+	{
+		struct timeval tv;
+		static double beforeTime = 0;
+		double currentTime;
+		double durationTime;
+		
+		gettimeofday(&tv, NULL);
+		currentTime = (double)tv.tv_sec*1000.0 + (double)tv.tv_usec/1000.0;
+		durationTime = currentTime - beforeTime;
+		fprintf(stderr, "\rCamera: %.1fmsec(%.1ffps)                    ", durationTime, 1000.0 / durationTime);
+		beforeTime = currentTime;
+	}
+
+
+    for (;;) {
+
+        fd_set fds;
+        struct timeval tv;
+        int r;
+
+        FD_ZERO (&fds);
+        FD_SET (camera_fd, &fds);
+
+        /* Timeout. */
+        tv.tv_sec = 2;
+        tv.tv_usec = 0;
+
+        r = select (camera_fd + 1, &fds, NULL, NULL, &tv);
+
+        if (-1 == r) {
+            if (EINTR == errno)
+                continue;
+
+            exit (EXIT_FAILURE);
+        }
+
+        if (0 == r) {
+            fprintf (stderr, "select timeout\n");
+            exit (EXIT_FAILURE);
+        }
+
+       if (ReadFrameWb())
+            break;
+
+        /* EAGAIN - continue select loop. */
+    }
+}
+

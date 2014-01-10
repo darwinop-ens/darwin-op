@@ -15,25 +15,25 @@ namespace Robot
 	class MX28
 	{
 	public:
-		static const int MIN_VALUE = 0;
+		static const int MIN_VALUE;
 #ifdef MX28_1024
-        static const int CENTER_VALUE = 512;
-        static const int MAX_VALUE = 1023;
-        static const double MIN_ANGLE = -150.0; // degree
-        static const double MAX_ANGLE = 150.0; // degree
-        static const double RATIO_VALUE2ANGLE = 0.293; // 300 / 1024
-        static const double RATIO_ANGLE2VALUE = 3.413; // 1024 / 300
+        static const int CENTER_VALUE;
+        static const int MAX_VALUE;
+        static const double MIN_ANGLE;
+        static const double MAX_ANGLE;
+        static const double RATIO_VALUE2ANGLE;
+        static const double RATIO_ANGLE2VALUE;
 
-        static const int PARAM_BYTES = 5;
+        static const int PARAM_BYTES;
 #else
-		static const int CENTER_VALUE = 2048;
-		static const int MAX_VALUE = 4095;
-		static const double MIN_ANGLE = -180.0; // degree
-		static const double MAX_ANGLE = 180.0; // degree
-		static const double RATIO_VALUE2ANGLE = 0.088; // 360 / 4096
-		static const double RATIO_ANGLE2VALUE = 11.378; // 4096 / 360
+		static const int CENTER_VALUE;
+		static const int MAX_VALUE;
+		static const double MIN_ANGLE;
+		static const double MAX_ANGLE;
+		static const double RATIO_VALUE2ANGLE;
+		static const double RATIO_ANGLE2VALUE;
 
-		static const int PARAM_BYTES = 7;
+		static const int PARAM_BYTES;
 #endif
 
         static int GetMirrorValue(int value)		{ return MAX_VALUE + 1 - value; }

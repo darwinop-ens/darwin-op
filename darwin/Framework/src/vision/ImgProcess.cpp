@@ -227,8 +227,6 @@ void ImgProcess::HFlipYUV(Image* img)
 void ImgProcess::VFlipYUV(Image* img)
 {
     int sizeline = img->m_Width * 2; /* 2 bytes per pixel */
-    unsigned char *pframe;
-    pframe=img->m_ImageData;
     unsigned char line1[sizeline-1];/*line1 buffer*/
     unsigned char line2[sizeline-1];/*line2 buffer*/
     for(int h = 0; h < img->m_Height/2; h++)
@@ -240,3 +238,62 @@ void ImgProcess::VFlipYUV(Image* img)
         memcpy(img->m_ImageData+(img->m_Height-1-h)*sizeline, line1, sizeline);
     }
 }
+
+// ***   WEBOTS PART  *** //
+
+void ImgProcess::BGRAtoHSV(FrameBuffer *buf)
+{
+    int ir, ig, ib, imin, imax;
+    int th, ts, tv, diffvmin;
+
+    for(int i = 0; i < buf->m_BGRAFrame->m_Width*buf->m_BGRAFrame->m_Height; i++)
+    {
+        ib = buf->m_BGRAFrame->m_ImageData[4*i+0];
+        ig = buf->m_BGRAFrame->m_ImageData[4*i+1];
+        ir = buf->m_BGRAFrame->m_ImageData[4*i+2];
+
+        if( ir > ig )
+        {
+            imax = ir;
+            imin = ig;
+        }
+        else
+        {
+            imax = ig;
+            imin = ir;
+        }
+
+        if( imax > ib ) {
+            if( imin > ib ) imin = ib;
+        } else imax = ib;
+
+        tv = imax;
+        diffvmin = imax - imin;
+
+        if( (tv!=0) && (diffvmin!=0) )
+        {
+            ts = (255* diffvmin) / imax;
+            if( tv == ir ) th = (ig-ib)*60/diffvmin;
+            else if( tv == ig ) th = 120 + (ib-ir)*60/diffvmin;
+            else th = 240 + (ir-ig)*60/diffvmin;
+            if( th < 0 ) th += 360;
+            th &= 0x0000FFFF;
+        }
+        else
+        {
+            tv = 0;
+            ts = 0;
+            th = 0xFFFF;
+        }
+
+        ts = ts * 100 / 255;
+        tv = tv * 100 / 255;
+
+        //buf->m_HSVFrame->m_ImageData[i]= (unsigned int)th | ((unsigned int)ts<<16) | ((unsigned int)tv<<24);
+        buf->m_HSVFrame->m_ImageData[i*buf->m_HSVFrame->m_PixelSize+0] = (unsigned char)(th >> 8);
+        buf->m_HSVFrame->m_ImageData[i*buf->m_HSVFrame->m_PixelSize+1] = (unsigned char)(th & 0xFF);
+        buf->m_HSVFrame->m_ImageData[i*buf->m_HSVFrame->m_PixelSize+2] = (unsigned char)(ts & 0xFF);
+        buf->m_HSVFrame->m_ImageData[i*buf->m_HSVFrame->m_PixelSize+3] = (unsigned char)(tv & 0xFF);
+    }
+}
+

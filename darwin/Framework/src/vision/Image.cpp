@@ -40,6 +40,7 @@ FrameBuffer::FrameBuffer(int width, int height)
     m_YUVFrame = new Image(width, height, Image::YUV_PIXEL_SIZE);
     m_RGBFrame = new Image(width, height, Image::RGB_PIXEL_SIZE);
     m_HSVFrame = new Image(width, height, Image::HSV_PIXEL_SIZE);
+    m_BGRAFrame = new Image(width, height, Image::BGRA_PIXEL_SIZE); // for Webots only
 }
 
 FrameBuffer::~FrameBuffer()
@@ -47,4 +48,5 @@ FrameBuffer::~FrameBuffer()
     delete m_YUVFrame;
     delete m_RGBFrame;
     delete m_HSVFrame;
+    delete m_BGRAFrame; // for Webots only
 }
