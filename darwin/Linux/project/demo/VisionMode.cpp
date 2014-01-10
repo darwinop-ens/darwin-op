@@ -5,6 +5,7 @@
  *      Author: zerom
  */
 #include <stdio.h>
+#include <unistd.h>
 #include "VisionMode.h"
 #include "Action.h"
 #include "ColorFinder.h"
