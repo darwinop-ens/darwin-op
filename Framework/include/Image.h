@@ -57,7 +57,7 @@ namespace Robot
 	    		Image *m_YUVFrame;
 	    		Image *m_RGBFrame;
 	    		Image *m_HSVFrame;
-	....		Image *m_BGRAFrame;  // for Webots only
+	    		Image *m_BGRAFrame;  // for Webots only
 
 	    		FrameBuffer(int width, int height);
 	    		virtual ~FrameBuffer();
