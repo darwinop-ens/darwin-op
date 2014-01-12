@@ -118,12 +118,13 @@ void Webcam::Execute(void)
 void Webcam::ReadTable(unsigned char *buf)
 {
 	buf[1] = ThreadArg.Enable;
-	*((int*)&buf[2]) = Camera::WIDTH;
-	*((int*)&buf[4]) = Camera::HEIGHT;
-	buf[6] = ThreadArg.BallEnable;
-	buf[7] = ThreadArg.RedEnable;
-	buf[8] = ThreadArg.YellowEnable;
-	buf[9] = ThreadArg.BlueEnable;
+	buf[2] = ThreadArg.BallEnable;
+	buf[3] = ThreadArg.RedEnable;
+	buf[4] = ThreadArg.YellowEnable;
+	buf[5] = ThreadArg.BlueEnable;
+
+	*((int*)&buf[10]) = Camera::WIDTH;
+	*((int*)&buf[12]) = Camera::HEIGHT;
 
 	*((int*)&buf[20]) = ThreadArg.BallFinder->m_hue;
 	*((int*)&buf[22]) = ThreadArg.BallFinder->m_hue_tolerance;
@@ -174,14 +175,14 @@ void Webcam::WriteTable(unsigned char start, unsigned char end, unsigned char *b
 {
 	if (start <= 1 && end >= 1)
 		ThreadArg.Enable = buf[1];
-	if (start <= 6 && end >= 6)
-		ThreadArg.BallEnable = buf[6];
-	if (start <= 7 && end >= 7)
-		ThreadArg.RedEnable = buf[7];
-	if (start <= 8 && end >= 8)
-		ThreadArg.YellowEnable = buf[8];
-	if (start <= 9 && end >= 9)
-		ThreadArg.BlueEnable = buf[9];
+	if (start <= 2 && end >= 2)
+		ThreadArg.BallEnable = buf[2];
+	if (start <= 3 && end >= 3)
+		ThreadArg.RedEnable = buf[3];
+	if (start <= 4 && end >= 4)
+		ThreadArg.YellowEnable = buf[4];
+	if (start <= 5 && end >= 5)
+		ThreadArg.BlueEnable = buf[5];
 
 	if (start <= 20 && end >= 21)
 		ThreadArg.BallFinder->m_hue = *((int*)&buf[20]);
