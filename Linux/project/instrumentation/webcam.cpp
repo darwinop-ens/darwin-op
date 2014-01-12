@@ -115,3 +115,140 @@ void Webcam::Execute(void)
 	// everything is done in working thread
 }
 
+void Webcam::ReadTable(unsigned char *buf)
+{
+	buf[1] = ThreadArg.Enable;
+	*((int*)&buf[2]) = Camera::WIDTH;
+	*((int*)&buf[4]) = Camera::HEIGHT;
+	buf[6] = ThreadArg.BallEnable;
+	buf[7] = ThreadArg.RedEnable;
+	buf[8] = ThreadArg.YellowEnable;
+	buf[9] = ThreadArg.BlueEnable;
+
+	*((int*)&buf[20]) = ThreadArg.BallFinder->m_hue;
+	*((int*)&buf[22]) = ThreadArg.BallFinder->m_hue_tolerance;
+	buf[24] = ThreadArg.BallFinder->m_min_saturation;
+	buf[25] = ThreadArg.BallFinder->m_max_saturation;
+	buf[26] = ThreadArg.BallFinder->m_min_value;
+	buf[27] = ThreadArg.BallFinder->m_max_value;
+	buf[28] = ThreadArg.BallFinder->m_min_percent;
+	buf[29] = ThreadArg.BallFinder->m_min_percent;
+	*((int*)&buf[30]) = ThreadArg.BallPositionX;
+	*((int*)&buf[32]) = ThreadArg.BallPositionY;
+
+	*((int*)&buf[40]) = ThreadArg.RedFinder->m_hue;
+	*((int*)&buf[42]) = ThreadArg.RedFinder->m_hue_tolerance;
+	buf[44] = ThreadArg.RedFinder->m_min_saturation;
+	buf[45] = ThreadArg.RedFinder->m_max_saturation;
+	buf[46] = ThreadArg.RedFinder->m_min_value;
+	buf[47] = ThreadArg.RedFinder->m_max_value;
+	buf[48] = ThreadArg.RedFinder->m_min_percent;
+	buf[49] = ThreadArg.RedFinder->m_min_percent;
+	*((int*)&buf[50]) = ThreadArg.RedPositionX;
+	*((int*)&buf[52]) = ThreadArg.RedPositionY;
+
+	*((int*)&buf[60]) = ThreadArg.YellowFinder->m_hue;
+	*((int*)&buf[62]) = ThreadArg.YellowFinder->m_hue_tolerance;
+	buf[64] = ThreadArg.YellowFinder->m_min_saturation;
+	buf[65] = ThreadArg.YellowFinder->m_max_saturation;
+	buf[66] = ThreadArg.YellowFinder->m_min_value;
+	buf[67] = ThreadArg.YellowFinder->m_max_value;
+	buf[68] = ThreadArg.YellowFinder->m_min_percent;
+	buf[69] = ThreadArg.YellowFinder->m_min_percent;
+	*((int*)&buf[70]) = ThreadArg.YellowPositionX;
+	*((int*)&buf[72]) = ThreadArg.YellowPositionY;
+
+	*((int*)&buf[80]) = ThreadArg.BlueFinder->m_hue;
+	*((int*)&buf[82]) = ThreadArg.BlueFinder->m_hue_tolerance;
+	buf[84] = ThreadArg.BlueFinder->m_min_saturation;
+	buf[85] = ThreadArg.BlueFinder->m_max_saturation;
+	buf[86] = ThreadArg.BlueFinder->m_min_value;
+	buf[87] = ThreadArg.BlueFinder->m_max_value;
+	buf[88] = ThreadArg.BlueFinder->m_min_percent;
+	buf[89] = ThreadArg.BlueFinder->m_min_percent;
+	*((int*)&buf[90]) = ThreadArg.BluePositionX;
+	*((int*)&buf[92]) = ThreadArg.BluePositionY;
+}
+
+void Webcam::WriteTable(unsigned char start, unsigned char end, unsigned char *buf)
+{
+	if (start <= 1 && end >= 1)
+		ThreadArg.Enable = buf[1];
+	if (start <= 6 && end >= 6)
+		ThreadArg.BallEnable = buf[6];
+	if (start <= 7 && end >= 7)
+		ThreadArg.RedEnable = buf[7];
+	if (start <= 8 && end >= 8)
+		ThreadArg.YellowEnable = buf[8];
+	if (start <= 9 && end >= 9)
+		ThreadArg.BlueEnable = buf[9];
+
+	if (start <= 20 && end >= 21)
+		ThreadArg.BallFinder->m_hue = *((int*)&buf[20]);
+	if (start <= 22 && end >= 23)
+		ThreadArg.BallFinder->m_hue_tolerance = *((int*)&buf[22]);
+	if (start <= 24 && end >= 24)
+		ThreadArg.BallFinder->m_min_saturation = buf[24];
+	if (start <= 25 && end >= 25)
+		ThreadArg.BallFinder->m_max_saturation = buf[25];
+	if (start <= 26 && end >= 26)
+		ThreadArg.BallFinder->m_min_value = buf[26];
+	if (start <= 27 && end >= 27)
+		ThreadArg.BallFinder->m_max_value = buf[27];
+	if (start <= 28 && end >= 28)
+		ThreadArg.BallFinder->m_min_percent = buf[28];
+	if (start <= 29 && end >= 29)
+		ThreadArg.BallFinder->m_min_percent = buf[29];
+
+	if (start <= 40 && end >= 41)
+		ThreadArg.RedFinder->m_hue = *((int*)&buf[40]);
+	if (start <= 42 && end >= 43)
+		ThreadArg.RedFinder->m_hue_tolerance = *((int*)&buf[42]);
+	if (start <= 44 && end >= 44)
+		ThreadArg.RedFinder->m_min_saturation = buf[44];
+	if (start <= 45 && end >= 45)
+		ThreadArg.RedFinder->m_max_saturation = buf[45];
+	if (start <= 46 && end >= 46)
+		ThreadArg.RedFinder->m_min_value = buf[46];
+	if (start <= 47 && end >= 47)
+		ThreadArg.RedFinder->m_max_value = buf[47];
+	if (start <= 48 && end >= 48)
+		ThreadArg.RedFinder->m_min_percent = buf[48];
+	if (start <= 49 && end >= 49)
+		ThreadArg.RedFinder->m_min_percent = buf[49];
+
+	if (start <= 60 && end >= 61)
+		ThreadArg.YellowFinder->m_hue = *((int*)&buf[60]);
+	if (start <= 62 && end >= 63)
+		ThreadArg.YellowFinder->m_hue_tolerance = *((int*)&buf[62]);
+	if (start <= 64 && end >= 64)
+		ThreadArg.YellowFinder->m_min_saturation = buf[64];
+	if (start <= 65 && end >= 65)
+		ThreadArg.YellowFinder->m_max_saturation = buf[65];
+	if (start <= 66 && end >= 66)
+		ThreadArg.YellowFinder->m_min_value = buf[66];
+	if (start <= 67 && end >= 67)
+		ThreadArg.YellowFinder->m_max_value = buf[67];
+	if (start <= 68 && end >= 68)
+		ThreadArg.YellowFinder->m_min_percent = buf[68];
+	if (start <= 69 && end >= 69)
+		ThreadArg.YellowFinder->m_min_percent = buf[69];
+
+	if (start <= 80 && end >= 81)
+		ThreadArg.BlueFinder->m_hue = *((int*)&buf[80]);
+	if (start <= 82 && end >= 83)
+		ThreadArg.BlueFinder->m_hue_tolerance = *((int*)&buf[82]);
+	if (start <= 84 && end >= 84)
+		ThreadArg.BlueFinder->m_min_saturation = buf[84];
+	if (start <= 85 && end >= 85)
+		ThreadArg.BlueFinder->m_max_saturation = buf[85];
+	if (start <= 86 && end >= 86)
+		ThreadArg.BlueFinder->m_min_value = buf[86];
+	if (start <= 87 && end >= 87)
+		ThreadArg.BlueFinder->m_max_value = buf[87];
+	if (start <= 88 && end >= 88)
+		ThreadArg.BlueFinder->m_min_percent = buf[88];
+	if (start <= 89 && end >= 89)
+		ThreadArg.BlueFinder->m_min_percent = buf[89];
+}
+

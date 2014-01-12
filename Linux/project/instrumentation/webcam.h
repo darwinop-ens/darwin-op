@@ -43,6 +43,8 @@ class Webcam: public Task
 		~Webcam();
 		virtual void Initialize(void);
 		virtual void Execute(void);
+		void ReadTable(unsigned char *buf);
+		void WriteTable(unsigned char start, unsigned char end, unsigned char *buf);
 	public:
 		WebcamThreadArg ThreadArg;
 };

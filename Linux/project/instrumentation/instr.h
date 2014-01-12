@@ -40,16 +40,13 @@ string &result);
 		void ProcessTextControllerCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessTextControllerOnCommand(string::iterator &iterator, string::iterator &end, string &result);
 		void ProcessTextControllerOffCommand(string::iterator &iterator, string::iterator &end, string &result);
-
-		void WebcamReadTable(unsigned char *buf);
-		void WebcamWriteTable(unsigned char start, unsigned char end, unsigned char *buf);
 	public:
 		InstrServer(CM730 &cm730);
 		~InstrServer();
 		virtual void Initialize(void);
 		virtual void Execute(void);
 	public:
-		WebcamThreadArg* webcam;
+		Webcam* webcam;
 		ControllerSettings* controllersettings;
 };
 

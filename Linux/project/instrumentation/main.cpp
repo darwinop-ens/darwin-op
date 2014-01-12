@@ -69,7 +69,7 @@ int main(void)
 	Webcam wc = Webcam();
 	Controller control = Controller(cm730);
 
-	instr.webcam = &wc.ThreadArg;
+	instr.webcam = &wc;
 	control.webcam = &wc.ThreadArg;
 	instr.controllersettings = &control.settings;
 
