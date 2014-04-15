@@ -68,9 +68,9 @@ int main(void)
 	while(1) {
 		double magnitude, polar, azimuth;
 		Acc.ReadSphericalValues(magnitude, polar, azimuth);
-		//printf("mag = %.3f pol=%.3f, az=%.3f\n", magnitude, polar/M_PI*180.0, azimuth/M_PI*180.0);
-		LA.WriteSphericalPosition(-polar,-azimuth);
-		RA.WriteSphericalPosition(-polar,-azimuth);
+		printf("mag = %.3f pol=%.3f, az=%.3f\n", magnitude, polar/M_PI*180.0, azimuth/M_PI*180.0);
+		LA.WriteSphericalPosition(polar,azimuth);
+		RA.WriteSphericalPosition(polar,azimuth);
 		usleep(1000000);
 	}
 }

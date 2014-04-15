@@ -50,16 +50,18 @@ bool Accelerometer::ReadSphericalValues(double &magnitude, double &polar_angle, 
 
 	result = ReadCartesianValues(ax, ay, az);
 
-	horizontal_magnitude = ax*ax + ay*ay;
+	horizontal_magnitude = az*az + ay*ay;
 	magnitude = sqrt(horizontal_magnitude + az*az);
 	horizontal_magnitude = sqrt(horizontal_magnitude);
 
 	if (magnitude > 0.0)
 	{
-		polar_angle = atan2(horizontal_magnitude,az);
+		polar_angle = atan2(horizontal_magnitude,ax);
 		if (horizontal_magnitude > 0.0)
 		{
-			azimuth_angle = atan2(ay,ax);
+			azimuth_angle = atan2(ay,az);
+			if (azimuth_angle < 0.0)
+				azimuth_angle += 2.0*M_PI;
 		}
 		else
 		{
