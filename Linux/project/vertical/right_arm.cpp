@@ -25,9 +25,9 @@ bool RightArm::WriteSphericalPosition(double polar_angle, double azimuth_angle)
 {
 	if(polar_angle<M_PI_2)
 	{
-		ShoulderRoll.WriteRawPosition(2600.0 - polar_angle*1024.0/M_PI_2);
-		ShoulderPitch.WriteRawPosition(4096.0-azimuth_angle*1024.0/M_PI_2);
-		Elbow.WriteRawPosition(1024);
+		WriteRawPosition(4096.0-azimuth_angle*1024.0/M_PI_2,
+		                 2600.0 - polar_angle*1024.0/M_PI_2,
+		                 1024);
 		return true;
 	}
 	else

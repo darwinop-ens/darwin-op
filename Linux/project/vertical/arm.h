@@ -11,6 +11,8 @@ class Arm
 		Joint ShoulderPitch;
 		Joint ShoulderRoll;
 		Joint Elbow;
+		bool ReadRawPosition(unsigned short &shoulder_pitch, unsigned short &shoulder_roll, unsigned short &elbow);
+		bool WriteRawPosition(unsigned short shoulder_pitch, unsigned short shoulder_roll, unsigned short elbow);
 		bool virtual WriteSphericalPosition(double polar_angle, double azimuth_angle) = 0;
 };
 
