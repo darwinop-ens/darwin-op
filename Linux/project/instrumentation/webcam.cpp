@@ -62,15 +62,15 @@ Webcam::Webcam()
 	IniSettings = new minIni(INI_FILE_PATH);
 	ThreadArg.ThreadID = 0;
 
-	ThreadArg.Enable = true;
-	ThreadArg.BallEnable = true;
+	ThreadArg.Enable = false;
+	ThreadArg.BallEnable = false;
 	ThreadArg.BallFinder = new ColorFinder();
 	ThreadArg.RedEnable = false;
 	ThreadArg.RedFinder = new ColorFinder(0, 15, 45, 100, 0, 100, 0.3, 50.0);
 	ThreadArg.YellowEnable = false;
-	ThreadArg.YellowFinder = new ColorFinder(60, 15, 45, 0, 0.3, 50.0);
+	ThreadArg.YellowFinder = new ColorFinder(60, 15, 45, 100, 0, 100, 0.3, 50.0);
 	ThreadArg.BlueEnable = false;
-	ThreadArg.BlueFinder = new ColorFinder(225, 15, 45, 0, 0.3, 50.0);
+	ThreadArg.BlueFinder = new ColorFinder(225, 15, 45, 100, 0, 100, 0.3, 50.0);
 
 	ThreadArg.Camera = LinuxCamera::GetInstance();
 	ThreadArg.Continue = true;
