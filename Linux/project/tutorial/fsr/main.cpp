@@ -155,6 +155,10 @@ int main()
 
         right_fsr_x = cm730.m_BulkReadData[FSR::ID_R_FSR].ReadByte(FSR::P_FSR_X);
         right_fsr_y = cm730.m_BulkReadData[FSR::ID_R_FSR].ReadByte(FSR::P_FSR_Y);
+        if(right_fsr_x == 255)
+            right_fsr_x = -1;
+        if(right_fsr_y == 255)
+            right_fsr_y = -1;
         printf(" RX:%3d", right_fsr_x);
         printf(" RY:%3d", right_fsr_y);
 
