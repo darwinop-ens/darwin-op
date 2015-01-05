@@ -279,16 +279,6 @@ void Dump(CM730 *cm730, int id)
 		printf( " TORQUE_ENABLE          (R/W)[%.3d]:%5d\n", addr, value);
 		addr = MX28::P_LED; value = table[addr];
 		printf( " LED                    (R/W)[%.3d]:%5d\n", addr, value);
-#ifdef MX28_1024
-		addr = MX28::P_CW_COMPLIANCE_MARGIN; value = table[addr];
-		printf( " CW_COMPLIANCE_MARGIN   (R/W)[%.3d]:%5d\n", addr, value);
-		addr = MX28::P_CCW_COMPLIANCE_MARGIN; value = table[addr];
-		printf( " CCW_COMPLIANCE_MARGIN  (R/W)[%.3d]:%5d\n", addr, value);
-		addr = MX28::P_CW_COMPLIANCE_SLOPE; value = table[addr];
-		printf( " CW_COMPLIANCE_SLOPE    (R/W)[%.3d]:%5d\n", addr, value);
-		addr = MX28::P_CCW_COMPLIANCE_SLOPE; value = table[addr];
-		printf( " CCW_COMPLIANCE_SLOPE   (R/W)[%.3d]:%5d\n", addr, value);
-#else
 		addr = MX28::P_D_GAIN; value = table[addr];
 		printf( " D_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
 		addr = MX28::P_I_GAIN; value = table[addr];
@@ -297,7 +287,6 @@ void Dump(CM730 *cm730, int id)
 		printf( " P_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
 		addr = MX28::P_RESERVED; value = table[addr];
 		printf( " RESERVED               (R/W)[%.3d]:%5d\n", addr, value);
-#endif
 		addr = MX28::P_GOAL_POSITION_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " GOAL_POSITION          (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 		addr = MX28::P_MOVING_SPEED_L; value = CM730::MakeWord(table[addr], table[addr+1]);
@@ -652,17 +641,10 @@ void Write(Robot::CM730 *cm730, int id, int addr, int value)
 		     || addr == MX28::P_ALARM_SHUTDOWN
 		     || addr == MX28::P_TORQUE_ENABLE
 		     || addr == MX28::P_LED
-#ifdef MX28_1024
-		     || addr == MX28::P_CW_COMPLIANCE_MARGIN
-		     || addr == MX28::P_CCW_COMPLIANCE_MARGIN
-		     || addr == MX28::P_CW_COMPLIANCE_SLOPE
-		     || addr == MX28::P_CCW_COMPLIANCE_SLOPE
-#else
 		     || addr == MX28::P_P_GAIN
 		     || addr == MX28::P_I_GAIN
 		     || addr == MX28::P_D_GAIN
 		     || addr == MX28::P_RESERVED
-#endif
 		     || addr == MX28::P_LED
 		     || addr == MX28::P_LED)
 		{

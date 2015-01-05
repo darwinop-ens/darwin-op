@@ -572,19 +572,6 @@ void Walking::Process()
     {
 		double rlGyroErr = MotionStatus::RL_GYRO;
 		double fbGyroErr = MotionStatus::FB_GYRO;
-#ifdef MX28_1024
-        outValue[1] += (int)(dir[1] * rlGyroErr * BALANCE_HIP_ROLL_GAIN); // R_HIP_ROLL
-        outValue[7] += (int)(dir[7] * rlGyroErr * BALANCE_HIP_ROLL_GAIN); // L_HIP_ROLL
-
-        outValue[3] -= (int)(dir[3] * fbGyroErr * BALANCE_KNEE_GAIN); // R_KNEE
-        outValue[9] -= (int)(dir[9] * fbGyroErr * BALANCE_KNEE_GAIN); // L_KNEE
-        
-        outValue[4] -= (int)(dir[4] * fbGyroErr * BALANCE_ANKLE_PITCH_GAIN); // R_ANKLE_PITCH
-        outValue[10] -= (int)(dir[10] * fbGyroErr * BALANCE_ANKLE_PITCH_GAIN); // L_ANKLE_PITCH        
-        
-        outValue[5] -= (int)(dir[5] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN); // R_ANKLE_ROLL
-        outValue[11] -= (int)(dir[11] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN); // L_ANKLE_ROLL
-#else
 		outValue[1] += (int)(dir[1] * rlGyroErr * BALANCE_HIP_ROLL_GAIN*4); // R_HIP_ROLL
         outValue[7] += (int)(dir[7] * rlGyroErr * BALANCE_HIP_ROLL_GAIN*4); // L_HIP_ROLL
 
@@ -596,7 +583,6 @@ void Walking::Process()
 
 		outValue[5] -= (int)(dir[5] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN*4); // R_ANKLE_ROLL
         outValue[11] -= (int)(dir[11] * rlGyroErr * BALANCE_ANKLE_ROLL_GAIN*4); // L_ANKLE_ROLL
-#endif
     }
 
 	m_Joint.SetValue(JointData::ID_R_HIP_YAW,           outValue[0]);

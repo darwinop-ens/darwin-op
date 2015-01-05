@@ -8,12 +8,7 @@
 #include <signal.h>
 #include "cmd_process.h"
 
-#ifdef MX28_1024
-#define MOTION_FILE_PATH    "../../../Data/motion_1024.bin"
-#else
 #define MOTION_FILE_PATH    "../../../Data/motion_4096.bin"
-#endif
-
 #define INI_FILE_PATH       "../../../Data/config.ini"
 
 using namespace Robot;

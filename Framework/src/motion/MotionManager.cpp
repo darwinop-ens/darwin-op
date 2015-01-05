@@ -291,15 +291,10 @@ void MotionManager::Process()
             if(MotionStatus::m_CurrentJoints.GetEnable(id) == true)
             {
                 param[n++] = id;
-#ifdef MX28_1024
-                param[n++] = MotionStatus::m_CurrentJoints.GetCWSlope(id);
-                param[n++] = MotionStatus::m_CurrentJoints.GetCCWSlope(id);
-#else
                 param[n++] = MotionStatus::m_CurrentJoints.GetDGain(id);
                 param[n++] = MotionStatus::m_CurrentJoints.GetIGain(id);
                 param[n++] = MotionStatus::m_CurrentJoints.GetPGain(id);
                 param[n++] = 0;
-#endif
                 param[n++] = CM730::GetLowByte(MotionStatus::m_CurrentJoints.GetValue(id) + m_Offset[id]);
                 param[n++] = CM730::GetHighByte(MotionStatus::m_CurrentJoints.GetValue(id) + m_Offset[id]);
                 joint_num++;
@@ -310,11 +305,7 @@ void MotionManager::Process()
         }
 
         if(joint_num > 0)
-#ifdef MX28_1024
-            m_CM730->SyncWrite(MX28::P_CW_COMPLIANCE_SLOPE, MX28::PARAM_BYTES, joint_num, param);
-#else
             m_CM730->SyncWrite(MX28::P_D_GAIN, MX28::PARAM_BYTES, joint_num, param);
-#endif
     }
 
     m_CM730->BulkRead();

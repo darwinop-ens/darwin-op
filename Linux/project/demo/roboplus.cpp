@@ -14,11 +14,7 @@
 using namespace Robot;
 using namespace std;
 
-#ifdef MX28_1024
-#define MOTION_FILE_PATH    "../../../Data/motion_1024.bin"
-#else
 #define MOTION_FILE_PATH    "../../../Data/motion_4096.bin"
-#endif
 
 #define VERSION                    "1.000"
 #define TCPIP_PORT                6501

@@ -154,21 +154,12 @@ int main()
 			        exit(0);
 			    }
 
-#ifdef MX28_1024
-			    if(27 <= firm_ver)
-			    {
-			        fprintf(stderr, "\n MX-28's firmware is not support 1024 resolution!! \n");
-			        fprintf(stderr, " Remove '#define MX28_1024' from 'MX28.h' file and rebuild.\n\n");
-			        continue;
-			    }
-#else
 			    if(0 < firm_ver && firm_ver < 27)
 			    {
 			        fprintf(stderr, "\n MX-28's firmware is not support 4096 resolution!! \n");
 			        fprintf(stderr, " Upgrade MX-28's firmware to version 27(0x1B) or higher.\n\n");
 			        continue;
 			    }
-#endif
 
 				if(num_param == 0)
 					Reset(&cm730, gID);

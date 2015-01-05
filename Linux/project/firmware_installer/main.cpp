@@ -702,21 +702,13 @@ int main(int argc, char *argv[])
                 goto EXIT;
             }
 
-#ifdef MX28_1024
-            if(27 <= firm_ver)
-            {
-                fprintf(stderr, "\n MX-28's firmware is not support 1024 resolution!! \n");
-                fprintf(stderr, " Remove '#define MX28_1024' from 'MX28.h' file and rebuild.\n\n");
-                goto EXIT;
-            }
-#else
             if(0 < firm_ver && firm_ver < 27)
             {
                 fprintf(stderr, "\n MX-28's firmware is not support 4096 resolution!! \n");
                 fprintf(stderr, " Upgrade MX-28's firmware to version 27(0x1B) or higher.\n\n");
                 goto EXIT;
             }
-#endif
+
             for(int i=JointData::ID_R_SHOULDER_PITCH; i<JointData::NUMBER_OF_JOINTS; i++)
                 Reset(&cm730, i);
 
