@@ -103,16 +103,16 @@ void Scan(CM730 *cm730)
 
 	for(int id=1; id<254; id++)
 	{
-        if(cm730->Ping(id, 0) == CM730::SUCCESS)
-        {
-            printf("                                  ... OK\r");
-            printf(" Check ID:%d(%s)\n", id, GetIDString(id));
-        }
-        else if(id < JointData::NUMBER_OF_JOINTS || id == CM730::ID_CM)
-        {
-            printf("                                  ... FAIL\r");
-            printf(" Check ID:%d(%s)\n", id, GetIDString(id));
-        }
+		if(cm730->Ping(id, 0) == CM730::SUCCESS)
+		{
+			printf("                                  ... OK\r");
+			printf(" Check ID:%d(%s)\n", id, GetIDString(id));
+		}
+		else if(id < JointData::NUMBER_OF_JOINTS || id == CM730::ID_CM)
+		{
+			printf("                                  ... FAIL\r");
+			printf(" Check ID:%d(%s)\n", id, GetIDString(id));
+		}
 	}
 
 	printf("\n");
@@ -171,8 +171,8 @@ void Dump(CM730 *cm730, int id)
 		printf( " ACCEL_Y                 (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 		addr = CM730::P_ACCEL_Z_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " ACCEL_Z                 (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
-        addr = CM730::P_VOLTAGE; value = table[addr];
-        printf( " VOLTAGE                 (R) [%.3d]:%5d\n", addr, value);
+		addr = CM730::P_VOLTAGE; value = table[addr];
+		printf( " VOLTAGE                 (R) [%.3d]:%5d\n", addr, value);
 		addr = CM730::P_LEFT_MIC_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " LEFT_MIC                (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
 		addr = CM730::P_RIGHT_MIC_L; value = CM730::MakeWord(table[addr], table[addr+1]);
@@ -234,14 +234,14 @@ void Dump(CM730 *cm730, int id)
 		addr = MX28::P_CCW_COMPLIANCE_SLOPE; value = table[addr];
 		printf( " CCW_COMPLIANCE_SLOPE   (R/W)[%.3d]:%5d\n", addr, value);
 #else
-        addr = MX28::P_D_GAIN; value = table[addr];
-        printf( " D_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
-        addr = MX28::P_I_GAIN; value = table[addr];
-        printf( " I_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
-        addr = MX28::P_P_GAIN; value = table[addr];
-        printf( " P_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
-        addr = MX28::P_RESERVED; value = table[addr];
-        printf( " RESERVED               (R/W)[%.3d]:%5d\n", addr, value);
+		addr = MX28::P_D_GAIN; value = table[addr];
+		printf( " D_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
+		addr = MX28::P_I_GAIN; value = table[addr];
+		printf( " I_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
+		addr = MX28::P_P_GAIN; value = table[addr];
+		printf( " P_GAIN                 (R/W)[%.3d]:%5d\n", addr, value);
+		addr = MX28::P_RESERVED; value = table[addr];
+		printf( " RESERVED               (R/W)[%.3d]:%5d\n", addr, value);
 #endif
 		addr = MX28::P_GOAL_POSITION_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " GOAL_POSITION          (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
@@ -342,9 +342,9 @@ void Reset(Robot::CM730 *cm730, int id)
 			break;
 
 		case JointData::ID_R_HIP_YAW:
-            cwLimit = -123.0;
-            ccwLimit = 53.0;
-            break;
+			cwLimit = -123.0;
+			ccwLimit = 53.0;
+			break;
 
 		case JointData::ID_L_HIP_YAW:
 			cwLimit = -53.0;
@@ -574,25 +574,25 @@ void Write(Robot::CM730 *cm730, int id, int addr, int value)
 		    }
 		}
 		else if(addr == MX28::P_HIGH_LIMIT_TEMPERATURE
-            || addr == MX28::P_LOW_LIMIT_VOLTAGE
-            || addr == MX28::P_HIGH_LIMIT_VOLTAGE
-            || addr == MX28::P_ALARM_LED
-            || addr == MX28::P_ALARM_SHUTDOWN
-            || addr == MX28::P_TORQUE_ENABLE
-            || addr == MX28::P_LED
+		     || addr == MX28::P_LOW_LIMIT_VOLTAGE
+		     || addr == MX28::P_HIGH_LIMIT_VOLTAGE
+		     || addr == MX28::P_ALARM_LED
+		     || addr == MX28::P_ALARM_SHUTDOWN
+		     || addr == MX28::P_TORQUE_ENABLE
+		     || addr == MX28::P_LED
 #ifdef MX28_1024
-            || addr == MX28::P_CW_COMPLIANCE_MARGIN
-            || addr == MX28::P_CCW_COMPLIANCE_MARGIN
-            || addr == MX28::P_CW_COMPLIANCE_SLOPE
-            || addr == MX28::P_CCW_COMPLIANCE_SLOPE
+		     || addr == MX28::P_CW_COMPLIANCE_MARGIN
+		     || addr == MX28::P_CCW_COMPLIANCE_MARGIN
+		     || addr == MX28::P_CW_COMPLIANCE_SLOPE
+		     || addr == MX28::P_CCW_COMPLIANCE_SLOPE
 #else
-			|| addr == MX28::P_P_GAIN
-			|| addr == MX28::P_I_GAIN
-			|| addr == MX28::P_D_GAIN
-			|| addr == MX28::P_RESERVED
+		     || addr == MX28::P_P_GAIN
+		     || addr == MX28::P_I_GAIN
+		     || addr == MX28::P_D_GAIN
+		     || addr == MX28::P_RESERVED
 #endif
-			|| addr == MX28::P_LED
-			|| addr == MX28::P_LED)
+		     || addr == MX28::P_LED
+		     || addr == MX28::P_LED)
 		{
 			res = cm730->WriteByte(id, addr, value, &error);
 		}
