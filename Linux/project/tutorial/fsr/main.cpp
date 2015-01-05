@@ -8,7 +8,6 @@
 #include <pthread.h>
 
 #include "LinuxDARwIn.h"
-#include "FSR.h"
 #include "mjpg_streamer.h"
 
 using namespace Robot;
