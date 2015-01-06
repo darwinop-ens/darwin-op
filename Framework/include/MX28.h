@@ -70,10 +70,9 @@ namespace Robot
 			P_ALARM_LED                 = 17,
 			P_ALARM_SHUTDOWN            = 18,
 			P_OPERATING_MODE            = 19,
-			P_LOW_CALIBRATION_L         = 20,
-			P_LOW_CALIBRATION_H         = 21,
-			P_HIGH_CALIBRATION_L        = 22,
-			P_HIGH_CALIBRATION_H        = 23,
+			P_MULTI_TURN_OFFSET_L       = 20,
+			P_MULTI_TURN_OFFSET_H       = 21,
+			P_RESOLUTION_DIVIDER        = 22,
 			P_TORQUE_ENABLE             = 24,
 			P_LED                       = 25,
 			P_D_GAIN                    = 26,
@@ -118,6 +117,7 @@ namespace Robot
 			P_I_ERROR_OUT_H             = 65,
 			P_D_ERROR_OUT_L             = 66,
 			P_D_ERROR_OUT_H             = 67,
+			P_GOAL_ACCELERATION         = 73,
 			MAXNUM_ADDRESS
 		};
 	};

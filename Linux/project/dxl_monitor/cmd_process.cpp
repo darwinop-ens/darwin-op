@@ -237,7 +237,7 @@ void Dump(CM730 *cm730, int id)
 	}
 	else // Actuator
 	{		
-		if(cm730->ReadTable(id, MX28::P_MODEL_NUMBER_L, MX28::P_PUNCH_H, &table[MX28::P_MODEL_NUMBER_L], 0) != CM730::SUCCESS)
+		if(cm730->ReadTable(id, MX28::P_MODEL_NUMBER_L, MX28::P_GOAL_ACCELERATION, &table[MX28::P_MODEL_NUMBER_L], 0) != CM730::SUCCESS)
 		{
 			printf(" Can not read table!\n");
 			return;
@@ -273,6 +273,10 @@ void Dump(CM730 *cm730, int id)
 		printf( " ALARM_LED              (R/W)[%.3d]:%5d\n", addr, value);
 		addr = MX28::P_ALARM_SHUTDOWN; value = table[addr];
 		printf( " ALARM_SHUTDOWN         (R/W)[%.3d]:%5d\n", addr, value);
+		addr = MX28::P_MULTI_TURN_OFFSET_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		printf( " MULTI_TURN_OFFSET      (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		addr = MX28::P_RESOLUTION_DIVIDER; value = table[addr];
+		printf( " RESOLUTION_DIVIDER     (R/W)[%.3d]:%5d\n", addr, value);
 		printf( "\n" );
 		printf( " [RAM AREA]\n" );
 		addr = MX28::P_TORQUE_ENABLE; value = table[addr];
@@ -311,7 +315,24 @@ void Dump(CM730 *cm730, int id)
 		printf( " LOCK                   (R/W)[%.3d]:%5d\n", addr, value);
 		addr = MX28::P_PUNCH_L; value = CM730::MakeWord(table[addr], table[addr+1]);
 		printf( " PUNCH                  (R/W)[%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
-
+		addr = MX28::P_POT_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		printf( " POT                     (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		addr = MX28::P_PWM_OUT_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		printf( " PWM_OUT                 (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		addr = MX28::P_P_ERROR_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		printf( " P_ERROR_L               (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		addr = MX28::P_I_ERROR_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		printf( " I_ERROR_L               (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		addr = MX28::P_D_ERROR_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		printf( " D_ERROR_L               (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		addr = MX28::P_P_ERROR_OUT_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		printf( " P_ERROR_OUT_L           (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		addr = MX28::P_I_ERROR_OUT_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		printf( " I_ERROR_OUT_L           (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		addr = MX28::P_D_ERROR_OUT_L; value = CM730::MakeWord(table[addr], table[addr+1]);
+		printf( " D_ERROR_OUT_L           (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr+1]);
+		addr = MX28::P_GOAL_ACCELERATION; value = table[addr];
+		printf( " P_GOAL_ACCELERATION     (R) [%.3d]:%5d\n", addr, value);
 		printf( "\n" );
 	}
 }
@@ -639,14 +660,14 @@ void Write(Robot::CM730 *cm730, int id, int addr, int value)
 		     || addr == MX28::P_HIGH_LIMIT_VOLTAGE
 		     || addr == MX28::P_ALARM_LED
 		     || addr == MX28::P_ALARM_SHUTDOWN
+		     || addr == MX28::P_RESOLUTION_DIVIDER
 		     || addr == MX28::P_TORQUE_ENABLE
 		     || addr == MX28::P_LED
 		     || addr == MX28::P_P_GAIN
 		     || addr == MX28::P_I_GAIN
 		     || addr == MX28::P_D_GAIN
 		     || addr == MX28::P_RESERVED
-		     || addr == MX28::P_LED
-		     || addr == MX28::P_LED)
+		     || addr == MX28::P_GOAL_ACCELERATION)
 		{
 			res = cm730->WriteByte(id, addr, value, &error);
 		}
