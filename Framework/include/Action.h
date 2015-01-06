@@ -54,7 +54,7 @@ namespace Robot
 			unsigned char exit;             // Link to exit     26
 			unsigned char reserved5[4];     // reserved5        27~30
 			unsigned char checksum;         // checksum         31
-			unsigned char slope[31];        // CW/CCW compliance slope  32~62
+			unsigned char slope[31];        // CW/CCW compliance slope  32~62, unused in latest MX-28 firmwares
 			unsigned char reserved6;        // reserved6        63
 		} PAGEHEADER;
 

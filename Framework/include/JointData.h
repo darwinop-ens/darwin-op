@@ -41,14 +41,6 @@ namespace Robot
 
 		enum
 		{
-			SLOPE_HARD			= 16,
-			SLOPE_DEFAULT		= 32,
-			SLOPE_SOFT			= 64,
-			SLOPE_EXTRASOFT		= 128
-		};
-
-		enum
-		{
 			P_GAIN_DEFAULT      = 32,
 			I_GAIN_DEFAULT      = 0,
 			D_GAIN_DEFAULT      = 0
@@ -61,8 +53,6 @@ namespace Robot
 		bool m_Enable[NUMBER_OF_JOINTS];
 		int m_Value[NUMBER_OF_JOINTS];
 		double m_Angle[NUMBER_OF_JOINTS];
-		int m_CWSlope[NUMBER_OF_JOINTS];
-		int m_CCWSlope[NUMBER_OF_JOINTS];
 		int m_PGain[NUMBER_OF_JOINTS];
 		int m_IGain[NUMBER_OF_JOINTS];
 		int m_DGain[NUMBER_OF_JOINTS];
@@ -103,12 +93,6 @@ namespace Robot
 
 		void SetRadian(int id, double radian);
 		double GetRadian(int id);
-
-		void SetSlope(int id, int cwSlope, int ccwSlope);
-		void SetCWSlope(int id, int cwSlope);
-		int  GetCWSlope(int id);
-		void SetCCWSlope(int id, int ccwSlope);
-		int  GetCCWSlope(int id);
 
 		void SetPGain(int id, int pgain) { m_PGain[id] = pgain; }
 		int  GetPGain(int id)            { return m_PGain[id]; }

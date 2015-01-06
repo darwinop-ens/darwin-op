@@ -272,7 +272,6 @@ void MotionManager::Process()
                 {
                     if((*i)->m_Joint.GetEnable(id) == true)
                     {
-                        MotionStatus::m_CurrentJoints.SetSlope(id, (*i)->m_Joint.GetCWSlope(id), (*i)->m_Joint.GetCCWSlope(id));
                         MotionStatus::m_CurrentJoints.SetValue(id, (*i)->m_Joint.GetValue(id));
 
                         MotionStatus::m_CurrentJoints.SetPGain(id, (*i)->m_Joint.GetPGain(id));
