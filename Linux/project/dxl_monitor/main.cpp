@@ -170,6 +170,10 @@ int main()
 						for(int i=JointData::ID_R_SHOULDER_PITCH; i<JointData::NUMBER_OF_JOINTS; i++)
 							Reset(&cm730, i);
 
+						if(cm730->Ping(FSR::ID_R_FSR, 0) == CM730::SUCCESS)
+							Reset(&cm730, FSR::ID_R_FSR);
+						if(cm730->Ping(FSR::ID_L_FSR, 0) == CM730::SUCCESS)
+							Reset(&cm730, FSR::ID_L_FSR);
 						Reset(&cm730, CM730::ID_CM);
 					}
 					else
