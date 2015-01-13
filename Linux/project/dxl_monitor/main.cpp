@@ -24,7 +24,7 @@ void sighandler(int sig)
 int main()
 {
 	signal(SIGABRT, &sighandler);
-    signal(SIGTERM, &sighandler);
+	signal(SIGTERM, &sighandler);
 	signal(SIGQUIT, &sighandler);
 	signal(SIGINT, &sighandler);
 
@@ -79,15 +79,15 @@ int main()
 				}
 				
 				iparam[0] = atoi(param[0]);
-	            if(cm730.Ping(iparam[0], 0) == CM730::SUCCESS)
-	            {
-	                gID = iparam[0];
-	            }
-	            else
-	            {
-                    printf(" Invalid ID(%d)!\n", iparam[0]);
-                    continue;
-	            }
+				if(cm730.Ping(iparam[0], 0) == CM730::SUCCESS)
+				{
+					gID = iparam[0];
+				}
+				else
+				{
+					printf(" Invalid ID(%d)!\n", iparam[0]);
+					continue;
+				}
 			}
 			else if(strcmp(cmd, "on") == 0)
 			{
@@ -147,19 +147,19 @@ int main()
 				Dump(&cm730, gID);
 			else if(strcmp(cmd, "reset") == 0)
 			{
-			    int firm_ver = 0;
-			    if(cm730.ReadByte(JointData::ID_HEAD_PAN, MX28::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
-			    {
-			        fprintf(stderr, "Can't read firmware version from Dynamixel ID %d!! \n\n", JointData::ID_HEAD_PAN);
-			        exit(0);
-			    }
+				int firm_ver = 0;
+				if(cm730.ReadByte(JointData::ID_HEAD_PAN, MX28::P_VERSION, &firm_ver, 0)  != CM730::SUCCESS)
+				{
+					fprintf(stderr, "Can't read firmware version from Dynamixel ID %d!! \n\n", JointData::ID_HEAD_PAN);
+					exit(0);
+				}
 
-			    if(0 < firm_ver && firm_ver < 27)
-			    {
-			        fprintf(stderr, "\n MX-28's firmware is not support 4096 resolution!! \n");
-			        fprintf(stderr, " Upgrade MX-28's firmware to version 27(0x1B) or higher.\n\n");
-			        continue;
-			    }
+				if(0 < firm_ver && firm_ver < 27)
+				{
+					fprintf(stderr, "\n MX-28's firmware is not support 4096 resolution!! \n");
+					fprintf(stderr, " Upgrade MX-28's firmware to version 27(0x1B) or higher.\n\n");
+					continue;
+				}
 
 				if(num_param == 0)
 					Reset(&cm730, gID);
