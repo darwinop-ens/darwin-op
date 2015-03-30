@@ -262,7 +262,7 @@ int main(void)
                 Head::GetInstance()->m_Joint.SetEnableHeadOnly(true, true);
                 Walking::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true, true);
                 
-                if(Walking::GetInstance()->IsRunning() == false){
+                if(Walking::GetInstance()->IsRunning() == false && _ball_found != 1){
             		Walking::GetInstance()->X_MOVE_AMPLITUDE = -1.0;
             		Walking::GetInstance()->A_MOVE_AMPLITUDE = 0.0;
             		Walking::GetInstance()->Start();
