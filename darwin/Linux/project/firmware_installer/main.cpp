@@ -90,12 +90,12 @@ void help(char *progname)
     fprintf(stderr, "Usage: %s\n" \
                     " [-h | --help]........: display this help\n" \
                     " [-d | --device]......: port to open                     (/dev/ttyUSB0)\n" \
-                    " [-c | --controller]..: controller firmware file       (cm730_0x13.hex)\n" \
+                    " [-c | --controller]..: controller firmware file       (cm740_0x14.hex)\n" \
                     " [-a | --actuator]....: actuator firmware file (mx28_0x1E+FSR_0x11.hex)\n", progname);
     fprintf(stderr, "-----------------------------------------------------------------------\n");
     fprintf(stderr, "Example #1:\n" \
-                    " To open a default port and install with firmware file \"cm730.hex\":\n" \
-                    "  %s -c cm730.hex\n", progname);
+                    " To open a default port and install with firmware file \"cm740.hex\":\n" \
+                    "  %s -c cm740.hex\n", progname);
     fprintf(stderr, "-----------------------------------------------------------------------\n");
     fprintf(stderr, "Example #2:\n" \
                     " To open a /dev/ttyUSB1 and install with default firmware file name:\n" \
@@ -360,10 +360,10 @@ int main(int argc, char *argv[])
     int r = 0;
 
     fprintf(stderr, "\n***********************************************************************\n");
-    fprintf(stderr,   "*             CM-730 & Actuator & FSR Firmware Installer              *\n");
+    fprintf(stderr,   "*             CM-740 & Actuator & FSR Firmware Installer              *\n");
     fprintf(stderr,   "***********************************************************************\n\n");
 
-    char *controller_fw = (char*)"cm730_0x13.hex";
+    char *controller_fw = (char*)"cm740_0x14.hex";
     char *actuator_fw = (char*)"mx28_0x1E+FSR_0x11.hex";
     char *dev = (char*)"/dev/ttyUSB0";
 
@@ -429,7 +429,7 @@ int main(int argc, char *argv[])
     }
 
     fprintf(stderr, "You can choose to: \n\n"
-                    "  (1) CM-730 firmware installation.    (with \"%s\")\n" \
+                    "  (1) CM-740 firmware installation.    (with \"%s\")\n" \
                     "  (2) Dynamixel firmware installation. (with \"%s\")\n\n", controller_fw, actuator_fw);
     char choice = 0;
     do{
@@ -444,7 +444,7 @@ int main(int argc, char *argv[])
 
     if(mode == 1)
     {
-        fprintf(stderr, "\n [ CM-730 firmware installation mode ]\n\n");
+        fprintf(stderr, "\n [ CM-740 firmware installation mode ]\n\n");
         fprintf(stderr, "Load %s... ", controller_fw);
 
         if(hex2bin(controller_fw, binMem, &startAddr, &binSize) == false)
@@ -723,7 +723,7 @@ int main(int argc, char *argv[])
             Reset(&cm730, CM730::ID_CM);
         }
         else
-            fprintf(stderr, "CM-730 Connect fail!! \n");
+            fprintf(stderr, "CM-740 Connect fail!! \n");
 
         return 0;
     }
