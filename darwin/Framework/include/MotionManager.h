@@ -11,7 +11,6 @@
 #include <list>
 #include <fstream>
 #include <iostream>
-#include <unistd.h>
 #include "MotionStatus.h"
 #include "MotionModule.h"
 #include "CM730.h"
