@@ -149,6 +149,7 @@ int main(void)
     Action::GetInstance()->Start(15);
     while(Action::GetInstance()->IsRunning()) usleep(8*1000);
 
+    int _ball_found = 0;
     while(1)
     {
         StatusCheck::Check(cm730);
@@ -231,7 +232,8 @@ int main(void)
         }
         else if(StatusCheck::m_cur_mode == SOCCER)
         {
-            tracker.Process(ball_finder->GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame));
+            //tracker.Process(ball_finder->GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame));
+            _ball_found = tracker.SearchAndTracking(ball_finder->GetPosition(LinuxCamera::GetInstance()->fbuffer->m_HSVFrame));
 
             for(int i = 0; i < rgb_output->m_NumberOfPixels; i++)
             {
@@ -254,28 +256,48 @@ int main(void)
         case READY:
             break;
         case SOCCER:
-            if(Action::GetInstance()->IsRunning() == 0)
+            if(Action::GetInstance()->IsRunning() == 0 &&
+                    StatusCheck::m_soccer_sub_mode == SOCCER_PLAY)
             {
                 Head::GetInstance()->m_Joint.SetEnableHeadOnly(true, true);
                 Walking::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true, true);
+                
+                if(Walking::GetInstance()->IsRunning() == false){
+            		Walking::GetInstance()->X_MOVE_AMPLITUDE = -1.0;
+            		Walking::GetInstance()->A_MOVE_AMPLITUDE = 0.0;
+            		Walking::GetInstance()->Start();
+            	}
 
-                follower.Process(tracker.ball_position);
-
-                if(follower.KickBall != 0)
+                if(_ball_found == 1)
                 {
-                    Head::GetInstance()->m_Joint.SetEnableHeadOnly(true, true);
-                    Action::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true, true);
+                    follower.Process(tracker.ball_position);
 
-                    if(follower.KickBall == -1)
+                    if(follower.KickBall != 0)
                     {
-                        Action::GetInstance()->Start(12);   // RIGHT KICK
-                        fprintf(stderr, "RightKick! \n");
+                        Head::GetInstance()->m_Joint.SetEnableHeadOnly(true, true);
+                        Action::GetInstance()->m_Joint.SetEnableBodyWithoutHead(true, true);
+
+                        if(follower.KickBall == -1)
+                        {
+                            Action::GetInstance()->Start(12);   // RIGHT KICK
+                            fprintf(stderr, "RightKick! \n");
+                        }
+                        else if(follower.KickBall == 1)
+                        {
+                            Action::GetInstance()->Start(13);   // LEFT KICK
+                            fprintf(stderr, "LeftKick! \n");
+                        }
                     }
-                    else if(follower.KickBall == 1)
-                    {
-                        Action::GetInstance()->Start(13);   // LEFT KICK
-                        fprintf(stderr, "LeftKick! \n");
-                    }
+                }
+                else if(_ball_found == -1)
+                {
+            		Walking::GetInstance()->X_MOVE_AMPLITUDE = -1.0;
+            		Walking::GetInstance()->A_MOVE_AMPLITUDE = 10.0;
+                }
+                else
+                {
+            		Walking::GetInstance()->X_MOVE_AMPLITUDE = -1.0;
+            		Walking::GetInstance()->A_MOVE_AMPLITUDE = 0.0;
                 }
             }
             break;

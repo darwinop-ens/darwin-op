@@ -26,8 +26,17 @@ void *LinuxMotionTimer::TimerProc(void *param)
     static struct timespec next_time;
     clock_gettime(CLOCK_MONOTONIC,&next_time);
 
+//    struct timespec now, prev;
+//    double diff;
+//    clock_gettime(CLOCK_MONOTONIC,&prev);
     while(!timer->m_FinishTimer)
     {
+//        clock_gettime(CLOCK_MONOTONIC,&now);
+//        diff = (now.tv_nsec - prev.tv_nsec) / 1000000.0;
+//        if((diff < 7.9 || 8.1 < diff) && diff > -990.0)
+//            fprintf(stderr, "TIME : (%d) %f \n", (now.tv_sec - prev.tv_sec), diff);
+//        prev = now;
+        
         next_time.tv_sec += (next_time.tv_nsec + MotionModule::TIME_UNIT * 1000000) / 1000000000;
         next_time.tv_nsec = (next_time.tv_nsec + MotionModule::TIME_UNIT * 1000000) % 1000000000;
 

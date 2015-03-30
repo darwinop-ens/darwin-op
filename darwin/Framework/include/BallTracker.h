@@ -19,7 +19,8 @@ namespace Robot
 	{
 	private:
 		int NoBallCount;
-		static const int NoBallMaxCount = 15;
+		static const int NoBallMaxCount = 15, NotFoundMaxCount = 100;
+        static const double TiltTopLimit = 25, TiltBottomLimit = -12, PanLimit = 65;
 
 	public:
         Point2D     ball_position;
@@ -27,7 +28,9 @@ namespace Robot
 		BallTracker();
 		~BallTracker();
 
-		void Process(Point2D pos);
+		int  Search(bool count_reset);
+        int  SearchAndTracking(Point2D pos);
+        void Process(Point2D pos);
 	};
 }
 
