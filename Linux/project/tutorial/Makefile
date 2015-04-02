@@ -7,7 +7,7 @@
 #
 ###############################################################
 
-TARGETS=$(shell find . -mindepth 1 -maxdepth 1 -type d)
+TARGETS=$(shell find . -mindepth 1 -maxdepth 1 -type d | sed s/.*\\.svn.*//)
 all_TARGETS=$(addprefix all_,$(TARGETS))
 clean_TARGETS=$(addprefix clean_,$(TARGETS))
 libclean_TARGETS=$(addprefix libclean_,$(TARGETS))
