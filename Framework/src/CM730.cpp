@@ -8,7 +8,7 @@
 #include "FSR.h"
 #include "CM730.h"
 #include "MotionStatus.h"
-
+#include "Kinematics.h"
 
 using namespace Robot;
 
@@ -473,7 +473,7 @@ bool CM730::Connect()
 		return false;
 	}
 
-	return DXLPowerOn();
+	return (DXLPowerOn() && MX28InitAll());
 }
 
 bool CM730::ChangeBaud(int baud)
@@ -503,6 +503,104 @@ bool CM730::DXLPowerOn()
 			fprintf(stderr, " Fail to change Dynamixel power!\n");
 		return false;
 	}
+
+	return true;
+}
+
+bool CM730::MX28InitAll()
+{
+	// no limits for R_SHOULDER_PITCH
+	// no limits for L_SHOULDER_PITCH
+
+	if(WriteWord(JointData::ID_R_SHOULDER_ROLL, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_R_SHOULDER_ROLL), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of R_SHOULDER_ROLL!\n");
+	if(WriteWord(JointData::ID_R_SHOULDER_ROLL, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_R_SHOULDER_ROLL), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of R_SHOULDER_ROLL!\n");
+
+	if(WriteWord(JointData::ID_L_SHOULDER_ROLL, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_L_SHOULDER_ROLL), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of L_SHOULDER_ROLL!\n");
+	if(WriteWord(JointData::ID_L_SHOULDER_ROLL, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_L_SHOULDER_ROLL), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of L_SHOULDER_ROLL!\n");
+
+	if(WriteWord(JointData::ID_R_ELBOW, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_R_ELBOW), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of R_ELBOW!\n");
+	if(WriteWord(JointData::ID_R_ELBOW, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_R_ELBOW), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of R_ELBOW!\n");
+
+	if(WriteWord(JointData::ID_L_ELBOW, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_L_ELBOW), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of L_ELBOW!\n");
+	if(WriteWord(JointData::ID_L_ELBOW, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_L_ELBOW), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of L_ELBOW!\n");
+
+	if(WriteWord(JointData::ID_R_HIP_YAW, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_R_HIP_YAW), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of R_HIP_YAW!\n");
+	if(WriteWord(JointData::ID_R_HIP_YAW, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_R_HIP_YAW), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of R_HIP_YAW!\n");
+
+	if(WriteWord(JointData::ID_L_HIP_YAW, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_L_HIP_YAW), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of L_HIP_YAW!\n");
+	if(WriteWord(JointData::ID_L_HIP_YAW, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_L_HIP_YAW), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of L_HIP_YAW!\n");
+
+	if(WriteWord(JointData::ID_R_HIP_ROLL, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_R_HIP_ROLL), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of R_HIP_ROLL!\n");
+	if(WriteWord(JointData::ID_R_HIP_ROLL, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_R_HIP_ROLL), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of R_HIP_ROLL!\n");
+
+	if(WriteWord(JointData::ID_L_HIP_ROLL, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_L_HIP_ROLL), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of L_HIP_ROLL!\n");
+	if(WriteWord(JointData::ID_L_HIP_ROLL, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_L_HIP_ROLL), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of L_HIP_ROLL!\n");
+
+	if(WriteWord(JointData::ID_R_HIP_PITCH, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_R_HIP_PITCH), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of R_HIP_PITCH!\n");
+	if(WriteWord(JointData::ID_R_HIP_PITCH, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_R_HIP_PITCH), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of R_HIP_PITCH!\n");
+
+	if(WriteWord(JointData::ID_L_HIP_PITCH, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_L_HIP_PITCH), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of L_HIP_PITCH!\n");
+	if(WriteWord(JointData::ID_L_HIP_PITCH, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_L_HIP_PITCH), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of L_HIP_PITCH!\n");
+
+	if(WriteWord(JointData::ID_R_KNEE, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_R_KNEE), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of R_KNEE!\n");
+	if(WriteWord(JointData::ID_R_KNEE, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_R_KNEE), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of R_KNEE!\n");
+
+	if(WriteWord(JointData::ID_L_KNEE, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_L_KNEE), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of L_KNEE!\n");
+	if(WriteWord(JointData::ID_L_KNEE, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_L_KNEE), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of L_KNEE!\n");
+
+	if(WriteWord(JointData::ID_R_ANKLE_PITCH, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_R_ANKLE_PITCH), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of R_ANKLE_PITCH!\n");
+	if(WriteWord(JointData::ID_R_ANKLE_PITCH, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_R_ANKLE_PITCH), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of R_ANKLE_PITCH!\n");
+
+	if(WriteWord(JointData::ID_L_ANKLE_PITCH, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_L_ANKLE_PITCH), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of L_ANKLE_PITCH!\n");
+	if(WriteWord(JointData::ID_L_ANKLE_PITCH, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_L_ANKLE_PITCH), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of L_ANKLE_PITCH!\n");
+
+	if(WriteWord(JointData::ID_R_ANKLE_ROLL, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_R_ANKLE_ROLL), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of R_ANKLE_ROLL!\n");
+	if(WriteWord(JointData::ID_R_ANKLE_ROLL, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_R_ANKLE_ROLL), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of R_ANKLE_ROLL!\n");
+
+	if(WriteWord(JointData::ID_L_ANKLE_ROLL, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_L_ANKLE_ROLL), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of L_ANKLE_ROLL!\n");
+	if(WriteWord(JointData::ID_L_ANKLE_ROLL, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_L_ANKLE_ROLL), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of L_ANKLE_ROLL!\n");
+
+	if(WriteWord(JointData::ID_HEAD_PAN, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_HEAD_PAN), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of HEAD_PAN!\n");
+	if(WriteWord(JointData::ID_HEAD_PAN, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_HEAD_PAN), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of HEAD_PAN!\n");
+
+	if(WriteWord(JointData::ID_HEAD_TILT, MX28::P_CW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CW_LIMIT_HEAD_TILT), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CW limit of HEAD_TILT!\n");
+	if(WriteWord(JointData::ID_HEAD_TILT, MX28::P_CCW_ANGLE_LIMIT_L, MX28::Angle2Value(Kinematics::CCW_LIMIT_HEAD_TILT), 0) != CM730::SUCCESS)
+		fprintf(stderr, " Fail to change CCW limit of HEAD_TILT!\n");
 
 	return true;
 }

@@ -187,6 +187,7 @@ For instance, LinuxCM730 is a concretisation of this class.
 		bool ChangeBaud(int baud);
 		void Disconnect();
 		bool DXLPowerOn();
+		bool MX28InitAll();
 
 		// For board
 		int WriteByte(int address, int value, int *error);
