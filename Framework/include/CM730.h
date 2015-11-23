@@ -43,7 +43,7 @@ For instance, LinuxCM730 is a concretisation of this class.
 		/////////// Need to implement below methods (Platform porting) //////////////
 		// Port control
 		virtual bool OpenPort() = 0;
-        virtual bool SetBaud(int baud) = 0;
+		virtual bool SetBaud(int baud) = 0;
 		virtual void ClosePort() = 0;
 		virtual void ClearPort() = 0;
 		virtual int WritePort(unsigned char* packet, int numPacket) = 0;
@@ -98,17 +98,17 @@ For instance, LinuxCM730 is a concretisation of this class.
 		/*EEPROM and RAM p. 4 in MX28 Technical Specifications.pdf ????*/
 		enum
 		{
-			P_MODEL_NUMBER_L		= 0,
-			P_MODEL_NUMBER_H		= 1,
+			P_MODEL_NUMBER_L			= 0,
+			P_MODEL_NUMBER_H			= 1,
 			P_VERSION				= 2,
 			P_ID					= 3,
 			P_BAUD_RATE				= 4,
-			P_RETURN_DELAY_TIME		= 5,
-			P_RETURN_LEVEL			= 16,
+			P_RETURN_DELAY_TIME			= 5,
+			P_RETURN_LEVEL				= 16,
 			P_DXL_POWER				= 24,
-			P_LED_PANNEL			= 25,
-			P_LED_HEAD_L			= 26,
-			P_LED_HEAD_H			= 27,
+			P_LED_PANNEL				= 25,
+			P_LED_HEAD_L				= 26,
+			P_LED_HEAD_H				= 27,
 			P_LED_EYE_L				= 28,
 			P_LED_EYE_H				= 29,
 			P_BUTTON				= 30,
@@ -125,8 +125,8 @@ For instance, LinuxCM730 is a concretisation of this class.
 			P_ACCEL_Z_L				= 48,
 			P_ACCEL_Z_H				= 49,
 			P_VOLTAGE				= 50,
-			P_LEFT_MIC_L			= 51,
-			P_LEFT_MIC_H			= 52,
+			P_LEFT_MIC_L				= 51,
+			P_LEFT_MIC_H				= 52,
 			P_ADC2_L				= 53,
 			P_ADC2_H				= 54,
 			P_ADC3_L				= 55,
@@ -141,8 +141,8 @@ For instance, LinuxCM730 is a concretisation of this class.
 			P_ADC7_H				= 64,
 			P_ADC8_L				= 65,
 			P_ADC8_H				= 66,
-			P_RIGHT_MIC_L			= 67,
-			P_RIGHT_MIC_H			= 68,
+			P_RIGHT_MIC_L				= 67,
+			P_RIGHT_MIC_H				= 68,
 			P_ADC10_L				= 69,
 			P_ADC10_H				= 70,
 			P_ADC11_L				= 71,
@@ -160,8 +160,8 @@ For instance, LinuxCM730 is a concretisation of this class.
 
 		enum
 		{
-			ID_CM			= 200,
-			ID_BROADCAST	= 254
+			ID_CM					= 200,
+			ID_BROADCAST				= 254
 		};
 
 	private:
@@ -176,7 +176,7 @@ For instance, LinuxCM730 is a concretisation of this class.
 
 	public:
 		bool DEBUG_PRINT;
-        BulkReadData m_BulkReadData[ID_BROADCAST];
+		BulkReadData m_BulkReadData[ID_BROADCAST];
 
 		CM730(PlatformCM730 *platform);
 		~CM730();
@@ -184,7 +184,7 @@ For instance, LinuxCM730 is a concretisation of this class.
 /*this method is to be used first to connect to the robot. Returns true when success and false when fail*/
 		bool Connect();
 
-        bool ChangeBaud(int baud);
+		bool ChangeBaud(int baud);
 		void Disconnect();
 		bool DXLPowerOn();
 
@@ -205,7 +205,7 @@ For instance, LinuxCM730 is a concretisation of this class.
 		int SyncWrite(int start_addr, int each_length, int number, int *pParam);
 
 		void MakeBulkReadPacket();
-        int BulkRead();
+		int BulkRead();
 
 		// Utility
 		static int MakeWord(int lowbyte, int highbyte);
@@ -213,7 +213,7 @@ For instance, LinuxCM730 is a concretisation of this class.
 		static int GetHighByte(int word);
 		static int MakeColor(int red, int green, int blue);
 
-// ***   WEBOTS PART  *** //
+		// ***   WEBOTS PART  *** //
 
 		void MakeBulkReadPacketWb();
 	};
