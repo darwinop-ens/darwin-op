@@ -17,7 +17,7 @@ namespace Robot
 	{
 	private:
 		static Kinematics* m_UniqueInstance;
-        Kinematics();
+		Kinematics();
 
 	protected:
 
