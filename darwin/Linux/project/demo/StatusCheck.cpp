@@ -116,13 +116,12 @@ void StatusCheck::Check(CM730 &cm730)
 
     if(m_old_btn == MotionStatus::BUTTON)
     {
-        if(m_cur_mode == READY && m_is_started == 0 && m_chicago_mode_cnt > MAX_CHICAGO_CNT)
+        if(m_cur_mode == READY && (m_old_btn & BTN_START) && m_is_started == 0 && m_chicago_mode_cnt > MAX_CHICAGO_CNT)
         {
             fprintf(stderr, "CHICAGO MODE ! \n\n");
 			m_cur_mode = SOCCER;
-			m_old_btn == BTN_START;
         }
-        else if(m_cur_mode == READY && m_is_started == 0 && m_chicago_mode_cnt <= MAX_CHICAGO_CNT)
+        else if(m_cur_mode == READY && (m_old_btn & BTN_START) && m_is_started == 0 && m_chicago_mode_cnt <= MAX_CHICAGO_CNT)
         {
             m_chicago_mode_cnt++;
 			return;
